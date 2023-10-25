@@ -107,7 +107,6 @@ function Login({ logerName, url }) {
         if (error.response?.status === 401) {
           toast.error(error?.response?.data?.errMsg)
         } else {
-          toast.error("Something went wrong at your login");
           console.log(error)
         }
       }
@@ -162,7 +161,6 @@ function Login({ logerName, url }) {
       if (error.response?.status === 401) {
         toast.error(error?.response?.data?.errMsg)
       } else {
-        toast.error("Something went wrong at your login");
         console.log(error)
       }
     }
@@ -285,7 +283,7 @@ function Login({ logerName, url }) {
           </form>
           <div className="w-11/12 ml-4 mt-6">
             <div className='bg-gray-500 h-0.5' ></div>
-            <Link to={'/phoneLogin'}>
+            <Link to={'/login_with_phone'}>
               <button className='mt-6 group relative w-full flex justify-center py-2 px-3 border border-transparent text-md font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:border-emerald-700 focus:shadow-outline-indigo active:bg-emerald-800 transition duration-150 ease-in-out'>
                 Sign in with Phone
               </button>
