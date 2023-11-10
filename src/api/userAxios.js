@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {store} from '../store/store'
-import {BACKEND_URL} from '../constants/userAPI'
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 const Axios_Instance  = axios.create({
     baseURL: BACKEND_URL,
     headers: {

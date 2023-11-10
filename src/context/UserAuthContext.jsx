@@ -2,7 +2,7 @@ import  { createContext, useContext } from "react";
 import { RecaptchaVerifier } from "firebase/auth";
 import { signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../api/firebase";
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 // import { BACKEND_URL } from '../constants/userAPI';
 
 
