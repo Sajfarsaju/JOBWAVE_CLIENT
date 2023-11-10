@@ -198,13 +198,13 @@ function Login({ logerName, url }) {
                   </button>
                 </div> */}
         {/*  */}
-        <div className="py-6">
+        {/* <div className="py-6">
           <img
             className="mx-auto h-12 w-14"
             src="../public/JobWave2-fotor-bg-remover-20230817153930.png"
             alt="JobWave"
           />
-        </div>
+        </div> */}
 
         <div className="px-11 py-8">
           {pathname === '/login' ?
@@ -212,7 +212,7 @@ function Login({ logerName, url }) {
             :
             <h2 className='text-lg font-bold leading-9 text-gray-900 text-center'>Welcome Back, Find your dream Jobseeker</h2>
           }
-          <h2 className="text-xl font-bold leading-9 text-gray-900 text-center">
+          <h2 className="text-2xl font-bold leading-9 text-gray-900 text-center">
             Sign in
           </h2>
 
