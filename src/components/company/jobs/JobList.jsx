@@ -15,9 +15,9 @@ import MenuItem from '@mui/material/MenuItem';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Autocomplete from '@mui/material/Autocomplete';
-import Axios_Instance from '../../api/userAxios';
+import Axios_Instance from '../../../api/userAxios';
 import { useSelector } from 'react-redux'
-import SingleJobView from './home/SingleJobView';
+import SingleJobView from './SingleJobView';
 import { FaEye } from 'react-icons/fa'
 
 function JobList() {
@@ -25,7 +25,6 @@ function JobList() {
   const [isOpenView, setIsOpenView] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
-  console.log('selectedJob;', selectedJob)
 
   // const [JobData, setJobData] = useState(
   //   {
@@ -50,7 +49,6 @@ function JobList() {
   const [CategoryList, setCategoryList] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [subscriptionPlan, setSubscriptionPlan] = useState([])
-  console.log('subscriptionPlan;', subscriptionPlan)
 
   const companyId = useSelector((state) => state.company.id)
 
@@ -291,7 +289,6 @@ function JobList() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   const jobsToShow = JobList.slice(indexOfFirstItem, indexOfLastItem);
-  console.log('jobsToShow:', jobsToShow)
 
   // Function to handle page change
   const paginate = (pageNumber) => {
@@ -308,136 +305,129 @@ function JobList() {
   return (
     <>
       <SingleJobView job={selectedJob} isOpenView={isOpenView} setIsOpenView={setIsOpenView} />
-      <div className="min-h-screen mt-28">
-        <div className="pb-12 overflow-x-auto bg-white shadow-xl m-10 shadow-gray-400">
-          <div className="flex justify-end mb-2">
-            {subscriptionPlan.subscriptionPlan ? (
-              <button
-                onClick={() => setOpenModal(true)}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md"
-              >
-                Post Job
-              </button>
-            ) : (
-              <Link to={'/company/home'}>
-                <button
+      <div className="min-h-screen mt-28 md:min-h-fit sm:min-h-fit">
+        <div className="pb-12 overflow-x-auto bg-white  m-10">
 
+          {subscriptionPlan.subscriptionPlan ? (
+            <>
+              <div className="flex justify-end mb-2">
+                <button
+                  onClick={() => setOpenModal(true)}
                   className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md"
                 >
-                  Take plan
+                  Post Job
                 </button>
-              </Link>
-            )}
-          </div>
-          <div className="w-full overflow-x-scroll">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                    No
-                  </th>
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                    Job Title
-                  </th>
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                    Work Type
-                  </th>
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                    Salary Range
-                  </th>
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                    Vacancy
-                  </th>
-                  {/* <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+              </div>
+
+              <div className="w-full overflow-x-scroll">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead>
+                    <tr>
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        No
+                      </th>
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        Job Title
+                      </th>
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        Work Type
+                      </th>
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        Salary Range
+                      </th>
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        Vacancy
+                      </th>
+                      {/* <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                     Posted On
                   </th> */}
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                    Deadline
-                  </th>
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                    Logo
-                  </th>
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                    Qualifications
-                  </th>
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                   View
-                  </th>
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                    Approval status
-                  </th>
-                  <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                    Job status
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {jobsToShow.map((job, index) => (
-                  <tr key={job._id}>
-                    <td className="px-6 py-4 whitespace-no-wrap">
-                      {index + 1 + itemsPerPage * (currentPage - 1)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-no-wrap">{job.jobTitle}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap">{job.workType}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap">{job.salaryRange}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap">{job.vacancy}</td>
-                    {/* <td className="px-6 py-4 whitespace-no-wrap">
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        Deadline
+                      </th>
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        Logo
+                      </th>
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        Qualifications
+                      </th>
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        View
+                      </th>
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        Approval status
+                      </th>
+                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                        Job status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {jobsToShow.map((job, index) => (
+                      <tr key={job._id}>
+                        <td className="px-6 py-4 whitespace-no-wrap">
+                          {index + 1 + itemsPerPage * (currentPage - 1)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-no-wrap">{job.jobTitle}</td>
+                        <td className="px-6 py-4 whitespace-no-wrap">{job.workType}</td>
+                        <td className="px-6 py-4 whitespace-no-wrap">{job.salaryRange}</td>
+                        <td className="px-6 py-4 whitespace-no-wrap">{job.vacancy}</td>
+                        {/* <td className="px-6 py-4 whitespace-no-wrap">
                       {new Date(job.createdAt).toLocaleDateString()}
                     </td> */}
-                    <td className="px-6 py-4 whitespace-no-wrap">
-                      {new Date(job.deadline).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-no-wrap">
-                      <img
-                        className='rounded-full'
-                        src={job.logo}
-                        alt="Job Logo"
-                        width="50"
-                        height="50"
-                      />
-                    </td>
-                    <td className="px-6 py-4 whitespace-no-wrap">{job.qualifications}</td>
-                    <td className="text-green-600 px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-sm sm:text-center whitespace-nowrap p-2 sm:p-3 text-center">
-
-                      <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:text-gray-700">
-                        <FaEye onClick={() => viewSingleJob(job._id)} className="w-6 h-6" />
-                      </div>
-                    </td>
-
-                    {job.isPostAccepted && job.status === 'Active' ? (
-                      <>
                         <td className="px-6 py-4 whitespace-no-wrap">
-                          <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-200">
-                            <span className="h-1.5 w-1.5 bg-green-600"></span>
-                            <h2 className="text-sm font-medium text-green-700">Approved</h2>
-                          </div>
+                          {new Date(job.deadline).toLocaleDateString()}
                         </td>
-
                         <td className="px-6 py-4 whitespace-no-wrap">
-                          <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 ">
-                            <span className="h-2 w-3 rounded-full bg-green-600"></span>
-                            <h2 className="text-sm font-medium text-green-600">Actively recruting</h2>
-                          </div>
+                          <img
+                            className='rounded-full'
+                            src={job.logo}
+                            alt="Job Logo"
+                            width="50"
+                            height="50"
+                          />
                         </td>
-                      </>
-                    ) : (
-                      <>
-                        <td className="px-6 py-4 whitespace-no-wrap text-center">
-                          <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-yellow-200">
-                            <span className="h-1.5 w-1.5 rounded-full bg-yellow-600"></span>
-                            <h2 className="text-sm font-medium text-yellow-600">Pending</h2>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap text-center">
-                          <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/70 ">
-                            <span className="h-1.5 w-1.5 rounded-full"></span>
-                            <h2 className="text-sm font-medium text-yellow-600">Approval Pending</h2>
-                          </div>
-                        </td>
-                      </>
-                    )}
+                        <td className="px-6 py-4 whitespace-no-wrap">{job.qualifications}</td>
+                        <td className="text-green-600 px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-sm sm:text-center whitespace-nowrap p-2 sm:p-3 text-center">
 
-                    {/* <td className="px-6 py-4 whitespace-no-wrap">
+                          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:text-gray-700">
+                            <FaEye onClick={() => viewSingleJob(job._id)} className="w-6 h-6" />
+                          </div>
+                        </td>
+
+                        {job.isPostAccepted && job.status === 'Active' ? (
+                          <>
+                            <td className="px-6 py-4 whitespace-no-wrap">
+                              <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-200">
+                                <span className="h-1.5 w-1.5 bg-green-600"></span>
+                                <h2 className="text-sm font-medium text-green-700">Approved</h2>
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-no-wrap">
+                              <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 ">
+                                <span className="h-2 w-3 rounded-full bg-green-600"></span>
+                                <h2 className="text-sm font-medium text-green-600">Actively recruting</h2>
+                              </div>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="px-6 py-4 whitespace-no-wrap text-center">
+                              <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-yellow-200">
+                                <span className="h-1.5 w-1.5 rounded-full bg-yellow-600"></span>
+                                <h2 className="text-sm font-medium text-yellow-600">Pending</h2>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-no-wrap text-center">
+                              <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/70 ">
+                                <span className="h-1.5 w-1.5 rounded-full"></span>
+                                <h2 className="text-sm font-medium text-yellow-600">Approval Pending</h2>
+                              </div>
+                            </td>
+                          </>
+                        )}
+
+                        {/* <td className="px-6 py-4 whitespace-no-wrap">
                       <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded-md mr-1">
                         Details
                       </button>
@@ -448,31 +438,54 @@ function JobList() {
                         Edit
                       </button>
                     </td> */}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {/* Pagination */}
-            {JobList.length > 10 && (
-              <div className="mt-4 flex justify-center">
-                <ul className="flex">
-                  {Array.from({ length: Math.ceil(JobList.length / itemsPerPage) }, (_, index) => (
-                    <li key={index}>
-                      <button
-                        onClick={() => paginate(index + 1)}
-                        className={`${currentPage === index + 1
-                          ? 'bg-sky-500 hover:bg-sky-600 text-white'
-                          : 'bg-white hover:bg-gray-100 text-gray-800'
-                          }  font-semibold py-1 px-2 rounded-md mr-1`}
-                      >
-                        {index + 1}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {/* Pagination */}
+                {JobList.length > 10 && (
+                  <div className="mt-4 flex justify-center">
+                    <ul className="flex">
+                      {Array.from({ length: Math.ceil(JobList.length / itemsPerPage) }, (_, index) => (
+                        <li key={index}>
+                          <button
+                            onClick={() => paginate(index + 1)}
+                            className={`${currentPage === index + 1
+                              ? 'bg-sky-500 hover:bg-sky-600 text-white'
+                              : 'bg-white hover:bg-gray-100 text-gray-800'
+                              }  font-semibold py-1 px-2 rounded-md mr-1`}
+                          >
+                            {index + 1}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          ) : (
+            <>
+              <div className="flex flex-col items-center justify-center min-h-screen">
+                {/* Centered UI */}
+                <div className="dark:bg-slate-100 p-4 rounded shadow-md shadow-gray-500 text-center">
+                  <h1 className="lg:text-3xl xl:text-3xl text-xl font-semibold font-serif text-blue-700 mb-4">
+                    Explore Our Subscription Plans
+                  </h1>
+                  <p className="text-gray-700 font-semibold xl:text-xl text-md lg:text-xl font-serif mb-4">
+                    Enhance your job posting and unlock powerful features with our subscription plans.
+                  </p>
+                </div>
+                <Link to={'/company/home'}>
+                  <button
+                    className="mt-4 font-serif bg-blue-500 text-white shadow-lg shadow-gray-500 rounded px-4 py-2 hover:bg-blue-600">
+                    Get Started
+                  </button>
+                </Link>
+              </div>
+
+            </>
+          )}
         </div>
       </div>
 
@@ -508,91 +521,6 @@ function JobList() {
                     </svg>
                   </button>
                 </div>
-
-                {/* Modal 2nd original form */}
-                {/* <form
-                  className="space-y-6 px-6 lg:px-8 pb-4 sm:pb-6 xl:pb-8"
-                  action="#"
-                >
-                  <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                    Sign in to our platform
-                  </h3>
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300"
-                    >
-                      Your email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      placeholder="name@company.com"
-                      required=""
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="password"
-                      className="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300"
-                    >
-                      Your password
-                    </label>
-                    <input
-                      type="password"
-                      name="password"
-                      id="password"
-                      placeholder="••••••••"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      required=""
-                    />
-                  </div>
-                  <div className="flex justify-between">
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="remember"
-                          aria-describedby="remember"
-                          type="checkbox"
-                          className="bg-gray-50 border border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
-                          required=""
-                        />
-                      </div>
-                      <div className="text-sm ml-3">
-                        <label
-                          htmlFor="remember"
-                          className="font-medium text-gray-900 dark:text-gray-300"
-                        >
-                          Remember me
-                        </label>
-                      </div>
-                    </div>
-                    <a
-                      href="#"
-                      className="text-sm text-blue-700 hover:underline dark:text-blue-500"
-                    >
-                      Lost Password?
-                    </a>
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  >
-                    Login to your account
-                  </button>
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
-                    Not registered?{' '}
-                    <a
-                      href="#"
-                      className="text-blue-700 hover:underline dark:text-blue-500"
-                    >
-                      Create account
-                    </a>
-                  </div>
-                </form> */}
-                {/* Modal original form end */}
 
 
                 {/* register form */}
@@ -639,84 +567,7 @@ function JobList() {
 
                         <Grid item xs={5}>
 
-                          {/* ook */}
-                          {/* <FormControl variant="filled" sx={{ minWidth: 240 }}>
-                            <InputLabel
-                              id="demo-simple-select-filled-label"
-                              style={{
-                                color: 'white',
-                                fontSize: '18px',
-                              }}
-                              shrink={true}
-                            >
-                              Job Category
-                            </InputLabel>
-                            <Select
-                              labelId="demo-simple-select-filled-label"
-                              id="demo-simple-select-filled"
-                              value={age}
-                              onChange={handleChange}
-                              style={{
-                                color: 'white',
-                              }}
-                            >
-                              <MenuItem value="">
-                                <em>None</em>
-                              </MenuItem>
-                              <MenuItem value={10}>Sajfar</MenuItem>
-                              <MenuItem value={20}>Twenty</MenuItem>
-                              <MenuItem value={30}>Thirty</MenuItem>
-                            </Select>
-                          </FormControl> */}
 
-                          {/* <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={movieOptions}
-                            sx={{ width: 241 }}
-                            value={jobCategory}
-                            onChange={(e, newValue) => setJobCategory(newValue)}
-                            renderInput={(params) =>
-                              <TextField variant="filled" {...params}
-                                label="Job Category"
-                                type="text"
-                                name='jobCategory'
-                                InputLabelProps={{
-                                  style: {
-                                    color: 'black',
-                                    fontSize: '18px',
-                                  },
-                                  shrink: true,
-                                }}
-
-                              />}
-                          /> */}
-                          {/* <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            sx={{ width: 241 }}
-                            options={CategoryList}
-                            // getOptionLabel={(option) => option.categoryName}
-                            value={jobCategory}
-                            onChange={(event, newValue) => {
-                              setJobCategory(newValue);
-                            }}
-                            renderInput={(params) =>
-                              <TextField {...params}
-                              type="text"
-                              name='jobCategory'
-                                label="Job Category"
-                                variant="filled"
-                                InputLabelProps={{
-                                  style: {
-                                    color: 'black',
-                                    fontSize: '18px',
-                                  },
-                                  shrink: true,
-                                }}
-                              />}
-                            
-                          /> */}
                           <Autocomplete
                             disablePortal
                             id="combo-box-demo"
@@ -821,7 +672,7 @@ function JobList() {
                             InputProps={{
                               style: {
                                 padding: '1px 3px',
-                                color: 'gray',
+                                color: 'black',
                               },
                             }}
                             InputLabelProps={{
@@ -849,7 +700,7 @@ function JobList() {
                             InputProps={{
                               style: {
                                 padding: '1px 3px',
-                                color: 'gray',
+                                color: 'black',
                               },
                             }}
                             InputLabelProps={{
@@ -963,7 +814,7 @@ function JobList() {
                             // value={formData.GSTNumber}
                             InputProps={{
                               classes: {
-                                root: 'py-6 px-6', // Apply background color, text color, and padding
+                                root: 'py-6 px-6',
                               },
                               style: {
                                 color: "black"

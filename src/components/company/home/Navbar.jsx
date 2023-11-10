@@ -7,18 +7,12 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { FaUserLarge, FaBookOpenReader } from 'react-icons/fa6'
 import { AiFillHome } from 'react-icons/ai'
 import { FaUserFriends } from 'react-icons/fa'
+// import Axios_Instance from '../../../api/userAxios'
 
 function Navbar() {
 
-  // let color = 'Home'
-  let color2 = 'Browse Recruiters'
-  let color3 = 'My Jobs'
   const { pathname } = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { token } = useSelector((state) => state.company);
@@ -29,10 +23,19 @@ function Navbar() {
     navigate('/company/login')
   }
 
+  const createChat = (companyId) => {
+
+        //? Send post req for create chat 
+        // Axios_Instance.post('/chats', { compId: companyId, senderRole: "user" }).then((res) => {
+        //     console.log("res;", res);
+            navigate(`/company/chats`)
+        
+}
+
   return (
 
     <>
-      <header className="absolute inset-x-0 top-0 z-50 ">
+      <header className="absolute inset-x-0 top-0 z-10 ">
         <nav className="flex items-center bg-slate-100 shadow-sm justify-between p-6 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
@@ -63,9 +66,9 @@ function Navbar() {
                 }`}
             >Home
             </Link>
-            <Link
+            <Link to="/company/candidates"
               className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 hover:text-emerald-700 text-gray-900 "
-            >Browse Recruiters
+            >Browse Candidates
             </Link>
             <Link
               to="/company/joblist"
@@ -77,6 +80,22 @@ function Navbar() {
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <div className="flex items-center">
+            <button onClick={() => createChat()} className="mr-3 text-white flex flex-col rounded-lg ">
+                                                                    <div className="p-1.5  rounded-full bg-green-600">
+                                                                        <svg
+                                                                            className="w-4 h-4 lg:w-4 lg:h-4 xl:w-4 xl:h-4"
+                                                                            fill="currentColor"
+                                                                            viewBox="0 0 20 20"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                        >
+                                                                            <path
+                                                                                fillRule="evenodd"
+                                                                                d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                                                                                clipRule="evenodd"
+                                                                            ></path>
+                                                                        </svg>
+                                                                    </div>
+                                                                </button>
               <Link 
                 className={`${pathname === '/company/profile' ? 'dark:text-emerald-500 ' : 'text-gray-900 '}`}
                 to={'/company/profile'}>

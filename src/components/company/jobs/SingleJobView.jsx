@@ -3,7 +3,7 @@ import { Dialog, RadioGroup, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function SingleJobView({ job, isOpenView, setIsOpenView }) {
-  console.log(job, isOpenView)
+  
   return (
     <>
       {isOpenView && (
@@ -21,7 +21,7 @@ export default function SingleJobView({ job, isOpenView, setIsOpenView }) {
               <div className="fixed inset-0 hidden bg-gray-500 bg-opacity-75 transition-opacity md:block" />
             </Transition.Child>
 
-            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="fixed inset-0 z-10 w-screen overflow-y-auto backdrop-blur-sm">
               <div className="mx-auto text-center flex justify-center md:px-2 lg:px-4"> {/* Center the modal */}
                 <Transition.Child
                   as={Fragment}

@@ -199,9 +199,8 @@ function Register() {
             if(error.response.status === 409){
               toast.error(error.response.data.errMsg);
             }else{
-              toast.error("Something went wrong your sign up");
+              console.log(error);
             }
-            console.log(error);
           }
 
         }else if(Object.keys(errors).length === 10){
@@ -272,14 +271,14 @@ function Register() {
                   </button>
                 </div> */}
                 {/*  */}
-        <div className="py-4">
+        {/* <div className="py-4">
           <img
             className="mx-auto h-8 w-auto bg-indigo-600"
             src="https://tailwindui.com/img/logos/mark.svg?color=white"
             alt="JobWave"
           />
         </div>
-        
+         */}
         <div className="px-6 py-8">
         <h2 className="text-xl font-bold leading-9 text-gray-900 text-center">
             Are you looking new JobSeeker?!

@@ -12,7 +12,6 @@ function UsersList() {
   // console.log('user:', blockedUserIds)
 
   const [usersList, setUsersList] = useState([])
-  console.log('list:',usersList)
 
    // ********************FETCH USER*********************//
   useEffect(() => {
@@ -75,11 +74,16 @@ function UsersList() {
   };
   // ********************END UNBLOCK USER  *********************//
 
+
+  if(Math.random() > 0.5 ) {
+    return new Error('Test error boundary')
+  }
+
   return (
     <div className='min-h-auto'>
       <section className="relative py-8 sm:py-16 px-4 sm:px-10 lg:px-20 xl:px-32">
         <div className="w-full mb-6">
-          <div className="relative min-w-0 w-full mb-6 shadow-lg shadow-gray-400 rounded dark:bg-white text-gray-900 overflow-x-auto">
+          <div className="relative min-w-0 w-full mb-6 shadow-md shadow-gray-500 rounded dark:bg-white text-gray-900 overflow-x-auto">
             <div className="rounded-t mb-0 px-4 py-3 border-0">
               <div className="flex flex-wrap items-center">
                 <div className="relative w-full px-4 max-w-full flex-grow flex-1">

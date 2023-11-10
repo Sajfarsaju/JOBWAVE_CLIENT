@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import Axios_Instance from '../../../../api/userAxios';
 import { Link } from 'react-router-dom';
 
@@ -33,10 +33,10 @@ export default function AppliedJobs() {
           {/* Centered UI */}
           <div className="bg-white p-4 rounded shadow-xl shadow-gray-300 text-center">
             <h1 className="text-3xl font-semibold text-blue-700 mb-4">
-              You Haven't Applied Yet.
+              You Have not Applied Yet.
             </h1>
             <p className="text-gray-700 text-xl mb-4">
-              It's time to take action! Apply for a job and start your journey.
+              It is time to take action! Apply for a job and start your journey.
             </p>
           </div>
 
@@ -56,6 +56,7 @@ export default function AppliedJobs() {
                   <div className="relative w-full px-4 max-w-full flex-grow flex-1">
                     <h3 className="font-bold xl:text-xl lg:text-xl text-lg text-gray-900">Your applied job history</h3>
                   </div>
+                    <h3 className="font-bold xl:text-xl lg:text-xl text-end text-lg text-green-600">You applied {appliedJobs.length} job</h3>
                 </div>
               </div>
 

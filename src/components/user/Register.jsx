@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment';
@@ -30,8 +30,6 @@ const Register = () => {
   const Navigate = useNavigate()
   // JobSeeker title color
   const color = 'Jobseeker'
-  const [msg, setMsg] = useState('')
-  const [otpValue, setOtpValue] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState(
     {
@@ -43,16 +41,16 @@ const Register = () => {
 
     }
   );
-  const [googleSignupData,setGoogleSignupData] = useState(
+  const [googleSignupData, setGoogleSignupData] = useState(
     {
-      firstName : "",
-      lastName : "",
-      email : "",
-      isEmailVerified : false,
-      profile : ""
+      firstName: "",
+      lastName: "",
+      email: "",
+      isEmailVerified: false,
+      profile: ""
     }
   );
-  console.log("googleSignupData;",googleSignupData)
+  console.log("googleSignupData;", googleSignupData)
 
   const inputPasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -116,9 +114,8 @@ const Register = () => {
         if (error.response.status === 401) {
           toast.error(error.response.data.errMsg);
         } else {
-          toast.error("Something went wrong your sign up");
+          console.log(error);
         }
-        console.log(error);
       }
 
     } else if (Object.keys(errors).length === 4) {
@@ -151,7 +148,7 @@ const Register = () => {
       googleSignupData.isEmailVerified = user?.emailVerified;
       googleSignupData.profile = user?.photoURL
 
-      const response = await Axios_Instance.post('google_signup' , googleSignupData );
+      const response = await Axios_Instance.post('google_signup', googleSignupData);
 
       if (response.status === 200) {
         toast.success(response.data.message);
@@ -198,18 +195,18 @@ const Register = () => {
                   </button>
                 </div> */}
           {/*  */}
-          <div className="py-4">
+          {/* <div className="py-4">
             <img
               className="mx-auto h-8 w-auto bg-indigo-600"
               src="https://tailwindui.com/img/logos/mark.svg?color=white"
               alt="JobWave"
             />
-          </div>
+          </div> */}
           {/* {clicked ? ( */}
-          <div className="px-11 py-8">
-            <h2 className="text-xl font-bold leading-9 text-gray-900 text-center">
+          <div className="px-11">
+            {/* <h2 className="text-xl font-bold leading-9  text-gray-900 text-center">
               Are you Looking for Dream Job?!
-            </h2>
+            </h2> */}
             <h2 className="text-2xl font-bold leading-9 text-gray-900 text-center">
               Sign up
             </h2>
@@ -348,15 +345,36 @@ const Register = () => {
               </Grid>
 
               <div className="mx-10">
-                <button
+                {/* <button
                   type="submit"
                   className="mt-6 group relative w-full flex justify-center py-2 px-4 border border-transparent text-md font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-800 transition duration-150 ease-in-out"
                 >
                   Signup
-                </button>
+                </button> */}
+                <Link type='submit' onClick={handleSubmit} className="flex items-center justify-center bg-gradient-to-r from-slate-400 to-slate-300 mt-4 text-white rounded-lg shadow-md shadow-slate-500">
+
+                  <h1 className="px-4 py-3  text-center dark:text-blue-700 font-bold">Signup</h1>
+                </Link>
+
+
               </div>
             </form>
-            <div className="w-11/12 px-4 mr-1 ml-5 mt-6">
+            <div className="mx-10">
+
+              <div className='bg-gray-500 h-0.5 text-center mt-4' ></div>
+              <Link onClick={handleGoogleSignup} className="flex items-center justify-center bg-gradient-to-r from-slate-400 to-slate-300 mt-4 text-white rounded-lg shadow-md shadow-slate-500">
+                <div className="px-4 py-2">
+                  <svg className="h-7 w-7" viewBox="0 0 40 40">
+                    <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#FFC107" />
+                    <path d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z" fill="#FF3D00" />
+                    <path d="M20 36.6667C24.305 36.6667 28.2167 35.0192 31.1742 32.34L26.0159 27.975C24.3425 29.2425 22.2625 30 20 30C15.665 30 11.9842 27.2359 10.5975 23.3784L5.16254 27.5659C7.92087 32.9634 13.5225 36.6667 20 36.6667Z" fill="#4CAF50" />
+                    <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.7592 25.1975 27.56 26.805 26.0133 27.9758C26.0142 27.975 26.0150 27.975 26.0158 27.9742L31.1742 32.3392C30.8092 32.6708 36.6667 28.3333 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#1976D2" />
+                  </svg>
+                </div>
+                <h1 className="px-4 py-3 w-5/6 text-center dark:text-blue-700 font-bold">Signup with Google</h1>
+              </Link>
+            </div>
+            {/* <div className="w-11/12 px-4 mr-1 ml-5 mt-6">
               <div className='bg-gray-500 h-0.5' ></div>
               <Link>
                 <button
@@ -365,7 +383,8 @@ const Register = () => {
                   Signup with Google
                 </button>
               </Link>
-            </div>
+            </div> */}
+
 
             <p className="mt-6 text-center text-sm leading-5 text-gray-900">
               Already a member? <Link to={"/login"} className="font-medium text-indigo-600 hover:text-indigo-800">Sign in</Link>

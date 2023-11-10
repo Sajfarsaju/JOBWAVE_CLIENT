@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import Axios_Instance from '../../../api/userAxios'
-import { useSelector } from 'react-redux'
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -12,8 +11,10 @@ function Profile( {setReRender , reRender} ) {
 
   useEffect(() => {
     async function getUser() {
-      const res = await Axios_Instance.get('/profile')
-      setUserData(res.data.user)
+      await Axios_Instance.get('/profile').then((res)=>{
+        setUserData(res.data.user)
+      })
+      
     }
 
     getUser();
@@ -22,7 +23,6 @@ function Profile( {setReRender , reRender} ) {
 
   //**************************UPDATE PROFILE*****************//
   const [profileEditModal, setProfileEditModal] = useState(false);
-  const [experncesEditModal, setExpernceEditModal] = useState(false)
   const [updatedUserData, setUpdatedUserData] = useState({ ...userData });
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -299,20 +299,23 @@ function Profile( {setReRender , reRender} ) {
               <h2 className="text-2xl font-semibold mb-4">Edit Profile</h2>
               <form>
                 <div className="mb-4">
-                  <label className="block text-gray-600 text-sm mb-1" htmlFor="profileImage">
+                  <label className="block text-center text-gray-800 text-sm mb-1" htmlFor="profileImage">
                     Profile Image
                   </label>
-                  <img className='w-20 h-28' src={selectedImage ? selectedImage : userData?.profile} alt="" />
+                  <div className='flex justify-center'>
+                  <img className='w-24 h-28' src={selectedImage ? selectedImage : userData?.profile} alt="profile" />
+                  </div>
                   <input
                     type="file"
                     name="profileImage"
                     id="profileImage"
                     accept="image/*"
                     onChange={handleImageChange}
+                    className="block w-full px-3 py-2 mt-2 text-sm text-gray-800 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-900 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full dark:file:bg-gray-200 dark:file:text-gray-900 dark:text-gray-900 placeholder-gray-400/70 dark:placeholder-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-300 dark:bg-white dark:focus:border-blue-300"
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-600 text-sm mb-1" htmlFor="firstName">
+                  <label className="block text-gray-800 text-sm mb-1" htmlFor="firstName">
                     First Name
                   </label>
                   <input
@@ -325,7 +328,7 @@ function Profile( {setReRender , reRender} ) {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-600 text-sm mb-1" htmlFor="lastName">
+                  <label className="block text-gray-800 text-sm mb-1" htmlFor="lastName">
                     Last Name
                   </label>
                   <input
@@ -337,8 +340,8 @@ function Profile( {setReRender , reRender} ) {
                     onChange={handleProfileInputChange}
                   />
                 </div>
-                {/* <div className="mb-4">
-                  <label className="block text-gray-600 text-sm mb-1" htmlFor="email">
+                <div className="mb-4">
+                  <label className="block text-gray-800 text-sm mb-1" htmlFor="email">
                     Email
                   </label>
                   <input
@@ -350,7 +353,7 @@ function Profile( {setReRender , reRender} ) {
                     onChange={handleProfileInputChange}
                   />
                 </div>
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <label className="block text-gray-600 text-sm mb-1" htmlFor="phone">
                     Phone
                   </label>

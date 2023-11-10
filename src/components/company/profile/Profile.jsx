@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Axios_Instance from '../../../api/userAxios';
 import { FaPlus } from 'react-icons/fa6'
 import { MdDownloadDone } from 'react-icons/md'
@@ -9,11 +9,11 @@ import { toast } from 'react-hot-toast';
 export default function Profile() {
 
   const [companyData, setCompanyData] = useState([]);
-  const updatedCompanyData = { ...companyData };
   const [isOpen, setIsOpen] = useState(false);
   const [image, setImage] = useState(null);
   const [viewImage, setViewImage] = useState(false)
   const [reload, setReload] = useState(false)
+  const [bio, setBio] = useState("");
 
   useEffect(() => {
 
@@ -33,6 +33,8 @@ export default function Profile() {
     })();
 
   }, [reload]);
+
+
 
   const closeModal = () => {
     setIsOpen(false)
@@ -83,42 +85,49 @@ export default function Profile() {
   const handleProfileSave = async (e) => {
     e.preventDefault();
 
-    // if (!companyData?.profile) {
-      const errors = validateImage(image);
+    const errors = validateImage(image);
 
+    if(!companyData.bio){
 
-      if (Object.keys(errors).length === 0) {
-        try {
-          let profile = image || companyData.profile;
-
-          const response = await Axios_Instance.patch(`/company/profile`, { profile })
-
-          if (response.status === 200) {
-
-            const profileUrl = response?.data?.updatedProfile?.profile;
-
-            updatedCompanyData.profile = profileUrl;
-
-            setCompanyData(updatedCompanyData);
-            setIsOpen(false)
-            setReload(!reload)
-            toast.success('Profile updated successfuly')
-          }
-
-        } catch (error) {
-          console.log(error);
-        }
-      } else {
-        toast.error(errors.image);
+      if (!bio || bio.trim().length === 0) {
+        return toast.error("Bio is required");
       }
+    }
 
-    // } else {
-    //   setIsOpen(false)
-    // }
+    if (Object.keys(errors).length === 0) {
+      try {
+        
+        const updatedProfileData = {
+          profile: image || companyData.profile,
+          bio: bio,
+        };
+
+        const response = await Axios_Instance.patch(`/company/profile`, updatedProfileData)
+
+        if (response.status === 200) {
+          setCompanyData(response.data.updatedCompany);
+          
+          setIsOpen(false)
+          toast.success('Profile updated successfuly')
+        } else {
+          console.error('Failed to add skill');
+        }
+
+      } catch (error) {
+        if (error.response?.status === 404) {
+          toast.error(error?.response?.data?.errMsg)
+        } else {
+          console.error('An error occurred:', error);
+        }
+      }
+    } else {
+      toast.error(errors.image);
+    }
+
   }
   return (
     <div className="min-h-fit bg-white flex flex-col items-center relative">
-      <div className="min-w-full mt-24 bg-blue-300 lg:h-60 xl:h-60 md:h-40 h-40 relative">
+      <div className="min-w-full mt-24  lg:h-60 xl:h-60 md:h-40 h-40 relative">
         <img
           src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dGVjaHxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
           alt=""
@@ -160,17 +169,19 @@ export default function Profile() {
           )}
 
 
-<div className="text-center mt-4">
-  {/* Card Text Content */}
-  <h2 className="text-2xl lg:text-2xl xl:text-2xl font-semibold">{companyData.companyName}</h2>
-  <div className="flex items-center justify-center text-lg lg:text-lg xl:text-lg">
-    <IoLocationSharp className='w-5 h-5'/>
-    <p>
-      {companyData?.companyAddress?.address}, {companyData?.companyAddress?.district}, {companyData?.companyAddress?.state}
-    </p>
-  </div>
-  {/* <p className="text-lg lg:text-lg xl:text-lg">Phone: {companyData.phone}</p> */}
-</div>
+          <div className="text-center mt-4">
+            {/* Card Text Content */}
+            <h2 className="text-2xl lg:text-2xl xl:text-2xl font-semibold">{companyData.companyName}</h2>
+            <p className='mt-2'>{companyData?.bio}</p>
+            <div className="flex items-center justify-center text-lg lg:text-lg xl:text-lg">
+              <IoLocationSharp className='w-5 h-5 mt-2' />
+
+              <p className='mt-2'>
+                {companyData?.companyAddress?.district}, {companyData?.companyAddress?.state}
+              </p>
+            </div>
+            {/* <p className="text-lg lg:text-lg xl:text-lg">Phone: {companyData.phone}</p> */}
+          </div>
 
         </div>
         {/* 2nd right card */}
@@ -200,8 +211,8 @@ export default function Profile() {
                 <XMarkIcon className="h-6 w-6" aria-hidden="true" />
               </button>
               <div className="modal-content py-4 text-left px-6">
-                <h2 className="text-xl font-semibold mb-4">Profile Image</h2>
-                <div className="mb-8">
+                <h2 className="text-xl font-serif font-semibold mb-4">Profile Image</h2>
+                <div className="mb-6">
                   <div className="w-24 h-24 border lg:w-36 lg:h-36 xl:w-36 xl:h-36 rounded-full mx-auto mb-2 overflow-hidden">
                     <img
                       src={image ? image : companyData?.profile}
@@ -213,13 +224,28 @@ export default function Profile() {
                     type="file"
                     accept=""
                     onChange={handleImageChange}
-                    className="block w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                    className="block w-full px-3 py-2 mt-2 text-sm text-gray-800 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-900 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full dark:file:bg-gray-200 dark:file:text-gray-900 dark:text-gray-900 placeholder-gray-400/70 dark:placeholder-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-300 dark:bg-white dark:focus:border-blue-300"
                     placeholder="Upload Profile Image"
                   />
                 </div>
+                <div className="mb-4">
+                  <label className="block font-semibold font-serif text-gray-800 text-xl mb-1" htmlFor="bio">
+                    Bio
+                  </label>
+                  <textarea
+                    name="bio"
+                    id="bio"
+                    className="w-full border border-gray-300 rounded-md py-2 px-3 h-20"
+                    // placeholder="Enter your bio here"
+                    // value={userData.bio}
+                    placeholder={companyData?.bio}
+                    onChange={(e) => setBio(e.target.value)}
+                  />
+
+                </div>
                 <div className="flex justify-center">
                   <button
-                    ype="button"
+                    type="button"
                     onClick={handleProfileSave}
                     className="bg-green-500 text-white py-2 px-3 rounded-md flex items-center">
                     <MdDownloadDone className="w-6 h-6 text-white-600" />

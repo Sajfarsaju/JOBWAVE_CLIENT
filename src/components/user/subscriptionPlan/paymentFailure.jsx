@@ -21,12 +21,12 @@ export default function paymentFailure() {
     <p>Please try again or contact customer support for assistance.</p>
     <div className="py-10">
       <Link
-        to={'/company/home'}
+        to={'/jobs'}
         className="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3"
       >
         GO BACK
       </Link>
-    </div>
+    </div>  
   </div>
 </div>
 

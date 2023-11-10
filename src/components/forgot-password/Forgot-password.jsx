@@ -6,6 +6,8 @@ import 'react-phone-input-2/lib/style.css'
 import { useUserAuth } from '../../context/UserAuthContext';
 import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux'
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { AiFillEyeInvisible } from 'react-icons/ai';
 import { userLogin } from '../../store/slice/userSlice';
 // import { userLogin } from '../store/slice/userSlice';
 
@@ -22,13 +24,11 @@ export default function ForgotPassword() {
   const [NotHide, setNotHide] = useState(true);
   const [confirmObj, setConfirmObj] = useState('');
   console.log('otp:', otp)
-  const [name, setName] = useState('');
-  const [role, setRole] = useState('');
-  const [token, setToken] = useState('');
-  const [id, setId] = useState('');
-  const [isActive, setIsActive] = useState(true)
-  // var isActive
+  // const [showPassword, setShowPassword] = useState(false);
 
+  // const inputPasswordVisibility = () => {
+  //   setShowPassword((prevShowPassword) => !prevShowPassword);
+  // };
   //*************************GET OTP***************************************
   const getOtp = async (e) => {
 
@@ -42,11 +42,11 @@ export default function ForgotPassword() {
         return toast.error('Please enter a valid 10-digit phone number');
       }
       if (!phoneRegex.test(Number.trim()) || Number.trim().length !== 10) return toast.error("Enter a valid 10-digit phone number");
-
-      const verifyPhone = await Axios_Instance.post('/forgot-password', { Number, action: "verifyPhone" });
-
+      
+      const verifyPhone = await Axios_Instance.post('/forgot_password', { Number, action: "verifyPhone" });
+      
       if (verifyPhone.status === 200) {
-
+        
         //* Login with Phone OTP response
         const response = await setUpRecaptchaForResetPass(number)
 
@@ -54,11 +54,15 @@ export default function ForgotPassword() {
           setConfirmObj(response)
           setIsOpen(false)
         }
+      }else{
+        toast.error('Not found')
       }
 
     } catch (error) {
-      if (error.response?.status === 401) {
-        toast.error(error?.response?.data?.errMsg)
+      if (error.response?.status === 404) {
+        toast.error("User not found!")
+      }else if(error.response?.status === 401 ){
+        toast.error("Your account is blocked")
       } else {
         console.log(error)
       }
@@ -70,11 +74,11 @@ export default function ForgotPassword() {
   const verifyOtp = async (e) => {
 
     e.preventDefault()
-
+    let confirmed;
     if (otp === '' || otp === null || otp.trim().length === 0) return toast.error('Enter a valid OTP');
 
     try {
-      const confirmed = await confirmObj.confirm(otp)
+      confirmed = await confirmObj.confirm(otp)
 
       if (confirmed) {
         setIsFormOpen(true);
@@ -85,7 +89,11 @@ export default function ForgotPassword() {
       }
 
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      if(!confirmed){
+        toast.error('Invalid OTP. Please check and try again.');
+        
+      }
     }
   }
   //*************************END VERIFY OTP***************************************
@@ -97,7 +105,7 @@ export default function ForgotPassword() {
 
     const Number = number.replace(/^91/, '');
 
-    const response = await Axios_Instance.post('/forgot-password', { password, Number, action: "updatePassword" })
+    const response = await Axios_Instance.post('/forgot_password  ', { password, Number, action: "updatePassword" })
 
     if (response.status === 200) {
 
@@ -118,10 +126,12 @@ export default function ForgotPassword() {
     {NotHide && (
       <>
       {isOpen ? (
-        <div className='flex justify-center items-center h-screen'>
-          <div className='text-center py-14 w-96 p-6 bg-gray-100 rounded-lg shadow-md shadow-gray-500 relative'>
-            <h1 className='font-bold absolute top-4 left-9 text-md font-mono text text-yellow-600'>Did you Forgot Password?</h1>
-            <h2 className='mb-3 text-sm text-yellow-600 font-semibold font-mono'>Enter your phone number to reset your password.</h2>
+        <div className='flex justify-center items-center bg-slate-100 h-screen'>
+          <div className='text-center py-24 w-96 p-10  dark:bg-white rounded-sm shadow-lg shadow-gray-400 relative'>
+            <div className='flex justify-center'>
+            <h1 className='font-bold absolute top-6  text-lg font-serif text text-green-600'>Did you Forgot Password?</h1>
+            <h2 className='mb-3 text-md text-green-600 font-semibold font-serif'>Enter your phone number to reset your password.</h2>
+            </div>
             <form onSubmit={getOtp}>
               <div className='mb-3' aria-controls='formBasicPhoneNumber'>
                 <PhoneInput
@@ -134,18 +144,18 @@ export default function ForgotPassword() {
               {/* Recaptcha div*/}
               <div id='recaptcha-container' />
               {/*  */}
-              <div className='flex justify-center'>
+              <div className='flex justify-center pt-9'>
                 <Link to={'/login'}>
                   <button
                     type='button'
-                    className='bg-red-500 hover:bg-red-600 text-white px-2 py-1.5 rounded mr-2'
+                    className='font-serif border border-red-600 text-red-600 px-2 py-1.5 rounded mr-2 active:bg-red-300'
                   >
-                    Cancel
+                    Go back
                   </button>
                 </Link>
                 <button
                   type='submit'
-                  className='bg-blue-500 hover:bg-blue-600 text-white px-2 py-1.5 rounded'
+                  className='font-serif border border-green-600 text-green-600 px-2 py-1.5 rounded active:bg-green-300'
                 >
                   Send OTP
                 </button>
@@ -155,10 +165,10 @@ export default function ForgotPassword() {
         </div>
 
       ) : (
-        <div className='flex justify-center items-center h-screen'>
-          <div className='text-center w-96 py-8 p-6 bg-gray-100 rounded-lg shadow-md shadow-gray-500'>
+        <div className='flex justify-center items-center bg-slate-100 h-screen'>
+          <div className='text-center w-96 py-16 p-5 dark:bg-white rounded-sm shadow-lg shadow-gray-400'>
             <form onSubmit={verifyOtp}>
-              <h1 className='text-sm text-yellow-600 font-semibold font-mono'>Enter the correct OTP to reset your password</h1>
+              <h1 className='text-md text-green-600 font-semibold font-serif'>Enter the correct OTP to reset your password</h1>
               <div className='py-6 px-4 mb-3 flex justify-center items-center' aria-controls='formBasicPhoneNumber'>
                 <input
                   className='py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 w-full'
@@ -171,14 +181,14 @@ export default function ForgotPassword() {
               <div className='flex justify-center'>
                 <button
                   type='button'
-                  className='bg-red-500 hover:bg-red-600 text-white px-2 py-1.5 rounded mr-2'
+                  className='font-serif border border-red-600 text-red-600 px-2 py-1.5 rounded mr-2 active:bg-red-300'
                   onClick={() => setIsOpen(true)}
                 >
                   Cancel
                 </button>
                 <button
                   type='submit'
-                  className='bg-blue-500 hover:bg-blue-600 text-white px-2 py-1.5 rounded'
+                  className='font-serif border border-green-600 text-green-600 px-2 py-1.5 rounded active:bg-green-300'
                 >
                   Verify OTP
                 </button>
@@ -193,26 +203,43 @@ export default function ForgotPassword() {
       {isFormOpen &&
         <>
 
-          <div className='flex justify-center items-center h-screen'>
-            <div className='text-center w-96 py-8 p-6 bg-gray-100 rounded-lg shadow-md shadow-gray-500'>
+          <div className='flex justify-center items-center bg-slate-100 h-screen'>
+            <div className='text-center w-96 py-12 p-8 dark:bg-white rounded-sm shadow-lg shadow-gray-400'>
               <form onSubmit={handleSubmit}>
-                <h1 className='text-md text-yellow-600 font-semibold font-mono'>Reset Password</h1>
-                <div className='py-6 px-4 mb-3 flex justify-center items-center' aria-controls='formBasicPhoneNumber'>
+                <h1 className='text-lg text-green-600 font-semibold font-serif'>Reset Password</h1>
+                <div className='py-6 px-4 mb-3 flex justify-center items-center relative' aria-controls='formBasicPhoneNumber'>
                   <input
                     type="password"
                     id="password"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
                     placeholder="Enter your new password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
+                  {/* <button className="text-slate-700 absolute right-6 top-8" onClick={inputPasswordVisibility}>
+      {showPassword ? <AiFillEyeInvisible /> : <VisibilityIcon className='w-12 h-12'/>}
+      </button> */}
                 </div>
+                {/* <div className='py-6 px-4 mb-3 flex justify-center items-center relative' aria-controls='formBasicPhoneNumber'>
+      <input
+        type='password'
+        id="password"
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
+        placeholder="Enter your new password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <button className="text-slate-700 absolute right-6 top-8" onClick={''}>
+      {showPassword ? <AiFillEyeInvisible /> : <VisibilityIcon />}
+      </button>
+    </div> */}
 
-                <div className='flex justify-center'>
+                <div className='flex justify-center pt-1'>
                   <button
                     type='submit'
-                    className='bg-blue-500 hover:bg-blue-600 text-white px-2 py-1.5 rounded'
+                    className='font-serif border border-green-600 text-green-600 px-2 py-1.5 rounded active:bg-green-300'
                   >
                     Update Password
                   </button>
