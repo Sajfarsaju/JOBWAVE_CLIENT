@@ -1,10 +1,9 @@
-import React,{useState , useEffect} from 'react'
+import {useState } from 'react'
 import Grid from '@mui/material/Grid';
 import  TextField  from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-// import VisibilityOffIcon from '@mui/icons-material/Visibility';
 import { AiFillEyeInvisible } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -78,7 +77,6 @@ function Login() {
             if(error.response?.status === 401){
               toast.error(error?.response?.data?.errMsg)
             }else{
-              toast.error("Something went wrong at Company login");
               console.log(error)
             }
           }
