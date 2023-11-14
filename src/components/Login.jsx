@@ -123,17 +123,17 @@ function Login({ logerName, url }) {
     try {
 
       const data = await signInWithPopup(auth, provider);
-      console.log("data;", data)
+      
       const credentials = GoogleAuthProvider.credentialFromResult(data);
 
       const user = data.user
-      console.log("user;", user)
+      
       googleSigninData.email = user?.email;
 
       const response = await Axios_Instance.post('google_signin', googleSigninData);
 
       if (response.status === 200) {
-        console.log(response.data)
+       
       const name = response?.data?.name;
       const role = response?.data?.role;
       const token = response?.data?.token;

@@ -137,28 +137,10 @@ export default function Chatbox({ senderRole, reciverRole }) {
   };
 
 
-
-  const navigateChatPerson = (clickedPerson, role) => {
-    console.log(clickedPerson, role)
-    if (role === 'user') {
-      navigate(`/chats/${clickedPerson}`)
-    }
-    // else if(role === 'company'){
-    //   navigate(`/company/chats/${clickedPerson}`)
-    // }
-
-  }
-
   const openChatBox = (selectedChat) => {
 
     let companyId = selectedChat.companyId._id
-    let userId = selectedChat.userId._id
     const chatId = selectedChat._id
-
-    console.log('selectedChat;',selectedChat)
-    console.log('companyId;',companyId)
-    console.log('userId;',userId)
-    console.log('chatId;',chatId)
 
     joinRoomCompany(selectedChat)
     

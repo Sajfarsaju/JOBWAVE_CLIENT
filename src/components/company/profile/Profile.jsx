@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast';
 export default function Profile() {
 
   const [companyData, setCompanyData] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isEditOpen, setEditIsOpen] = useState(false);
   const [image, setImage] = useState(null);
   const [viewImage, setViewImage] = useState(false)
   const [reload, setReload] = useState(false)
@@ -37,7 +37,7 @@ export default function Profile() {
 
 
   const closeModal = () => {
-    setIsOpen(false)
+    setEditIsOpen(false)
     setImage(null)
   }
 
@@ -107,7 +107,7 @@ export default function Profile() {
         if (response.status === 200) {
           setCompanyData(response.data.updatedCompany);
           
-          setIsOpen(false)
+          setEditIsOpen(false)
           toast.success('Profile updated successfuly')
         } else {
           console.error('Failed to add skill');
@@ -143,7 +143,7 @@ export default function Profile() {
 
           {companyData?.profile ? (
             <button
-              onClick={() => setIsOpen(true)}
+              onClick={() => setEditIsOpen(true)}
               className="absolute top-1 left-1/2 ml-20 text-gray-800 transition-colors duration-200 dark:hover:text-emerald-500 dark:text-gray-900 hover:text-yellow-500 focus:outline-none"
             >
               <svg
@@ -163,7 +163,7 @@ export default function Profile() {
             </button>
           ) : (
             <FaPlus
-              onClick={() => setIsOpen(true)}
+              onClick={() => setEditIsOpen(true)}
               className="cursor-pointer w-5 h-5 absolute left-1/2 ml-20 dark:hover:text-emerald-500 top-1"
             />
           )}
@@ -171,15 +171,16 @@ export default function Profile() {
 
           <div className="text-center mt-4">
             {/* Card Text Content */}
-            <h2 className="text-2xl lg:text-2xl xl:text-2xl font-semibold">{companyData.companyName}</h2>
-            <p className='mt-2'>{companyData?.bio}</p>
-            <div className="flex items-center justify-center text-lg lg:text-lg xl:text-lg">
+            <h2 className="text-2xl lg:text-3xl xl:text-3xl font-semibold font-serif">{companyData.companyName}</h2>
+            <p className='mt-2 font-serif text-lg lg:text-xl xl:text-xl'>{companyData?.email}</p>
+            <div className="flex items-center justify-center ">
               <IoLocationSharp className='w-5 h-5 mt-2' />
 
-              <p className='mt-2'>
+              <p className='mt-2 text-lg lg:text-xl xl:text-xl font-serif'>
                 {companyData?.companyAddress?.district}, {companyData?.companyAddress?.state}
               </p>
             </div>
+            <p className='mt-2 text-lg lg:text-xl xl:text-xl font-serif'>Bio: <span className='font-normal lg:text-xl xl:text-xl'>{companyData?.bio}</span></p>
             {/* <p className="text-lg lg:text-lg xl:text-lg">Phone: {companyData.phone}</p> */}
           </div>
 
@@ -196,8 +197,8 @@ export default function Profile() {
       </div> */}
         {/*  */}
 
-        {isOpen && (
-          <div className={`${isOpen ? 'fixed backdrop-blur-sm inset-0 flex items-center justify-center z-10 transition-opacity duration-300' : 'hidden'}`}>
+        {isEditOpen && (
+          <div className={`${isEditOpen ? 'fixed backdrop-blur-sm inset-0 flex items-center justify-center z-10 transition-opacity duration-300' : 'hidden'}`}>
             <div className="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
 
             <div className="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-10 overflow-y-auto relative">

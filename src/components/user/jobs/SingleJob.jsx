@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import Axios_Instance from '../../../api/userAxios';
 import { useSelector, useDispatch } from 'react-redux'
@@ -32,8 +32,7 @@ function SingleJob() {
 
   const validateApplyFormData = () => {
     const errors = {};
-    // const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
-    const coverLetterRegex = /^[A-Za-z\s]+$/;
+    
     const maxSize = 2 * 1024 * 1024;
 
     if (!CvFile && CvFile.trim().length === 0 && !CoverLetter && CoverLetter.trim().length === 0) {
@@ -52,9 +51,6 @@ function SingleJob() {
     if (!CoverLetter || CoverLetter.trim().length === 0) {
       errors.CvFile = "Cover letter is required"
     }
-    if (!coverLetterRegex.test(CoverLetter)) {
-      errors.CoverLetter = 'Cover letter should only contain alphabets and spaces.';
-    }
     if (CoverLetter.length > 1000) {
       errors.CoverLetter = "Cover letter exceeds the maximum length of 1000 characters.";
     }
@@ -66,41 +62,7 @@ function SingleJob() {
     return errors;
   };
 
-  // useEffect(() => {
-  //   localStorage.setItem('jobApplicationStates', JSON.stringify(jobApplicationStates));
-  // }, [jobApplicationStates]);
-
-
-  //   function isValidImage(logo) {
-  //     const validExtensions = ['.jpg', '.jpeg', '.png'];
-
-  //     const extension = logo.substr(logo.lastIndexOf('.')).toLowerCase();
-
-  //     return validExtensions.includes(extension);
-  //   }
-  //   const handleCvUpload = (e) => {
-  //     if (isValidImage(e?.target?.files[0].name)) {
-  //     const cvFile = e.target.files[0]
-  //     // setcvFileType(e.target.files[0])
-
-  //     // transformFile(cvFile);
-  //   // }
-  //   // const transformFile = (cvFile) => {
-  //     const reader = new FileReader();
-
-  //     if (cvFile) {
-  //       reader.readAsDataURL(cvFile)
-  //       reader.onloadend = () => {
-  //         setCvFile(reader.result)
-  //       }
-  //     } else {
-  //       setCvFile('')
-  //     }
-  //   }else {
-  //     toast.error('Invalid file type. Please upload a JPEG, PNG, or WEBP image file.')
-  //     removeCvFile()
-  //   }
-  // }
+  
 
   const closeModal = () => {
     setModalOpen(false)
@@ -117,7 +79,7 @@ function SingleJob() {
   };
 
   function isValidCv(file) {
-    const validExtensions = ['.pdf'];
+    const validExtensions = ['.jpeg', '.jpg', '.png'];
     const fileName = file.name.toLowerCase();
     const extension = fileName.substr(fileName.lastIndexOf('.'));
     return validExtensions.includes(extension);

@@ -2,13 +2,11 @@ import { Fragment } from 'react'
 import { Dialog, RadioGroup, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
-export default function SingleJobView({ job, isOpenView, setIsOpenView }) {
-  
+export default function ShortListCandidate({ isOpenShortlistModal , setIsOpenShortlistModal }) {
   return (
-    <>
-      {isOpenView && (
-        <Transition.Root show={isOpenView} as={Fragment}>
-          <Dialog as="div" className="relative z-10" onClose={setIsOpenView}>
+    <div>
+         <Transition.Root show={isOpenShortlistModal} as={Fragment}>
+          <Dialog as="div" className="relative z-10" onClose={setIsOpenShortlistModal}>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -37,14 +35,14 @@ export default function SingleJobView({ job, isOpenView, setIsOpenView }) {
                       <button
                         type="button"
                         className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
-                        onClick={() => setIsOpenView(false)}
+                        onClick={() => setIsOpenShortlistModal(false)}
                       >
                         <span className="sr-only">Close</span>
                         <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                       </button>
 
                       <div>
-                        <h1 className="text-3xl font-semibold  mb-4">
+                      {/* <h1 className="text-3xl font-semibold  mb-4">
                           <span className="text-lg font-semibold text-blue-700">Job Title:</span> {job.jobTitle}
                         </h1>
                         <p className="text-lg ">
@@ -79,7 +77,7 @@ export default function SingleJobView({ job, isOpenView, setIsOpenView }) {
                         </p>
                         <p className="text-lg">
                           <span className="text-lg font-semibold text-blue-700">Benefits:</span> {job.benefits}
-                        </p>
+                        </p> */}
                       </div>
                     </div>
                   </Dialog.Panel>
@@ -88,9 +86,6 @@ export default function SingleJobView({ job, isOpenView, setIsOpenView }) {
             </div>
           </Dialog>
         </Transition.Root>
-      )}
-    </>
-
-
+    </div>
   )
 }
