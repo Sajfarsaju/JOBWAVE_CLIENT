@@ -7,7 +7,8 @@ import Axios_Instance from '../../../api/userAxios';
 function Section() {
 
   const { id } = useSelector((state) => state.company);
-  const [companyData, setCompanyData] = useState({})
+  const [companyData, setCompanyData] = useState({});
+  const [spinnner, setspinnner] = useState(true);
 
   const links = [
     { name: 'Open roles', href: '#' },
@@ -45,6 +46,7 @@ function Section() {
         const response = await Axios_Instance.get('/company/profile');
 
         if (response.status === 200) {
+          setspinnner(false)
           setCompanyData(response.data.company)
         }
 
@@ -58,6 +60,16 @@ function Section() {
 
   return (
     <>
+    {/* Spinner */}
+    {spinnner && (
+      <div className='space-x-4 flex items-center justify-center min-h-screen' >
+        <span className='sr-only'>Loading...</span>
+        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.3s' }}></div>
+        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.15s' }}></div>
+        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce'></div>
+      </div>
+    )}
+    {/* Spinner */}
       {companyData.subscriptionPlan ? (
 
         <div className=" relative isolate overflow-hidden py-24 sm:py-32">

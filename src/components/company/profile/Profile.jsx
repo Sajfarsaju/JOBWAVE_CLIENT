@@ -14,6 +14,8 @@ export default function Profile() {
   const [viewImage, setViewImage] = useState(false)
   const [reload, setReload] = useState(false)
   const [bio, setBio] = useState("");
+  const [spinnner, setspinnner] = useState(true);
+  
 
   useEffect(() => {
 
@@ -23,6 +25,7 @@ export default function Profile() {
         const response = await Axios_Instance.get('/company/profile');
 
         if (response.status === 200) {
+          setspinnner(false)
           setCompanyData(response.data.company)
         }
 
@@ -126,6 +129,18 @@ export default function Profile() {
 
   }
   return (
+
+    <>
+    {/* Spinner */}
+    {spinnner && (
+      <div className='space-x-4 flex items-center justify-center min-h-screen' >
+        <span className='sr-only'>Loading...</span>
+        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.3s' }}></div>
+        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.15s' }}></div>
+        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce'></div>
+      </div>
+    )}
+    {/* Spinner */}
     <div className="min-h-fit bg-white flex flex-col items-center relative">
       <div className="min-w-full mt-24  lg:h-60 xl:h-60 md:h-40 h-40 relative">
         <img
@@ -289,6 +304,7 @@ export default function Profile() {
 
       </div>
     </div>
+    </>
 
 
 

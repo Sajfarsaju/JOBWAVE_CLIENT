@@ -25,6 +25,7 @@ function JobList() {
   const [isOpenView, setIsOpenView] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [spinnner, setspinnner] = useState(true);
 
   // const [JobData, setJobData] = useState(
   //   {
@@ -155,6 +156,7 @@ function JobList() {
     try {
       const response = await Axios_Instance.get(`/company/jobs/${companyId}`)
       if (response.status === 200) {
+        setspinnner(false)
         setJobList(response?.data?.Jobs);
       }
     } catch (error) {
@@ -303,7 +305,16 @@ function JobList() {
 
 
   return (
-    <>
+    <> 
+    {spinnner && (
+      <div className='space-x-4 flex items-center justify-center min-h-screen' >
+        <span className='sr-only'>Loading...</span>
+        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.3s' }}></div>
+        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.15s' }}></div>
+        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce'></div>
+      </div>
+    )}
+    
       <SingleJobView job={selectedJob} isOpenView={isOpenView} setIsOpenView={setIsOpenView} />
       <div className="min-h-screen mt-28 md:min-h-fit sm:min-h-fit">
         <div className="pb-12 overflow-x-auto bg-white  m-10">

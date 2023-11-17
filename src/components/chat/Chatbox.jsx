@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSelector } from "react-redux";
 import { AiOutlineArrowLeft } from 'react-icons/ai'
 import Axios_Instance from '../../api/userAxios';
@@ -31,6 +31,8 @@ export default function Chatbox({ senderRole, reciverRole }) {
       scroll.current?.scrollIntoView({ behavior: "smooth" })
     }
   }, [allMessages])
+
+
 
   useEffect(() => {
 
@@ -120,8 +122,10 @@ export default function Chatbox({ senderRole, reciverRole }) {
     if (socketConnection && selectedChat) {
 
       socketConnection.on("message_response", (data) => {
+        
         setAllMessages((prevChats) => [...prevChats, data]);
       });
+      
     }
   }, [socketConnection]);
 
@@ -268,13 +272,13 @@ export default function Chatbox({ senderRole, reciverRole }) {
         ) : (
           <ul className="space-y-2">
             {allMessages.map((message, index) => (
-              <li key={index}>
-                <div className={`${currentPersonId === message.senderId._id ? "flex justify-end" : "flex justify-start"}`}>
+              <li key={index} >
+                <div className={`${currentPersonId === message.senderId._id ? "flex justify-end" : "flex justify-start"}`} >
                   <div
                     className={`relative px-3 py-2 w-fit text-gray-800 rounded-xl shadow border inline-block chat-bubble
                               ${currentPersonId === message.senderId._id ? "bg-green-300 rounded-br-none" : "bg-green-200 rounded-tl-none"}`}
                   >
-                    <span className="block">{message.content}</span>
+                    <span className="block break-all">{message.content}</span>
                     <span className="text-xs flex justify-end">{formatMessageTime(message.createdAt)}</span>
                   </div>
                 </div>

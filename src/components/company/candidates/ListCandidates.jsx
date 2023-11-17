@@ -1,27 +1,26 @@
 import { useEffect, useState } from "react"
 import Axios_Instance from "../../../api/userAxios"
-// import { Menu, Transition } from '@headlessui/react'
-// import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from "react-router-dom"
 import ShortListCandidate from "./ShortListCandidate"
 
 
 export default function ListCandidates() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [viewCv, setViewCv] = useState(false)
-  const [CV, setCV] = useState('');
-  const [isOpenShortlistModal, setIsOpenShortlistModal] = useState(false)
-  const [candidates, setCandidates] = useState([])
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+  const [spinnner, setspinnner] = useState(true);
+  const [viewCv, setViewCv] = useState(false);
+  const [CV, setCV] = useState('');
+  const [userId, setUserId] = useState('')
+  const [jobId, setJobId] = useState('')
+  const [applicationId, setApplicationId] = useState('')
+  const [isOpenShortlistModal, setIsOpenShortlistModal] = useState(false);
+  const [candidates, setCandidates] = useState([]);
 
   useEffect(() => {
     (async function fetchCandidates() {
       try {
         await Axios_Instance.get('/company/candidates').then((res) => {
+          setspinnner(false)
           setCandidates(res.data.candidates)
         })
       } catch (error) {
@@ -36,14 +35,25 @@ export default function ListCandidates() {
     setViewCv(true);
   }
 
-  const shortListCandidate = () => {
-
-  }
+const openShortlistModal = (userId , applicationId ,jobId) => {
+ 
+  setUserId(userId)
+  setApplicationId(applicationId)
+  setJobId(jobId)
+  setIsOpenShortlistModal(true)
+}
 
 
   return (
     <>
-    {isOpenShortlistModal && <ShortListCandidate setIsOpenShortlistModal={setIsOpenShortlistModal} />}
+     {isOpenShortlistModal && 
+     <ShortListCandidate 
+          isOpenShortlistModal={isOpenShortlistModal} 
+          setIsOpenShortlistModal={setIsOpenShortlistModal} 
+          userId={userId}
+          applicationId={applicationId}
+          jobId={jobId}
+      /> }
 
       {candidates.length > 0 && (
         <>
@@ -59,10 +69,10 @@ export default function ListCandidates() {
               </div>
               <div className="hidden sm:flex sm:w-1/4 w-full">
                 <div className="text-lg sm:text-lg font-bold mx-4">
-                  <Link>Interview time</Link>
+                  <Link to={'/company/candidates/interviewTimes'}>Interview time</Link>
                 </div>
               </div>
-              <div className="hidden sm:flex sm:w-1/4 w-full">
+              {/* <div className="hidden sm:flex sm:w-1/4 w-full">
                 <div className="text-lg sm:text-lg font-bold mx-4">
                   <Link>Hired candidates</Link>
                 </div>
@@ -71,7 +81,7 @@ export default function ListCandidates() {
                 <div className="text-lg sm:text-lg font-bold mx-4">
                   <Link>Rejected</Link>
                 </div>
-              </div>
+              </div> */}
 
               {/* Only mobile screens */}
               <div className="sm:hidden w-full  flex items-center">
@@ -81,12 +91,12 @@ export default function ListCandidates() {
                 <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2">
                   <Link>Interview time</Link>
                 </div>
-                <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2">
+                {/* <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2">
                   <Link>Hired </Link>
                 </div>
                 <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2">
                   <Link>Rejected </Link>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -95,6 +105,8 @@ export default function ListCandidates() {
             <div className="flex flex-wrap w-11/12 ">
               {/* Card 1 */}
               {candidates.map((candidate, index) => (
+                candidate.status === 'Pending' && (
+
                 <div key={candidate._id} className="w-full sm:w-1/2 p-5">
                   <div className="bg-teal-50 p-6 rounded-lg shadow-md shadow-slate-400">
                     <h2 className="lg:text-xl xl:text-xl text-md font-bold text-green-600">Candidate: {index + 1}</h2>
@@ -127,20 +139,32 @@ export default function ListCandidates() {
                     </div>
                     <div className="mt-4 flex items-center">
                       <p className="text-md xl:text-lg lg:text-lg text-green-600">Go to Hiring Process!</p>
-                      <p 
-                        onClick={shortListCandidate}
+                      <p
+                        onClick={()=>openShortlistModal(candidate?.applicant?._id , candidate._id , candidate?.jobId?._id)}
                         className="cursor-pointer font-serif border font-semibold text-md xl:text-lg lg:text-lg underline text-blue-600 hover:text-blue-500 ml-3">
                         Let's Go?
                       </p>
                     </div>
                   </div>
                 </div>
+                )
               ))}
 
             </div>
           </div>
         </>
-      )} 
+      )}
+
+      {spinnner && (
+        <div className='space-x-4 flex items-center justify-center min-h-screen' >
+          <span className='sr-only'>Loading...</span>
+          <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.3s' }}></div>
+          <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.15s' }}></div>
+          <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce'></div>
+        </div>
+      )}
+
+
       {candidates.length < 1 && (
         <>
           <div className="flex flex-col items-center justify-center min-h-screen">

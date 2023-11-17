@@ -80,7 +80,6 @@ function Navbar() {
             <div className="flex items-center">
               <Link to={'/company/chats'}>
                 <button
-                  // onClick={() => createChat()} 
                   className="mr-3 text-white flex flex-col rounded-lg ">
                   <div className="p-1.5  rounded-full bg-green-600">
                     <svg
@@ -118,10 +117,12 @@ function Navbar() {
           </div>
 
         </nav>
+        
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
           <div className="fixed inset-0 z-50" />
           <Dialog.Panel className="fixed inset-y-0 left-0 z-50 w-full overflow-y-auto bg-slate-100 shadow-xl px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
+              
               <a href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">Your Company</span>
                 <img
@@ -154,6 +155,7 @@ function Navbar() {
                   </Link>
                   <Link
                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    to={'/company/candidates'}
                   >
                     <div className="flex items-center">
                       <FaUserFriends className="mr-2" />
@@ -180,6 +182,27 @@ function Navbar() {
                       Profile
                     </div>
                   </Link>
+                  <Link to={'/company/chats'} className={` flex -ml-1.5 text-base font-semibold leading-7 hover:bg-gray-50
+                  ${pathname === '/company/chats' ? 'dark:text-emerald-500 ' : 'text-gray-900 '}`}
+                  >
+                <button
+                  className="mr-3 text-white flex flex-col rounded-lg ">
+                  <div className="p-1.5  rounded-full bg-green-600">
+                    <svg
+                      className="w-4 h-4 lg:w-4 lg:h-4 xl:w-4 xl:h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                  </div>
+                </button>Your chats
+              </Link>
                   {token ? (
                     <Link
                       onClick={logout}
