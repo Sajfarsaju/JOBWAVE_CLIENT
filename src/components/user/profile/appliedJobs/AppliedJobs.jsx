@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 export default function AppliedJobs() {
 
   const [appliedJobs, setAppliedJobs] = useState([]);
-  console.log("appliedJobs;", appliedJobs)
 
   useEffect(() => {
 
@@ -50,7 +49,7 @@ export default function AppliedJobs() {
       ) : (
         <section className="relative py-8 sm:py-16 px-4 sm:px-10 lg:px-20 xl:px-32">
           <div className="w-full mb-6">
-            <div className="relative min-w-0 w-full mb-6 shadow-lg shadow-gray-400 rounded dark:bg-white text-gray-900 overflow-x-auto">
+            <div className="relative min-w-0 w-full mb-6 shadow-md shadow-gray-400 rounded dark:bg-white text-gray-900 overflow-x-auto">
               <div className="rounded-t mb-0 px-4 py-3 border-0">
                 <div className="flex flex-wrap items-center">
                   <div className="relative w-full px-4 max-w-full flex-grow flex-1">
@@ -117,7 +116,7 @@ export default function AppliedJobs() {
                             ) : (
                               <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-300">
                                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-700"></span>
-                                <h2 className="text-sm font-normal text-remeralded-800">Interested</h2>
+                                <h2 className="text-sm font-normal text-remeralded-800">{appliedJob?.status}</h2>
                               </div>
                             )}
                           </td>

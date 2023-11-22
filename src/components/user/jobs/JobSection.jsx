@@ -7,6 +7,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import NoSearchResultImg from '../../../assets/search_no_result.png'
 import PlanModal from '../subscriptionPlan/PlanModal'
 import Skelton from './Skelton'
+import axios from 'axios';
+import { useSelector } from 'react-redux'
 // import { HiDotsVertical } from 'react-icons/hi'
 // import Shimmer from 'shimmer-ui-effect';
 
@@ -16,6 +18,8 @@ import Skelton from './Skelton'
 function JobSection({ searchQuery }) {
 
     const navigate = useNavigate()
+
+    const userId = useSelector((state) => state.user.id)
 
     const [userData, setUserData] = useState([])
     const [openPlanModal, setOpenPlanModal] = useState(false);
@@ -91,7 +95,7 @@ function JobSection({ searchQuery }) {
 
     const fetchJobs = async () => {
         try {
-            await Axios_Instance.get('/jobs').then((res) => {
+            await Axios_Instance.get(`/jobs?userId=${userId}`).then((res) => {
                 setSkelton(false)
                 setJobs(res.data.Jobs);
             })
@@ -100,7 +104,7 @@ function JobSection({ searchQuery }) {
 
         }
     }
-    const fetchUser = async () => {
+    const fetchUserSubscription = async () => {
         const response = await Axios_Instance.get('/profile');
         if (response.status === 200) {
             setUserData(response.data.user);
@@ -108,7 +112,7 @@ function JobSection({ searchQuery }) {
     }
     useEffect(() => {
         fetchJobs();
-        fetchUser();
+        fetchUserSubscription();
     }, [])
 
     const getTimeDifference = (postedDate) => {
@@ -373,7 +377,7 @@ function JobSection({ searchQuery }) {
                                         <>
                                             <h3 className="-my-3 flow-root">
                                                 <Disclosure.Button className="flex w-full items-center justify-between bg-lg:col-span-3-100 py-3 text-sm text-gray-400 hover:text-gray-500">
-                                                    <span className="font-serif font-semibold text-md text-gray-900">Work Types</span>
+                                                    <span className="font-serif font-semibold text-md text-gray-900">Job Types</span>
                                                     <span className="ml-6 flex items-center">
                                                         {open ? (
                                                             <MinusIcon className="h-5 w-5" aria-hidden="true" />
@@ -425,7 +429,7 @@ function JobSection({ searchQuery }) {
                                                     <Skelton />
                                                 </div>
                                             ))}
-                                            </div>
+                                        </div>
                                     </div>
                                 </>
                             ) : (
@@ -453,14 +457,25 @@ function JobSection({ searchQuery }) {
                                         ) : (
                                             FilteredAllJobs.map((job, index) => (
                                                 <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 p-4 hover:scale-105 duration-1000 group">
-                                                    <div className="bg-slate-100 rounded-xl shadow-md shadow-slate-400 p-6 relative group-hover:bg-gradient-to-r from-slate-200 to-blue-100 flex h-full">
+                                                    <div className="bg-slate-100 rounded-xl shadow-sm shadow-slate-400 p-6 relative group-hover:bg-gradient-to-r from-slate-200 to-blue-100 flex h-full">
                                                         <img className="w-10 h-10 rounded-full mr-4" src={job.logo} /> {/* Added margin-right (mr-4) */}
                                                         <div className="flex flex-col flex-grow">
                                                             <div className="w-full h-auto">
-                                                                <Link to={`/jobs/jobview/${job._id}`}
-                                                                    className="break-all font-serif text-lg font-bold sm:text-xl md:text-2xl max-w-full">
-                                                                    {job.jobTitle}
-                                                                </Link>
+                                                                <div className="flex justify-between items-center">
+                                                                    <Link
+                                                                        to={job.appliedStatus ? "#" : `/jobs/jobview/${job._id}`}
+                                                                        className={`break-all font-serif text-lg font-bold sm:text-xl md:text-2xl max-w-full 
+                                                                            ${job.appliedStatus ? 'cursor-not-allowed ' : ''}`}
+                                                                    >
+                                                                        {job.jobTitle}
+                                                                    </Link>
+                                                                    <div className="flex justify-end font-serif">
+                                                                        {job.appliedStatus ? (
+                                                                            <span className="bg-gradient-to-r from-lime-500 to-lime-600 text-white px-3 py-1 rounded-full text-sm">Applied</span>
+                                                                        ) : null}
+                                                                    </div>
+
+                                                                </div>
                                                                 <p className="font-serif font-semibold break-all">{job?.companyId?.companyName}</p>
                                                                 {job.status === 'Active' ? (
                                                                     <div className="inline-flex mt-2 items-center  rounded-full gap-x-1 ">
@@ -472,8 +487,7 @@ function JobSection({ searchQuery }) {
                                                                         <span className="h-2 w-3 rounded-full bg-yellow-600"></span>
                                                                         <h2 className="font-serif text-sm font-medium text-yellow-600">Not Active</h2>
                                                                     </div>
-                                                                )
-                                                                }
+                                                                )}
                                                                 <p className="font-serif text-right text-green-600 text-sm font-small">
                                                                     {getTimeDifference(job.createdAt)}
                                                                 </p>
@@ -506,9 +520,13 @@ function JobSection({ searchQuery }) {
                                                                     </button>
                                                                 </div>
                                                                 <div className="pt-2 pr-0 pb-0 pl-0">
-                                                                    <Link to={`/jobs/jobview/${job._id}`}
-                                                                        className="font-serif text-green-600 inline text-md font-medium mt-0 mr-1 mb-0 ml-1 underline">
-                                                                        show more..</Link>
+                                                                    <Link
+                                                                        to={job.appliedStatus ? '#' : `/jobs/jobview/${job._id}`}
+                                                                        className={`font-serif text-green-600 inline text-md font-medium mt-0 mr-1 mb-0 ml-1  
+                                                                            ${job.appliedStatus ? 'text-lg font-bold' : ''}`}
+                                                                    >
+                                                                        {job.appliedStatus ? '' : 'Show More...'}
+                                                                    </Link>
                                                                 </div>
                                                             </div>
                                                         </div>

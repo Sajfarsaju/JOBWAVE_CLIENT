@@ -5,9 +5,12 @@ import { MdDownloadDone } from 'react-icons/md'
 import { IoLocationSharp } from 'react-icons/io5';
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast';
+import { useSelector } from "react-redux"
+import axios from 'axios';
 
 export default function Profile() {
 
+  const companyId = useSelector((state) => state.company.id);
   const [companyData, setCompanyData] = useState([]);
   const [isEditOpen, setEditIsOpen] = useState(false);
   const [image, setImage] = useState(null);
@@ -15,6 +18,7 @@ export default function Profile() {
   const [reload, setReload] = useState(false)
   const [bio, setBio] = useState("");
   const [spinnner, setspinnner] = useState(true);
+  const [isImageSelected, setIsImageSelected] = useState(false)
   
 
   useEffect(() => {
@@ -103,6 +107,8 @@ export default function Profile() {
         const updatedProfileData = {
           profile: image || companyData.profile,
           bio: bio,
+          companyId : companyId,
+          isImageSelected: isImageSelected
         };
 
         const response = await Axios_Instance.patch(`/company/profile`, updatedProfileData)
@@ -240,6 +246,7 @@ export default function Profile() {
                     type="file"
                     accept=""
                     onChange={handleImageChange}
+                    onClick={()=>setIsImageSelected(true)}
                     className="block w-full px-3 py-2 mt-2 text-sm text-gray-800 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-900 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full dark:file:bg-gray-200 dark:file:text-gray-900 dark:text-gray-900 placeholder-gray-400/70 dark:placeholder-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-300 dark:bg-white dark:focus:border-blue-300"
                     placeholder="Upload Profile Image"
                   />

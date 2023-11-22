@@ -5,13 +5,14 @@ import { Button, TextField, MenuItem, Select, FormControl, InputLabel } from '@m
 import Axios_Instance from '../../../api/userAxios';
 import { useSelector } from 'react-redux'
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
-export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShortlistModal , userId , applicationId , jobId}) {
+export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShortlistModal, userId, applicationId, jobId, jobTitle, relaod, setRelaod }) {
 
   const [selectedOption, setSelectedOption] = useState('');
   const [interviewTime, setInterviewTime] = useState('');
-  
-  const companyId  = useSelector((state) => state.company.id);
+
+  const companyId = useSelector((state) => state.company.id);
   // const handleOptionChange = (event) => {
   //   setSelectedOption(event.target.value);
   // };
@@ -19,16 +20,51 @@ export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShor
   // const handleInterviewTimeChange = (event) => {
   //   setInterviewTime(event.target.value);
   // };
-  const handleFormSubmit = async() => {
 
-    try{
+  const validateFormData = () => {
+    const errors = {};
 
-      await Axios_Instance.post('/company/shortlist', { selectedOption ,interviewTime , userId ,companyId ,applicationId ,jobId})
+    if (!selectedOption && !interviewTime) {
+      errors.common = 'Please enter the fields';
+    }
+    if (!selectedOption) {
+      errors.selectedOption = 'Please select an option (Shortlist or Reject)';
+    }
 
-        setIsOpenShortlistModal(false)
-    
-    }catch(error){
-      console.log(error)
+    // Validate interviewTime
+    if (!interviewTime) {
+      errors.interviewTime = 'Please enter the interview time';
+    }
+
+    return errors;
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault()
+    const errors = validateFormData()
+
+    if (Object.keys(errors).length === 0) {
+      try {
+
+        const res = await Axios_Instance.post('/company/shortlist', { selectedOption, interviewTime, userId, companyId, applicationId, jobId, jobTitle })
+        if (res.data.success) {
+          toast.success('Successfully and mail sented successfully')
+          setRelaod(!relaod)
+          setIsOpenShortlistModal(false)
+        } else {
+          toast.error(res.data.errMsg)
+          setIsOpenShortlistModal(false)
+        }
+
+      } catch (error) {
+        console.log(error)
+      }
+    } else if (errors.common) {
+      toast.error(errors.common);
+    } else if (errors.selectedOption) {
+      toast.error(errors.selectedOption);
+    } else if (errors.interviewTime) {
+      toast.error(errors.interviewTime);
     }
   };
 
@@ -63,7 +99,7 @@ export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShor
                   <div className="relative overflow-hidden dark:bg-white px-4 pb-8 pt-14 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
                     <button
                       type="button"
-                      className="absolute right-4 top-4 text-gray-700 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
+                      className="absolute right-4 top-4 text-red-600 hover:text-red-700 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
                       onClick={() => setIsOpenShortlistModal(false)}
                     >
                       <span className="sr-only">Close</span>
@@ -83,7 +119,7 @@ export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShor
                           label="Select Option"
                         >
                           <MenuItem value={'shortlisted'}>Shortlist</MenuItem>
-                          <MenuItem value={'reject'}>Reject</MenuItem>
+                          {/* <MenuItem value={'reject'}>Reject</MenuItem> */}
                         </Select>
                       </FormControl>
 
@@ -98,15 +134,15 @@ export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShor
                             onChange={(event) => setInterviewTime(event.target.value)}
                             variant="outlined"
                           />
-                          {/* <p className="text-sm mt-2 sm:w-full lg:w-96 text-yellow-600">
+                          <p className="text-sm mt-2 sm:w-full lg:w-96 text-yellow-600">
                             This will send an email to the candidate about the shortlisting, including the interview time.
-                          </p> */}
+                          </p>
                         </div>
                       )}
 
                       <div className="flex justify-center">
                         <Button variant="contained" onClick={handleFormSubmit}>
-                          Submit
+                          Send Mail
                         </Button>
                       </div>
                     </div>

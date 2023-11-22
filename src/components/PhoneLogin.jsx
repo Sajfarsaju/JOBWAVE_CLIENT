@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,8 +7,7 @@ import { toast } from 'react-hot-toast';
 import Axios_Instance from '../api/userAxios'
 import { useDispatch } from 'react-redux'
 import { userLogin } from '../store/slice/userSlice';
-
-import OTPInput, { ResendOTP } from "otp-input-react";
+// import OTPInput, { ResendOTP } from "otp-input-react";
 
 
 function PhoneLogin() {
@@ -177,7 +176,7 @@ function PhoneLogin() {
                 />
               </div>
 
-              <ResendOTP className='text-green-500 ' onClick={getOtp} />
+              {/* <ResendOTP className='text-green-500 ' onClick={getOtp} /> */}
 
               <div className='flex justify-center mt-6'>
                 <button
