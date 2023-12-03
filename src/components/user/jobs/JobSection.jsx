@@ -9,19 +9,23 @@ import PlanModal from '../subscriptionPlan/PlanModal'
 import Skelton from './Skelton'
 import axios from 'axios';
 import { useSelector } from 'react-redux'
-// import { HiDotsVertical } from 'react-icons/hi'
-// import Shimmer from 'shimmer-ui-effect';
-
-// import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+import { MdUnfoldMore } from "react-icons/md";
+import { MdKeyboardArrowDown } from "react-icons/md";
+import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux'
+import { userLogout } from '../../../store/slice/userSlice'
 
 
 function JobSection({ searchQuery }) {
 
     const navigate = useNavigate()
 
-    const userId = useSelector((state) => state.user.id)
+    const dispatch = useDispatch()
 
-    const [userData, setUserData] = useState([])
+    const userId = useSelector((state) => state.user.id)
+    const { token } = useSelector((state) => state.user)
+
+    const [userData, setUserData] = useState({})
     const [openPlanModal, setOpenPlanModal] = useState(false);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [Jobs, setJobs] = useState([]);
@@ -46,8 +50,10 @@ function JobSection({ searchQuery }) {
     // End
 
     // Filter
-    const uniqueCategories = [...new Set(Jobs.map((job) => job.jobCategory))];
-    const uniqueWorkTypes = [...new Set(Jobs.map((job) => job.workType))];
+    // const uniqueCategories = [...new Set(Jobs?.map((job) => job?.jobCategory))];
+    // const uniqueWorkTypes = [...new Set(Jobs?.map((job) => job?.workType))];
+
+
     const [selectedWorkTypes, setSelectedWorkTypes] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [filteredJobs, setFilteredJobs] = useState(SearchJobs);
@@ -87,33 +93,74 @@ function JobSection({ searchQuery }) {
             setSelectedWorkTypes([...selectedWorkTypes, workType]);
         }
     };
-    //? ****
-    const FilteredAllJobs = filteredJobs.slice().reverse()
-    //? End  ****
+
 
     // 
+    //? FETCH JOBS
 
-    const fetchJobs = async () => {
-        try {
-            await Axios_Instance.get(`/jobs?userId=${userId}`).then((res) => {
-                setSkelton(false)
-                setJobs(res.data.Jobs);
-            })
-        } catch (error) {
-            console.log(error.response.data.errMsg);
 
+    const fetchUserSubscription = async () => {
+            try{
+            const response = await Axios_Instance.get(`/plan?userId=${userId}`);
+            if (response.status === 200) {
+                setUserData(response.data.user);
+            }
+
+    }catch(error){
+        console.log(error);
+        if (error.response?.status === 401) {
+            dispatch(userLogout());
         }
     }
-    const fetchUserSubscription = async () => {
-        const response = await Axios_Instance.get('/profile');
-        if (response.status === 200) {
-            setUserData(response.data.user);
+}
+    useEffect(() => {
+
+    fetchUserSubscription()
+    }, [])
+
+    //? FETCH JOBS
+    const [uniqueCategories, setUniqueCategories] = useState([])
+    const [uniqueWorkTypes, setUniqueWorkTypes] = useState([])
+    const [limit, setLimit] = useState(6);
+    const [jobTotalLength, setJobTotalLength] = useState();
+    async function fetchJobs() {
+        try {
+            const res = await Axios_Instance.get(`/jobs`, {
+                params: {
+                    userId,
+                    search: searchQuery,
+                    limit,
+                    filters: selectedFilters.join(','),
+                    worktype: selectedWorkTypes.join(',')
+                }
+            });
+            setSkelton(false)
+            setJobs(res.data.Jobs);
+            setUniqueCategories(res.data.uniqueCategories)
+            setUniqueWorkTypes(res.data.uniqueWorkTypes)
+            setJobTotalLength(res.data.JobsLength)
+
+        } catch (error) {
+            console.log(error);
+            if (error.response?.status === 401) {
+                dispatch(userLogout());
+                toast.error(error?.response?.data?.errMsg);
+            }
+
         }
     }
     useEffect(() => {
-        fetchJobs();
-        fetchUserSubscription();
-    }, [])
+        fetchJobs()
+    }, [token, searchQuery, limit, selectedFilters, selectedWorkTypes])
+
+    //     const currentDate = new Date();
+    //     const filteredJobsForDateChecking = Jobs.filter((job) => {
+    //        const jobDeadline = new Date(job.deadline);
+    //        return currentDate <= jobDeadline;
+    //    });
+    // const reversedJobs = Jobs.slice().reverse();
+    //? FETCH JOBS
+
 
     const getTimeDifference = (postedDate) => {
         const currentDate = new Date();
@@ -438,12 +485,12 @@ function JobSection({ searchQuery }) {
                                     {/*  */}
                                     {showSearchResultsCount && (
                                         <div className="lg:text-xl md:text-xl sm:text-lg font-semibold text-green-700 flex justify-center ">
-                                            {filteredJobs.length} Results found
+                                            {Jobs.length} Results found
                                         </div>
                                     )}
                                     {/*  */}
                                     <div className="flex flex-wrap">
-                                        {filteredJobs.length === 0 ? (
+                                        {Jobs.length === 0 ? (
                                             <div className="w-auto text-center">
                                                 <p className="text-lg font-semibold text-gray-600">No search results found.</p>
                                                 <div className='mt-1 flex justify-center items-center w-full h-auto'>
@@ -455,9 +502,10 @@ function JobSection({ searchQuery }) {
                                                 </div>
                                             </div>
                                         ) : (
-                                            FilteredAllJobs.map((job, index) => (
-                                                <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 p-4 hover:scale-105 duration-1000 group">
-                                                    <div className="bg-slate-100 rounded-xl shadow-sm shadow-slate-400 p-6 relative group-hover:bg-gradient-to-r from-slate-200 to-blue-100 flex h-full">
+                                            Jobs.map((job, index) => (
+                                                // group-hover:bg-gradient-to-r from-[#AEC3AE] to-[#CEDEBD]
+                                                <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 p-4 hover:scale-105 duration-300 group">
+                                                    <div className="bg-slate-100 rounded-xl shadow-sm shadow-slate-400 p-6 relative group-hover:bg-gradient-to-r from-[#EEF5FF] to-[#FAF1E4] hover:shadow-lg hover:shadow-slate-400 flex h-full">
                                                         <img className="w-10 h-10 rounded-full mr-4" src={job.logo} /> {/* Added margin-right (mr-4) */}
                                                         <div className="flex flex-col flex-grow">
                                                             <div className="w-full h-auto">
@@ -492,7 +540,11 @@ function JobSection({ searchQuery }) {
                                                                     {getTimeDifference(job.createdAt)}
                                                                 </p>
                                                                 <p className="font-serif break-all xl:mt-2 text-gray-900 text-lg font-medium">
-                                                                    We have <span className="text-blue-800">{job.vacancy}</span> openings for the position of <span className="text-blue-800">{job.jobCategory}</span> in <span className="text-blue-800">{job.workplace}</span>. This <span className="text-blue-800">{job.workType}</span> role offers great benefits and an opportunity to take on this job. Apply now to join our team!
+                                                                    We have <span className="text-blue-800"> {job.vacancy} </span>
+                                                                    openings for the position of <span className="text-blue-800"> {job.jobCategory} </span>
+                                                                    in <span className="text-blue-800"> {job.workplace} </span>
+                                                                    . This <span className="text-blue-800"> {job.workType} </span>
+                                                                    role offers great benefits and an opportunity to take on this job. Apply now to join our team!
                                                                 </p>
                                                                 {/* old message icon */}
                                                                 {/* <div className='absolute top-57 right-14'>
@@ -535,6 +587,14 @@ function JobSection({ searchQuery }) {
                                                 </div>
                                             ))
                                         )}
+                                        {Jobs.length < jobTotalLength && jobTotalLength > limit && Jobs.length === limit && (
+                                            <div className='mt-4 mx-auto cursor-pointer' onClick={() => setLimit((prev) => prev + 6)}>
+                                                <p className='text-gray-700'>More Jobs</p>
+                                                {/* <MdUnfoldMore className='ml-8'/> */}
+                                                <MdKeyboardArrowDown className='text-gray-700 h-8 w-8 ml-6' />
+                                            </div>
+                                        )}
+
                                     </div>
                                 </div>
                             )}

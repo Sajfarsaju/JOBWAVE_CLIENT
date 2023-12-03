@@ -3,6 +3,8 @@ import { Dialog, RadioGroup, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useSelector } from 'react-redux';
 import Axios_Instance from '../../../api/userAxios';
+import Spinner from '../../Spinner';
+
 
 function Section() {
 
@@ -62,12 +64,7 @@ function Section() {
     <>
     {/* Spinner */}
     {spinnner && (
-      <div className='space-x-4 flex items-center justify-center min-h-screen' >
-        <span className='sr-only'>Loading...</span>
-        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.3s' }}></div>
-        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.15s' }}></div>
-        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce'></div>
-      </div>
+      <Spinner/>
     )}
     {/* Spinner */}
       {companyData.subscriptionPlan ? (

@@ -27,14 +27,13 @@ function Login({ logerName, url }) {
   // const [openModal, setOpenModal] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
-
+  const [proccessing, setProccessing] = useState(false)
   const [FormData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [googleSigninData, setGoogleSigninData] = useState({ email: "" }
   );
-  console.log("googleSigninData;", googleSigninData)
 
   const inputPasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -77,10 +76,11 @@ function Login({ logerName, url }) {
     if (Object.keys(errors).length === 0) {
 
       try {
+        setProccessing(true)
         const response = await Axios_Instance.post(`/${url}`, FormData);
 
         if (response.status === 200) {
-
+          setProccessing(false)
           const name = response?.data?.name;
           const role = response?.data?.role;
           const token = response?.data?.token;
@@ -94,6 +94,7 @@ function Login({ logerName, url }) {
               navigate('/');
               toast.success(`Welcome ${name}`);
             } else {
+              setProccessing(false)
               toast.error('Your account has been blocked')
             }
 
@@ -105,8 +106,10 @@ function Login({ logerName, url }) {
         }
       } catch (error) {
         if (error.response?.status === 401) {
+          setProccessing(false)
           toast.error(error?.response?.data?.errMsg)
         } else {
+          setProccessing(false)
           console.log(error)
         }
       }
@@ -175,7 +178,7 @@ function Login({ logerName, url }) {
 
 {openModal && ( */}
 
-      <div className="bg-gradient-to-tr from-[#94a3b8] to-[#e2e8f0] opacity-100 mx-auto sm:w-full max-w-md rounded-lg shadow-lg shadow-stone-400 overflow-hidden">
+      <div className="bg-gradient-to-tr from-[#94a3b8] to-[#e2e8f0] opacity-100 mx-auto sm:w-full max-w-md rounded-lg shadow-sm shadow-slate-400 overflow-hidden">
         {/* modal close btn */}
         {/* <div className="flex justify-end p-2">
                   <button
@@ -277,7 +280,7 @@ function Login({ logerName, url }) {
                 type="submit"
                 className="mt-6 group relative w-full flex justify-center py-2 px-3 border border-transparent text-md font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-800 transition duration-150 ease-in-out"
               >
-                Sign in
+                {proccessing ? 'Signing...' : 'Sign in'}
               </button>
             </div>
           </form>
@@ -299,90 +302,7 @@ function Login({ logerName, url }) {
               </button>
             </Link>
           </div>
-          {/* <div className="bg-blue-600 max-w-xs mx-auto mt-10 p-2 rounded-lg shadow-md">
-      <div className="flex ">
-        <div className="w-10 h-10">
-          <img src="https://sanantoniotreesurgeons.com/wp-content/uploads/2021/05/Illustration-of-Google-icon-on-transparent-background-PNG.png" alt="Google Logo" 
-          className="w-10 h-12" />
-        </div>
-        <div className=" flex-grow p-2 rounded-r-lg">
-          <button className="text-white font-semibold  px-2 w-full">
-            Sign in with Google
-          </button>
-        </div>
-      </div>
-    </div> */}
-
-
-
-          {/* <form className="mt-14 space-y-4" onSubmit={handleSubmit}>
-  <div className="grid grid-cols-12 gap-4">
-    <div className="col-span-12 sm:col-span-12 "> 
-      <label htmlFor="emailAddress" className="text-gray-600 text-sm">
-        Email Address*
-      </label>
-      <input
-        id="emailAddress"
-        name="email"
-        value={FormData.email}
-        onChange={handleChange}
-        type="email"
-        className="w-full border-b border-gray-300 py-2 bg-slate-300 focus:outline-none focus:border-indigo-500 sm:text-sm"
-      />
-    </div>
-    <div className="col-span-12 sm:col-span-12 ">
-      <label htmlFor="Password" className="text-gray-600 text-sm">
-        Password*
-      </label>
-      <div className="relative">
-        <input
-          id="Password"
-          name="password"
-          value={FormData.password}
-          onChange={handleChange}
-          type={showPassword ? 'text' : 'password'}
-          className="w-full border-b border-gray-300 py-2 bg-slate-300 focus:outline-none focus:border-indigo-500 sm:text-sm"
-        />
-        <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-          <button
-            type="button"
-            onClick={inputPasswordVisibility}
-            className="focus:outline-none"
-          >
-            {showPassword ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-gray-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-gray-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div className="mx-3">
-    <button
-      type="submit"
-      className="mt-6 group relative w-full flex justify-center py-2 px-4 border border-transparent text-md font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-800 transition duration-150 ease-in-out"
-    >
-      Sign in
-    </button>
-  </div>
-</form> */}
-
-
+          
 
           <p className="mt-8 text-center text-sm leading-5 text-gray-900">
             Not a member?

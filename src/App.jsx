@@ -32,6 +32,8 @@ import PaymentFailedUser from './components/user/subscriptionPlan/paymentFailure
 import CandidatesPage from './pages/company/CandidatesPage'
 import InterViewTime from './components/company/candidates/InterViewTime'
 import HiredCandidates from './components/company/candidates/HiredCandidates'
+import SignupOtp from './components/user/SIgnupOtp'
+
 
 
 
@@ -57,7 +59,7 @@ function App() {
         {/* <Route path='/:id/verify/:token' element={<VerifyEmail/>} /> */}
         {/* Forgot-password */}
 
-        {/* Email Verify Route*/}
+        {/* Forgot Pass Route*/}
         <Route path='/forgot_password' element={<ForgotPassword/>} />
         {/* Email Verify Route */}
         
@@ -65,6 +67,7 @@ function App() {
         <Route path='/' element={<Homepage/>}></Route>
         <Route path='/login' element={userAuth ? <Navigate to='/'/> : <Login logerName='user' url='login' />}></Route>
         <Route path='/signup' element={userAuth ? <Navigate to='/'/> : <RegisterPage/>}></Route>
+        <Route path='/verifyPhone' element={userAuth ? <Navigate to='/'/> : <SignupOtp/>}></Route>
         <Route path='/jobs' element={userAuth ? <JobsPage/> : <Navigate to='/login'/>}></Route>
         <Route path='/jobs/jobview/:jobId' element={userAuth ? <JobSinglePage/> : <Navigate to='/login'/>}></Route>
         <Route path='/profile' element={userAuth ? <ProfilePage/> : <Navigate to='/login'/>}></Route>

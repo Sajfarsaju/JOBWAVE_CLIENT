@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Axios_Instance from '../../api/userAxios'
 import { toast } from 'react-hot-toast';
+import Spinner from '../../components/Spinner';
 
 function Categories() {
 
@@ -11,7 +12,7 @@ function Categories() {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
-
+  const [spinner , setSpinner] = useState(false)
 
   const validateCategory = () => {
     const errors = {};
@@ -46,6 +47,7 @@ function Categories() {
       try {
         const response = await Axios_Instance.post('/admin/category', { name });
         if (response.status === 200) {
+          
           setCategoryList([...categoryList, response.data.newCategory]);
           setIsOpen(false);
           // setLoading(!loading)
@@ -67,8 +69,9 @@ function Categories() {
   }
 
   const fetchCategories = async () => {
-
+    setSpinner(true)
     const response = await Axios_Instance.get('/admin/category');
+    setSpinner(false)
     setCategoryList(response.data.category)
   }
 
@@ -130,6 +133,9 @@ function Categories() {
   return (
 
     <div className='min-h-screen'>
+      {spinner && (
+        <Spinner/>
+      )}
       <button onClick={() => setIsOpen(true)} className='btn btn-md bg-indigo-500 rounded-lg text-white ml-48 w-36 mt-3'>
         Add
       </button>

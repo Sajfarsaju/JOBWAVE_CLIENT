@@ -6,7 +6,7 @@ export default function paymentSuccess() {
 
     return (
         <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-        <div className="dark:bg-white rounded-sm shadow-lg shadow-gray-300 p-6 flex-col justify-center items-center md:mx-auto text-center">
+        <div className="dark:bg-white rounded-sm shadow-lg dark:shadow-gray-300 p-6 flex-col justify-center items-center md:mx-auto text-center">
           <svg viewBox="0 0 24 24" className="text-green-600 w-16 h-16 mx-auto my-6">
             <path
               fill="currentColor"

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Axios_Instance from '../../../api/userAxios';
 import { useSelector } from 'react-redux'
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 
 
@@ -15,6 +16,7 @@ function SingleJob() {
   const [singleJob, setSingleJob] = useState({})
   const [CoverLetter, setCoverLetter] = useState('')
   const [CvFile, setCvFile] = useState('');
+  const [proccessing, setProccessing] = useState(false);
 
   const validateApplyFormData = () => {
     const errors = {};
@@ -95,6 +97,7 @@ function SingleJob() {
 
     if (Object.keys(errors).length === 0) {
       try {
+        setProccessing(true)
         const response = await Axios_Instance.post('/applyJob', formData,
           {
             headers: {
@@ -102,12 +105,14 @@ function SingleJob() {
             }
           });
         if (response.status === 200) {
-          toast.success("Application successful")
+          setProccessing(false)
+          toast.success("Your application has been successful")
           closeModal()
           navigate('/jobs')
         }
 
       } catch (error) {
+        setProccessing(false)
         if (error.response.status === 400) {
           return toast.error(error?.response?.data?.errMsg)
         } else {
@@ -290,8 +295,9 @@ function SingleJob() {
                     <button
                       className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-full"
                       type="submit"
+                      disabled={proccessing}
                     >
-                      Submit
+                      {proccessing ? 'Processing...' : 'Submit'}
                     </button>
                   </div>
                 </form>

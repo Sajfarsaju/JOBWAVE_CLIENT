@@ -1,4 +1,4 @@
-import  { createContext, useContext } from "react";
+import { createContext, useContext, useRef } from "react";
 import { RecaptchaVerifier } from "firebase/auth";
 import { signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../api/firebase";
@@ -15,17 +15,24 @@ export const WebSocketContext = createContext(socketConnection)
 export const WebSocketProvider = WebSocketContext.Provider;
 
 export function UserAuthContextProvider({ children }) {
-
-    function setUpRecaptcha(number) {
-        const formattedPhoneNumber = `+${number}`;
-        console.log('setuprecaptcha:', formattedPhoneNumber)
-        const recaptchaVerifier = new RecaptchaVerifier(
-            auth,
-            'recaptcha-container',
-            {}
-        );
-        recaptchaVerifier.render()
-        return signInWithPhoneNumber(auth, formattedPhoneNumber, recaptchaVerifier);
+    
+    const isRecaptchaRendered = useRef(false);
+     function setUpRecaptcha(number) {
+        
+        if (!isRecaptchaRendered.current) {
+        
+            const formattedPhoneNumber = `+${number}`;
+            console.log('setuprecaptcha:', formattedPhoneNumber);
+    
+                const recaptchaVerifier = new RecaptchaVerifier(
+                    auth,
+                    'recaptcha-container',
+                    {}
+                );
+                recaptchaVerifier.render();
+                isRecaptchaRendered.current = true;
+                return signInWithPhoneNumber(auth, formattedPhoneNumber, recaptchaVerifier);
+        }
 
     }
     function setUpRecaptchaForResetPass(number) {

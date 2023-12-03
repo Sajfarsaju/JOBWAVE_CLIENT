@@ -2,21 +2,35 @@ import { useEffect, useState } from 'react'
 import Axios_Instance from '../../../api/userAxios'
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import Spinner from '../../Spinner';
+import { userLogout } from '../../../store/slice/userSlice';
+import { useDispatch } from 'react-redux';
 
 function Profile( {setReRender , reRender} ) {
+
+  const dispatch = useDispatch()
 
   const [userData, setUserData] = useState([]);
   const [reloadProfile, setReloadProfile] = useState(false);
   const [spinnner, setspinnner] = useState(true);
+  const [proccessing, setProccessing] = useState(false);
   let userId = userData._id
 
   useEffect(() => {
+
     async function getUser() {
-      await Axios_Instance.get('/profile').then((res)=>{
-        setspinnner(false)
-        setUserData(res.data.user)
-      })
-      
+      try{
+
+        const res = await Axios_Instance.get('/profile')
+          setspinnner(false)
+          setUserData(res.data.user)
+      }catch(error){
+        console.log(error)
+        if (error.res?.status === 401) {
+          dispatch(userLogout());
+          toast.error(error?.res?.data?.errMsg);
+        }
+      }
     }
 
     getUser();
@@ -64,17 +78,21 @@ function Profile( {setReRender , reRender} ) {
       let profile = selectedImage || userData.profile;
       
       console.log('updatedUserData:',updatedUserData)
+      setProccessing(true)
       const response = await Axios_Instance.patch(`/profile/${userId}`, { ...updatedUserData, profile })
       if (response.status === 200) {
+        setProccessing(false)
         setUserData(updatedUserData);
         // setUserData(response?.data?.updatedUser)
         setReloadProfile(!reloadProfile)
         setReRender(!reRender)
         setProfileEditModal(false);
       } else {
+        setProccessing(false)
         console.error('Failed to update user information');
       }
     } catch (error) {
+      setProccessing(false)
       if(error?.response?.status===400){
         toast.error(error?.response?.data?.errMsg)
       }else{
@@ -134,9 +152,10 @@ function Profile( {setReRender , reRender} ) {
   const handleSaveBio = async (e) => {
     e.preventDefault();
     const errors = validateBioForm()
-
+    
     if (Object.keys(errors).length === 0) {
       try {
+        setProccessing(true)
 
         const response = await Axios_Instance.post(`/profile`, {
           action: 'updateBio',
@@ -144,6 +163,7 @@ function Profile( {setReRender , reRender} ) {
         });
 
         if (response.status === 200) {
+          setProccessing(false)
           console.log(response.data.user, "bio data");
           setUserData((prevData) => ({
             ...prevData,
@@ -213,12 +233,7 @@ function Profile( {setReRender , reRender} ) {
     <>
     {/* Spinner */}
     {spinnner && (
-      <div className='space-x-4 flex items-center justify-center min-h-screen' >
-        <span className='sr-only'>Loading...</span>
-        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.3s' }}></div>
-        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.15s' }}></div>
-        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce'></div>
-      </div>
+      <Spinner/>
     )}
     {/* Spinner */}
     <div className='h-auto mt-12'>
@@ -384,14 +399,16 @@ function Profile( {setReRender , reRender} ) {
                     type="button"
                     onClick={handleProfileSave}
                     className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+                    disabled={proccessing}
                   >
-                    Save
+                     {proccessing ? "Saving..." : "Save"}
                   </button>
                   <button
                     type="button"
                     onClick={()=>setProfileEditModal(false)}
                     className="bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none ml-2"
-                  >
+                    disabled={proccessing}
+                    >
                     Cancel
                   </button>
                 </div>
@@ -438,13 +455,16 @@ function Profile( {setReRender , reRender} ) {
 
                 </div>
                 <div className="text-center">
-                  <button
-                    type="button"
-                    className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
-                    onClick={handleSaveBio}
-                  >
-                    Save
-                  </button>
+                  
+                <button
+    type="button"
+    className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+    onClick={handleSaveBio}
+    disabled={proccessing}
+>
+    {proccessing ? "Saving..." : "Save"}
+</button>
+
                   <button
                     type="button"
                     onClick={() => setBioEditModal(false)}

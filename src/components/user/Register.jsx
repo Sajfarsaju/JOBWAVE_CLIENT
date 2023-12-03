@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment';
@@ -9,8 +9,11 @@ import { AiFillEyeInvisible } from 'react-icons/ai';
 import Axios_Instance from '../../api/userAxios'
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, RecaptchaVerifier, signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../api/firebase';
+import defaultProfile from "../../assets/defaultProfile.jpeg";
+import axios from 'axios';
+import { useUserAuth } from '../../context/UserAuthContext';
 
 
 // import Input from '@mui/material/Input';
@@ -31,16 +34,19 @@ const Register = () => {
   // JobSeeker title color
   const color = 'Jobseeker'
   const [showPassword, setShowPassword] = useState(false);
+  const [proccessing, setProccessing] = useState(false)
   const [formData, setFormData] = useState(
     {
       firstName: "",
       lastName: "",
       email: "",
       phone: "",
+      profile: null,
       password: ""
 
     }
   );
+  
   const [googleSignupData, setGoogleSignupData] = useState(
     {
       firstName: "",
@@ -50,7 +56,6 @@ const Register = () => {
       profile: ""
     }
   );
-  console.log("googleSignupData;", googleSignupData)
 
   const inputPasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -92,7 +97,30 @@ const Register = () => {
         [name]: value,
       }
     ));
-  }
+  };
+
+  // ? storing default profile of the user
+  useEffect(() => {
+    const fetchImageAndSetFormData = async () => {
+      try {
+        const response = await fetch(defaultProfile);
+        if (!response.ok) {
+          console.log(`Failed to fetch default profile image. HTTP status ${response.status}`);
+        }
+  
+        const blob = await response.blob();
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setFormData((prevData) => ({ ...prevData, profile: reader.result }));
+        };
+        reader.readAsDataURL(blob);
+      } catch (error) {
+        console.error("Error fetching default profile image:", error.message);
+      }
+    };
+  
+    fetchImageAndSetFormData();
+  }, []);
 
   const handleSubmit = async (e) => {
 
@@ -101,21 +129,25 @@ const Register = () => {
 
     if (Object.keys(errors).length === 0) {
       try {
-
-        const response = await Axios_Instance.post('/signup', formData);
+        setProccessing(true)
+       
+        formData.action = 'checkBackendResponse';
+        const response = await Axios_Instance.post('/signup', formData );
 
         if (response.status === 200) {
-          toast.success(response.data.message);
-          Navigate('/login');
+          setProccessing(false)
+          const showOtpForm = true
+          formData.action = 'saveData'
+          Navigate('/verifyPhone', { state: { formData , showOtpForm} });
         }
 
       } catch (error) {
-
-        if (error.response.status === 401) {
-          toast.error(error.response.data.errMsg);
-        } else {
+        setProccessing(false)
           console.log(error);
-        }
+          if (error.response?.status === 401) {
+            toast.error(error?.response?.data?.errMsg)
+          }
+        
       }
 
     } else if (Object.keys(errors).length === 4) {
@@ -130,13 +162,14 @@ const Register = () => {
       toast.error(errors.password);
     }
 
-  }
+  };
 
+  
   const handleGoogleSignup = async () => {
     try {
 
       const data = await signInWithPopup(auth, provider);
-      console.log("data;", data)
+
       const credentials = GoogleAuthProvider.credentialFromResult(data);
 
       const user = data.user
@@ -165,14 +198,39 @@ const Register = () => {
     }
   }
 
+//   //*************************GET OTP***************************************
+
+//     (async function getOtp () {
+
+//         try {
+//             //* Login with Phone OTP response
+//             const action = 'signupNumberVerify'
+//             const response = await setUpRecaptcha(formData.phone,action)
+//             console.log('response;',response)
+//             if (response) {
+//                 setConfirmObj(response)
+//                 // setIsOpenForm(false)
+//                 // setIsOpenOtpForm(true)
+//                 console.log('otp:', otp)
+//             }
+
+//         } catch (error) {
+//             console.log(error)
+
+//         }
+//     })()
+// //*************************END GET OTP***************************************
+
+
   return (
     <>
+{/* {showSignupForm && ( */}
 
       <div className="bg-gradient-to-tr from-[#f1f5f9] to-[#cbd5e1] opacity-100 min-h-screen flex flex-col justify-center px-6 py-12 lg:px-8">
         {/* <button className='btn mt-2 bg-blue-500 w-24' onClick={() => setOpenModal(true)}>Open</button>
 
     {openModal && ( */}
-        <div className="mx-auto sm:w-full max-w-lg bg-gradient-to-tr from-[#94a3b8] to-[#e2e8f0] opacity-100 rounded-3xl shadow-lg shadow-stone-400 overflow-hidden">
+        <div className="mx-auto sm:w-full max-w-lg bg-gradient-to-tr from-[#94a3b8] to-[#e2e8f0] opacity-100 rounded-3xl shadow-sm shadow-slate-400 overflow-hidden">
           {/* modal close btn */}
           {/* <div className="flex justify-end p-2">
                   <button
@@ -343,17 +401,13 @@ const Register = () => {
                   />
                 </Grid>
               </Grid>
-
               <div className="mx-10">
-                {/* <button
-                  type="submit"
-                  className="mt-6 group relative w-full flex justify-center py-2 px-4 border border-transparent text-md font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-800 transition duration-150 ease-in-out"
-                >
-                  Signup
-                </button> */}
+                 
                 <Link type='submit' onClick={handleSubmit} className="flex items-center justify-center bg-gradient-to-r from-slate-400 to-slate-300 mt-4 text-white rounded-lg shadow-md shadow-slate-500">
 
-                  <h1 className="px-4 py-3  text-center dark:text-blue-700 font-bold">Signup</h1>
+                  <h1 className="px-4 py-3  text-center dark:text-blue-700 font-bold">
+                    {proccessing ? 'Processing...' : 'Signup'}
+                    </h1>
                 </Link>
 
 
@@ -374,16 +428,6 @@ const Register = () => {
                 <h1 className="px-4 py-3 w-5/6 text-center dark:text-blue-700 font-bold">Signup with Google</h1>
               </Link>
             </div>
-            {/* <div className="w-11/12 px-4 mr-1 ml-5 mt-6">
-              <div className='bg-gray-500 h-0.5' ></div>
-              <Link>
-                <button
-                  onClick={handleGoogleSignup}
-                  className='mt-6 group relative w-full flex justify-center py-2 px-3 border border-transparent text-md font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:border-emerald-700 focus:shadow-outline-indigo active:bg-emerald-800 transition duration-150 ease-in-out'>
-                  Signup with Google
-                </button>
-              </Link>
-            </div> */}
 
 
             <p className="mt-6 text-center text-sm leading-5 text-gray-900">
@@ -393,6 +437,8 @@ const Register = () => {
         </div>
         {/* )} */}
       </div>
+{/* )} */}
+
 
 
     </>

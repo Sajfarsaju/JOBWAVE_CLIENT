@@ -11,15 +11,10 @@ export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShor
 
   const [selectedOption, setSelectedOption] = useState('');
   const [interviewTime, setInterviewTime] = useState('');
+  const [proccessing, setProccessing] = useState(false);
 
   const companyId = useSelector((state) => state.company.id);
-  // const handleOptionChange = (event) => {
-  //   setSelectedOption(event.target.value);
-  // };
-
-  // const handleInterviewTimeChange = (event) => {
-  //   setInterviewTime(event.target.value);
-  // };
+  const { token } = useSelector((state) => state.company)
 
   const validateFormData = () => {
     const errors = {};
@@ -36,6 +31,14 @@ export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShor
       errors.interviewTime = 'Please enter the interview time';
     }
 
+    const currentDate = new Date();
+
+    const interviewTimeDate = new Date(interviewTime);
+
+    if (interviewTimeDate < currentDate) {
+      errors.interviewTime = 'Deadline must be a future date';
+    }
+
     return errors;
   };
 
@@ -45,18 +48,27 @@ export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShor
 
     if (Object.keys(errors).length === 0) {
       try {
+        setProccessing(true)
 
-        const res = await Axios_Instance.post('/company/shortlist', { selectedOption, interviewTime, userId, companyId, applicationId, jobId, jobTitle })
+        const res = await Axios_Instance.post('/company/shortlist', { selectedOption, interviewTime, userId, companyId, applicationId, jobId, jobTitle },
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
         if (res.data.success) {
-          toast.success('Successfully and mail sented successfully')
+          setProccessing(false)
+          toast.success('Shortlisted and Mail sented successfully')
           setRelaod(!relaod)
           setIsOpenShortlistModal(false)
         } else {
+          setProccessing(false)
           toast.error(res.data.errMsg)
           setIsOpenShortlistModal(false)
         }
 
       } catch (error) {
+        setProccessing(false)
         console.log(error)
       }
     } else if (errors.common) {
@@ -142,7 +154,7 @@ export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShor
 
                       <div className="flex justify-center">
                         <Button variant="contained" onClick={handleFormSubmit}>
-                          Send Mail
+                          {proccessing ? 'Processing...' : 'Send Mail'}
                         </Button>
                       </div>
                     </div>

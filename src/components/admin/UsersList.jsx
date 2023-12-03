@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Axios_Instance from '../../api/userAxios'
 import { useDispatch } from 'react-redux'
-// import { blockUser, unblockUser } from '../../store/slice/userSlice'
+// import { userLogout} from '../../store/slice/userSlice'
 import toast from 'react-hot-toast'
-
+import Spinner from '../../components/Spinner';
 function UsersList() {
 
   const dispatch = useDispatch()
@@ -12,75 +12,81 @@ function UsersList() {
   // console.log('user:', blockedUserIds)
 
   const [usersList, setUsersList] = useState([])
+  const [spinner, setSpinner] = useState(false)
 
-   // ********************FETCH USER*********************//
+  // ********************FETCH USER*********************//
   useEffect(() => {
 
     (async function getUsers() {
 
       try {
+        setSpinner(true)
         const response = await Axios_Instance.get('/admin/users')
+        setSpinner(false)
         setUsersList(response.data.users);
       } catch (error) {
         console.log(error);
       }
     })();
   }, []);
-   // ********************END FETCH USER  *********************//
+  // ********************END FETCH USER  *********************//
 
 
-   // ********************BLOCK USER  *********************//
-  const blockedUser = async(id) => {
-        try{
-          const response = await Axios_Instance.patch('/admin/block-unblockUser', { id, action: "blockUser" });
-          
-          if (response.data && response.data.userStatus) {
+  // ********************BLOCK USER  *********************//
+  const blockedUser = async (id) => {
+    try {
+      const response = await Axios_Instance.patch('/admin/block-unblockUser', { id, action: "blockUser" });
 
-            const userIndex = usersList.findIndex((user) => user._id === id);
-      
-            const updatedUsersList = [...usersList];
-            
-            updatedUsersList[userIndex] = response.data.userStatus;
-      
-            setUsersList(updatedUsersList);
-            toast.success('Blocked');
-          }
-        }catch(error){
-          console.log(error)
-        }
-  };
-   // ********************END BLOCK USER  *********************//
+      if (response.data && response.data.userStatus) {
 
-  // ******************** UNBLOCK USER  *********************//
-  const unBlockedUser = async(id) => {
-    try{
-      const response = await Axios_Instance.patch('/admin/block-unblockUser', { id, action: "unblockUser" });
-      
-    if (response.data && response.data.userStatus) {
+        const userIndex = usersList.findIndex((user) => user._id === id);
 
-      const userIndex = usersList.findIndex((user) => user._id === id);
+        const updatedUsersList = [...usersList];
 
-      const updatedUsersList = [...usersList];
+        updatedUsersList[userIndex] = response.data.userStatus;
 
-      updatedUsersList[userIndex] = response.data.userStatus;
-
-      setUsersList(updatedUsersList);
-      toast.success('Unblocked');
-    }
-    }catch(error){
+        setUsersList(updatedUsersList);
+        toast.success('Blocked');
+      }
+    } catch (error) {
       console.log(error)
     }
-    
+  };
+  // ********************END BLOCK USER  *********************//
+
+  // ******************** UNBLOCK USER  *********************//
+  const unBlockedUser = async (id) => {
+    try {
+      const response = await Axios_Instance.patch('/admin/block-unblockUser', { id, action: "unblockUser" });
+
+      if (response.data && response.data.userStatus) {
+
+        const userIndex = usersList.findIndex((user) => user._id === id);
+
+        const updatedUsersList = [...usersList];
+
+        updatedUsersList[userIndex] = response.data.userStatus;
+
+        setUsersList(updatedUsersList);
+        toast.success('Unblocked');
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
   };
   // ********************END UNBLOCK USER  *********************//
 
 
-  if(Math.random() > 0.5 ) {
+  if (Math.random() > 0.5) {
     return new Error('Test error boundary')
   }
 
   return (
     <div className='min-h-auto'>
+      {spinner && (
+        <Spinner/>
+      )}
       <section className="relative py-8 sm:py-16 px-4 sm:px-10 lg:px-20 xl:px-32">
         <div className="w-full mb-6">
           <div className="relative min-w-0 w-full mb-6 shadow-md shadow-gray-500 rounded dark:bg-white text-gray-900 overflow-x-auto">
@@ -118,6 +124,7 @@ function UsersList() {
                   </thead>
                   <tbody>
                     {usersList.map((user, index) => (
+                      !user.isAdmin &&
                       <tr key={index}>
                         <td className="px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-sm sm:text-center whitespace-nowrap p-2 sm:p-3 text-center">
                           {index + 1}
@@ -140,33 +147,33 @@ function UsersList() {
                           {user?.phone}
                         </td>
                         <td className="text-green-600 px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-sm sm:text-center whitespace-nowrap p-2 sm:p-3 text-center">
-                        {user?.isActive ? (
-                          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-300">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-700"></span>
-                            <h2 className="text-sm font-normal text-emerald-800">Active</h2>
+                          {user?.isActive ? (
+                            <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-300">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-700"></span>
+                              <h2 className="text-sm font-normal text-emerald-800">Active</h2>
                             </div>
-                            ) :(
-                              <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-red-300">
-                            <span className="h-1.5 w-1.5 rounded-full bg-red-700"></span>
-                            <h2 className="text-sm font-normal text-red-800">Blocked</h2>
+                          ) : (
+                            <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-red-300">
+                              <span className="h-1.5 w-1.5 rounded-full bg-red-700"></span>
+                              <h2 className="text-sm font-normal text-red-800">Blocked</h2>
                             </div>
-                            )}
-                          
+                          )}
+
                         </td>
                         {user?.isActive ? (
                           <td className="px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-sm sm:text-center whitespace-nowrap p-2 sm:p-3 text-center">
-                          <div className="inline-flex cursor-pointer items-center px-5 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-red-300">
-                            <h2 onClick={() => blockedUser(user?._id)} className="text-sm font-normal text-red-800">Block</h2>
-                          </div>
-                        </td>
-                         ) : ( 
-                          
+                            <div className="inline-flex items-center px-5 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-red-300">
+                              <h2 onClick={() => blockedUser(user?._id)} className="text-sm cursor-pointer font-normal text-red-800">Block</h2>
+                            </div>
+                          </td>
+                        ) : (
+
                           <td className="px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-sm sm:text-center whitespace-nowrap p-2 sm:p-3 text-center">
-                          <div className="inline-flex cursor-pointer items-center px-5 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-300">
-                          <h2 onClick={()=> unBlockedUser(user?._id)} className="text-sm font-normal text-green-800">Unblock</h2>
-                        </div>
-                        </td>
-                          )} 
+                            <div className="inline-flex cursor-pointer items-center px-5 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-300">
+                              <h2 onClick={() => unBlockedUser(user?._id)} className="text-sm font-normal text-green-800">Unblock</h2>
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>

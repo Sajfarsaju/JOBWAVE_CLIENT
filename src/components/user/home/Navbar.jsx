@@ -8,10 +8,11 @@ import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Logo from '../../../../public/JobWave2-fotor-bg-remover-20230817153930.png'
+import toast from 'react-hot-toast'
 
 
 
-function Navbar({ searchValue, setSearchQuery, reRender }) {
+function Navbar({ searchValue, setSearchQuery, reRender, showSearchield}) {
 
   const navigate = useNavigate()
   const { pathname } = useLocation();
@@ -38,13 +39,24 @@ function Navbar({ searchValue, setSearchQuery, reRender }) {
   }
   const [data, setData] = useState([])
   useEffect(() => {
-    async function get() {
-      const res = await Axios_Instance.get('/profile')
-      setData(res.data.user)
+
+    async function getUser() {
+      try {
+        const res = await Axios_Instance.get('/profile')
+        setData(res?.data?.user)
+
+      } catch (error) {
+        console.log(error);
+        if (error.res?.status === 401) {
+          dispatch(userLogout());
+          toast.error(error?.response?.data?.errMsg);
+        }
+      }
     }
 
-    get()
+    getUser()
   }, [reRender])
+
 
   return (
 
@@ -210,68 +222,57 @@ function Navbar({ searchValue, setSearchQuery, reRender }) {
                   </div> */}
 
                   {/* try search func */}
-                  <div className="hidden md:block relative md:mt-0 md:mx-4">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                      <svg className="w-4 h-4 text-gray-600 dark:text-slate-950" viewBox="0 0 24 24" fill="none">
-                        <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.134 17 3 13.866 3 10C3 6.134 6.134 3 10 3C13.866 3 17 6.134 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </span>
-                    {/* <input
-                      type="text"
-                      className="w-full py-1 pl-10 pr-4 text-gray-700 placeholder-gray-600 bg-slate-100 border-b border-slate-950 dark:placeholder-slate-950 dark:focus:border-slate-950 md:w-56 md:border-transparent dark:bg-white-800 dark:text-slate-950 focus:outline-none focus:border-slate-950"
-                      placeholder="Search"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          // Trigger the search when Enter key is pressed
-                          handleSearch();
-                        }
-                      }}
-                    /> */}
-                    {/* 2nd */}
-                    <input
-                      type="text"
-                      className="w-full py-1 pl-10 pr-4 font-serif text-gray-700 placeholder-gray-600 bg-slate-100 border-b border-slate-950 dark:placeholder-slate-950 dark:focus:border-slate-950 md:w-56 md:border-transparent dark:bg-white-800 dark:text-slate-950 focus:outline-none focus:border-slate-950"
-                      placeholder="Search"
-                      value={searchValue}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
+                  {showSearchield && (
 
-                    <div className="absolute inset-y-0 right-0 flex items-center ">
-                      <button
-                        type="button"
-                        className="text-gray-500 hover:text-gray-600"
-                        onClick={() => setSearchQuery('')}
-                      >
-                        <span className="sr-only"></span>
-                        <svg
-                          className="h-5 w-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M6 18L18 6M6 6l12 12"
-                          />
+                    <div className="hidden md:block relative md:mt-0 md:mx-4">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg className="w-4 h-4 text-gray-600 dark:text-slate-950" viewBox="0 0 24 24" fill="none">
+                          <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.134 17 3 13.866 3 10C3 6.134 6.134 3 10 3C13.866 3 17 6.134 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
-                      </button>
+                      </span>
+                      <input
+                        type="text"
+                        className="w-full py-1 pl-10 pr-4 font-serif text-gray-700 placeholder-gray-600 bg-slate-100 border-b border-slate-950 dark:placeholder-slate-950 dark:focus:border-slate-950 md:w-56 md:border-transparent dark:bg-white-800 dark:text-slate-950 focus:outline-none focus:border-slate-950"
+                        placeholder="Search"
+                        value={searchValue}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+
+                      <div className="absolute inset-y-0 right-0 flex items-center ">
+                        <button
+                          type="button"
+                          className="text-gray-500 hover:text-gray-600"
+                          onClick={() => setSearchQuery('')}
+                        >
+                          <span className="sr-only"></span>
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
                   {/*  */}
                 </div>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                  <button
+                  {/* <button
                     type="button"
                     className="relative rounded-full p-1 text-gray-900 "
                   >
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
+                  </button> */}
 
 
                   <Menu as="div" className="relative ml-3">

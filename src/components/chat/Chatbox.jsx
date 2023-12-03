@@ -33,7 +33,6 @@ export default function Chatbox({ senderRole, reciverRole }) {
   }, [allMessages])
 
 
-
   useEffect(() => {
 
     (async function fetchData() {
@@ -81,7 +80,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
       ...prevMessages,
       newMessageData,
     ]);
-                         
+
     socketConnection.emit(`send_message`, newMessageData)
     setNewMessage("")
 
@@ -95,7 +94,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
   }, [selectedChat]);
 
   const joinRoomCompany = (selectedUser) => {
-
+    
     if (senderRole === 'company') {
 
       setSelectedChat(selectedUser)
@@ -122,10 +121,10 @@ export default function Chatbox({ senderRole, reciverRole }) {
     if (socketConnection && selectedChat) {
 
       socketConnection.on("message_response", (data) => {
-        
+
         setAllMessages((prevChats) => [...prevChats, data]);
       });
-      
+
     }
   }, [socketConnection]);
 
@@ -147,7 +146,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
     const chatId = selectedChat._id
 
     joinRoomCompany(selectedChat)
-    
+
     setSelectedChat(selectedChat);
     setIsChatOpen(true);
 
@@ -155,7 +154,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
       navigate(`/chats/${companyId}`)
       Axios_Instance.get(`/openChat?chatId=${chatId}`).then((res) => {
 
-        if(res.status === 200){
+        if (res.status === 200) {
           setSpinner(false)
           setAllMessages(res.data.allMessages);
         }
@@ -163,8 +162,8 @@ export default function Chatbox({ senderRole, reciverRole }) {
     } else {
       // navigate(`/chats/${userId}`)
       Axios_Instance.get(`/company/openChat?chatId=${chatId}`).then((res) => {
-        
-        if(res.status === 200){
+
+        if (res.status === 200) {
           setSpinner(false)
           setAllMessages(res.data.allMessages);
         }
@@ -212,8 +211,12 @@ export default function Chatbox({ senderRole, reciverRole }) {
                 <div
                   key={chat._id}
                   onClick={() => openChatBox(chat)}
-                  className={`${chat?.companyId?.companyName === selectedChat?.companyId?.companyName ? 'lg:bg-sky-200 xl:bg-sky-200 flex items-center px-3 py-2  text-sm transition duration-150 ease-in-out border-b border-gray-300 cursor-pointer ' :
-                    'flex items-center px-3 py-2  text-sm transition duration-150 ease-in-out border-b border-gray-300 cursor-pointer hover:bg-slate-200 focus:outline-none'}`}
+                  className={`
+                    flex items-center px-3 py-2 text-sm transition duration-150 ease-in-out border-b border-gray-300 cursor-pointer 
+                    ${senderRole === 'company' && chat?.userId?._id === selectedChat?.userId?._id ? 'lg:bg-sky-200 xl:bg-sky-200' : ''}
+                    ${senderRole === 'users' && chat?.companyId?._id === selectedChat?.companyId?._id ? 'lg:bg-sky-200 xl:bg-sky-200' : ''}
+                    hover:bg-slate-200 focus:outline-none
+                `}
                 >
                   <img
                     className="object-cover w-10 h-10 rounded-full"
@@ -223,7 +226,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
                   <div className="w-full pb-2"
                   >
                     <div className="flex justify-between"
-                      >
+                    >
                       <span className="block ml-2 font-semibold text-gray-600">
                         {senderRole === 'users' ? chat?.companyId?.companyName : chat?.userId?.firstName} {senderRole === 'company' && chat?.userId?.lastName}
                       </span>
@@ -234,96 +237,96 @@ export default function Chatbox({ senderRole, reciverRole }) {
                 </div>
               ))}
             </li>
-            
+
             {/* End ChatList*/}
           </ul>
         </div>
 
 
         {/* Right box */}
-{isChatOpen ? (
-  <div className="lg:col-span-2 lg:block">
-    <div className="w-full">
+        {isChatOpen ? (
+          <div className="lg:col-span-2 lg:block">
+            <div className="w-full">
 
-      <div className="relative flex bg-slate-100 items-center p-3 border-b border-gray-300">
-        <AiOutlineArrowLeft className={`lg:hidden`} onClick={() => setIsChatOpen(false)} />
-        {selectedChat && (
-          <>
-            <img
-              className="object-cover w-10 h-10 rounded-full"
-              src={senderRole === 'users' ? selectedChat?.companyId?.profile : selectedChat?.userId?.profile}
-              alt=""
-            />
-            <span className="block ml-2 font-bold text-gray-600">
-              {senderRole === 'users' ? selectedChat?.companyId?.companyName : selectedChat?.userId?.firstName} {senderRole === 'company' && selectedChat?.userId?.lastName}
-            </span>
-          </>
-        )}
-      </div>
+              <div className="relative flex bg-slate-100 items-center p-3 border-b border-gray-300">
+                <AiOutlineArrowLeft className={`lg:hidden`} onClick={() => setIsChatOpen(false)} />
+                {selectedChat && (
+                  <>
+                    <img
+                      className="object-cover w-10 h-10 rounded-full"
+                      src={senderRole === 'users' ? selectedChat?.companyId?.profile : selectedChat?.userId?.profile}
+                      alt=""
+                    />
+                    <span className="block ml-2 font-bold text-gray-600">
+                      {senderRole === 'users' ? selectedChat?.companyId?.companyName : selectedChat?.userId?.firstName} {senderRole === 'company' && selectedChat?.userId?.lastName}
+                    </span>
+                  </>
+                )}
+              </div>
 
-      {/* Message area */}
-      <div className="relative w-full p-6 overflow-y-auto h-[28rem]">
-        {allMessages.length === 0 && isChatOpen ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="p-6 bg-slate-100 shadow-md shadow-gray-400 rounded-lg">
-              <p className="text-center font-serif text-lg text-gray-700">No messages yet. Start the conversation!</p>
+              {/* Message area */}
+              <div className="relative w-full p-6 overflow-y-auto h-[28rem]">
+                {allMessages.length === 0 && isChatOpen ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="p-6 bg-slate-100 shadow-md shadow-gray-400 rounded-lg">
+                      <p className="text-center font-serif text-lg text-gray-700">No messages yet. Start the conversation!</p>
+                    </div>
+                  </div>
+                ) : (
+                  <ul className="space-y-2">
+                    {allMessages.map((message, index) => (
+                      <li key={index} >
+                        <div className={`${currentPersonId === message.senderId._id ? "flex justify-end" : "flex justify-start"}`} >
+                          <div
+                            className={`relative px-3 py-2 w-fit text-gray-800 rounded-xl shadow border inline-block chat-bubble
+                              ${currentPersonId === message.senderId._id ? "bg-green-300 rounded-br-none" : "bg-green-200 rounded-tl-none"}`}
+                          >
+                            <span className="block break-all">{message.content}</span>
+                            <span className="text-xs flex justify-end">{formatMessageTime(message.createdAt)}</span>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              {/* End Message area */}
+
+              <form onSubmit={sendMessage} className="flex items-center justify-between w-full p-3 border-t border-gray-300">
+                <input
+                  type="text"
+                  placeholder="Message"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  className="block w-full py-2 pl-4 mx-3 bg-gray-100 rounded-full outline-none focus:text-gray-700"
+                  name="message"
+                  required
+                />
+                <button type='submit'>
+                  <svg
+                    className="w-5 h-5 text-gray-500 origin-center transform rotate-90"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                  </svg>
+                </button>
+              </form>
             </div>
           </div>
         ) : (
-          <ul className="space-y-2">
-            {allMessages.map((message, index) => (
-              <li key={index} >
-                <div className={`${currentPersonId === message.senderId._id ? "flex justify-end" : "flex justify-start"}`} >
-                  <div
-                    className={`relative px-3 py-2 w-fit text-gray-800 rounded-xl shadow border inline-block chat-bubble
-                              ${currentPersonId === message.senderId._id ? "bg-green-300 rounded-br-none" : "bg-green-200 rounded-tl-none"}`}
-                  >
-                    <span className="block break-all">{message.content}</span>
-                    <span className="text-xs flex justify-end">{formatMessageTime(message.createdAt)}</span>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <div className="lg:col-span-2 flex items-center justify-center lg:block bg-slate-100 p-6">
+
+            <p className="text-center text-gray-700 text-lg">Select a chat to start the conversation.</p>
+
+          </div>
+          // <div className="flex items-center justify-center h-full">
+          // <div className="lg:col-span-2 lg:block p-6 bg-slate-100 shadow-md shadow-gray-400 rounded-lg">
+          //   <p className="text-center font-serif text-lg text-gray-700">Select a chat to start the conversation.</p>
+          // </div>
+          // </div>
         )}
-      </div>
-      {/* End Message area */}
-
-      <form onSubmit={sendMessage} className="flex items-center justify-between w-full p-3 border-t border-gray-300">
-        <input
-          type="text"
-          placeholder="Message"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          className="block w-full py-2 pl-4 mx-3 bg-gray-100 rounded-full outline-none focus:text-gray-700"
-          name="message"
-          required
-        />
-        <button type='submit'>
-          <svg
-            className="w-5 h-5 text-gray-500 origin-center transform rotate-90"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-          </svg>
-        </button>
-      </form>
-    </div>
-  </div>
-) : (
-  <div className="lg:col-span-2 flex items-center justify-center lg:block bg-slate-100 p-6">
-
-  <p className="text-center text-gray-700 text-lg">Select a chat to start the conversation.</p>
-
-</div>
-  // <div className="flex items-center justify-center h-full">
-  // <div className="lg:col-span-2 lg:block p-6 bg-slate-100 shadow-md shadow-gray-400 rounded-lg">
-  //   <p className="text-center font-serif text-lg text-gray-700">Select a chat to start the conversation.</p>
-  // </div>
-  // </div>
-)}
       </div>
     </div>
   )

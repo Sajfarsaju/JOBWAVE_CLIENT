@@ -4,19 +4,23 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import Axios_Instance from '../../api/userAxios';
 import { FaEye } from 'react-icons/fa'
 import toast from 'react-hot-toast';
+import Spinner from '../../components/Spinner';
 
 
 export default function Jobs() {
 
     const [jobList, setJobList] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
+    const [spinner, setSpinner] = useState(false)
 
     useEffect(() => {
 
         (async function getJobs() {
+            setSpinner(true)
             try {
                 const response = await Axios_Instance.get('/admin/job_list')
                 if (response.status === 200) {
+                    setSpinner(false)
                     setJobList(response.data.jobs);
                 }
             } catch (error) {
@@ -110,6 +114,9 @@ export default function Jobs() {
 
     return (
         <div className='min-h-auto'>
+            {spinner && (
+        <Spinner/>
+      )}
             <section className="relative py-8 sm:py-16 px-4 sm:px-10 lg:px-20 xl:px-32">
                 <div className="w-full mb-6">
                     <div className="relative min-w-0 w-full mb-6 shadow-lg shadow-gray-400 rounded dark:bg-white text-gray-900 overflow-x-auto">

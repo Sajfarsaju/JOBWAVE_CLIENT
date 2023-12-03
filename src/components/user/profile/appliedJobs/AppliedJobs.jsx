@@ -1,20 +1,23 @@
 import  { useEffect, useState } from 'react'
 import Axios_Instance from '../../../../api/userAxios';
 import { Link } from 'react-router-dom';
+import Spinner from '../../../Spinner';
 
 export default function AppliedJobs() {
 
   const [appliedJobs, setAppliedJobs] = useState([]);
+  const [spinner, setSpinner] = useState(false)
 
   useEffect(() => {
 
     (async function getAppliedJobs() {
 
       try {
-
+        setSpinner(true)
         const response = await Axios_Instance.get('/applied_jobs');
 
         if (response.status === 200) {
+          setSpinner(false)
           setAppliedJobs(response.data.appliedJobs);
         }
 
@@ -27,6 +30,9 @@ export default function AppliedJobs() {
 
   return (
     <div className='min-h-auto'>
+      {spinner && (
+        <Spinner/>
+      )}
       {appliedJobs.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-screen ">
           {/* Centered UI */}

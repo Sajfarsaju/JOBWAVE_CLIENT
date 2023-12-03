@@ -19,6 +19,7 @@ import Axios_Instance from '../../../api/userAxios';
 import { useSelector } from 'react-redux'
 import SingleJobView from './SingleJobView';
 import { FaEye } from 'react-icons/fa'
+import Spinner from '../../Spinner';
 
 function JobList() {
   const { token } = useSelector((state) => state.company);
@@ -50,6 +51,7 @@ function JobList() {
   const [CategoryList, setCategoryList] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [subscriptionPlan, setSubscriptionPlan] = useState([])
+  const [proccessing, setProccessing] = useState(false);
 
   const companyId = useSelector((state) => state.company.id)
 
@@ -171,93 +173,176 @@ function JobList() {
     fetchSubscriptionPlan()
   }, [])
 
+  const validateFormData = () => {
 
-  // const validateFormData = () => {
-  //   const nameRegex = /^[A-Za-z\s]+$/;
+    let errors = {};
+    const alphabetRegex = /^[a-zA-Z]+$/;
 
-  //   if (!jobTitle || jobTitle.trim().length === 0 && 
-  //       !jobCategory || jobCategory.trim().length === 0 &&
-  //       !workType || workType.trim().length === 0 &&
-  //       !workplace || workplace.trim().length === 0 &&
-  //       !salaryRange || salaryRange.trim().length === 0 
-  //       ) {
-  //     errors.common = "Please fill all the fields.";
-  //   }
-
-
-
-
-
-  //   if (!jobTitle || jobTitle.trim().length === 0) {
-  //     errors.jobTitle = "CV file is required"
-  //   }
-
-  //   if (!jobCategory || jobCategory.trim().length === 0) {
-  //     errors.jobCategory = "Cover letter is required"
-  //   }
-  //   if (!coverLetterRegex.test(CoverLetter)) {
-  //     errors.CoverLetter = 'Cover letter should only contain alphabets and spaces.';
-  //   }
-  //   if (CoverLetter.length > 1000) {
-  //     errors.CoverLetter = "Cover letter exceeds the maximum length of 1000 characters.";
-  //   }
-  //   if (CoverLetter.length < 20) {
-  //     errors.CoverLetter = "Cover letter should be at least 20 characters long.";
-  //   }
-
-
-  //   return errors;
-
-  // }
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await Axios_Instance.post('/company/jobs', {
-        jobTitle,
-        jobCategory,
-        workType,
-        workplace,
-        salaryRange,
-        deadline,
-        logo,
-        qualifications,
-        jobDescription,
-        companyDescription,
-        jobResponsibilities,
-        benefits,
-        vacancy,
-        companyId,
-      },
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-      if (response.status === 200) {
-
-
-        // setJobList((prevJobList) => [...prevJobList, newJob]);
-        setJobList([...JobList, response.data.newJob]);
-
-        setOpenModal(false);
-        resetForm();
-        toast.success("Saved job details");
-      } else if (error.response.status === 400) {
-        toast.error(error.response.data.errMsg);
-      }
-    } catch (error) {
-      console.log(error);
-      if (error.response.status === 400) {
-        toast.error(error.response.data.errMsg);
-      } else if (error.response.status === 500) {
-        console.log(error.response.data.errMsg)
-      }
+    if (
+      !jobTitle &&
+      !jobCategory &&
+      !workType &&
+      !vacancy &&
+      !workplace &&
+      !salaryRange &&
+      !logo.trim() &&
+      !qualifications.trim() &&
+      !jobDescription.trim() &&
+      !companyDescription.trim() &&
+      !jobResponsibilities.trim() &&
+      !benefits.trim()
+    ) {
+      errors.allFields = 'All fields must be filled';
     }
+
+    // Individual field validations
+    if (!jobTitle) {
+      errors.jobTitle = 'Job title is required';
+    }
+
+    if (!jobCategory) {
+      errors.jobCategory = 'Job category is required';
+    }
+
+    if (!workType) {
+      errors.workType = 'Work type is required';
+    }
+    
+    if (!salaryRange ) {
+      errors.salaryRange = 'Salary range is required';
+    }
+    
+    if (!workplace || workplace.trim().length===0) {
+      errors.workplace = 'Workplace is required';
+    } else if (!alphabetRegex.test(workplace)){
+      errors.workplace = 'Workplace must contain only alphabetic characters';
+    }
+    
+    if (!vacancy) {
+      errors.vacancy = 'Vacancy is required';
+    } else if (isNaN(vacancy) || vacancy <= 0) {
+      errors.vacancy = 'Vacancy must be a positive number';
+    }
+
+    if (!deadline) {
+      errors.deadline = 'Deadline is required';
+    }
+
+    const currentDate = new Date();
+    if (deadline < currentDate) {
+      errors.deadline = 'Deadline must be a future date';
+    }
+    if (!logo) {
+      errors.logo = 'Logo is required';
+    }
+
+    if (!qualifications) {
+      errors.qualifications = 'Qualifications are required';
+    }
+
+    if (!jobDescription) {
+      errors.jobDescription = 'Job description is required';
+    }
+
+    if (!companyDescription) {
+      errors.companyDescription = 'Company description is required';
+    }
+
+    if (!jobResponsibilities) {
+      errors.jobResponsibilities = 'Job responsibilities are required';
+    }
+
+    if (!benefits) {
+      errors.benefits = 'Job benefits are required';
+    }
+
+
+    return errors;
   };
 
 
+  // Handle form submission
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+    const errors = validateFormData();
+
+    if (Object.keys(errors).length === 0) {
+      try {
+        setProccessing(true)
+
+        const response = await Axios_Instance.post('/company/jobs', {
+          jobTitle,
+          jobCategory,
+          workType,
+          workplace,
+          salaryRange,
+          deadline,
+          logo,
+          qualifications,
+          jobDescription,
+          companyDescription,
+          jobResponsibilities,
+          benefits,
+          vacancy,
+          companyId,
+        },
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        if (response.status === 200) {
+          setProccessing(false)
+
+          // setJobList((prevJobList) => [...prevJobList, newJob]);
+          setJobList([...JobList, response.data.newJob]);
+
+          setOpenModal(false);
+          resetForm();
+          toast.success("Saved job details");
+        }
+
+      } catch (error) {
+        console.log(error);
+        setProccessing(false)
+        if (error.response.status === 400 || error.response.status === 500) {
+          setProccessing(false)
+          toast.error(error.response.data.errMsg);
+        }
+      }
+
+    } else if (errors.allFields) {
+      toast.error(errors.allFields);
+    } else if (errors.jobTitle) {
+      toast.error(errors.jobTitle);
+    } else if (errors.jobCategory) {
+      toast.error(errors.jobCategory);
+    } else if (errors.workType) {
+      toast.error(errors.workType);
+    } else if (errors.salaryRange) {
+      toast.error(errors.salaryRange);
+    } else if (errors.workplace) {
+      toast.error(errors.workplace);
+    } else if (errors.vacancy) {
+      toast.error(errors.vacancy);
+    } else if (errors.deadline) {
+      toast.error(errors.deadline);
+    } else if (errors.logo) {
+      toast.error(errors.logo);
+    } else if (errors.qualifications) {
+      toast.error(errors.qualifications);
+    } else if (errors.jobDescription) {
+      toast.error(errors.jobDescription);
+    } else if (errors.companyDescription) {
+      toast.error(errors.companyDescription);
+    } else if (errors.jobResponsibilities) {
+      toast.error(errors.jobResponsibilities);
+    } else if (errors.benefits) {
+      toast.error(errors.benefits);
+    }
+  };
 
   const [workTypeList, setWorkTypeList] = useState([
     "Full-time",
@@ -305,16 +390,11 @@ function JobList() {
 
 
   return (
-    <> 
-    {spinnner && (
-      <div className='space-x-4 flex items-center justify-center min-h-screen' >
-        <span className='sr-only'>Loading...</span>
-        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.3s' }}></div>
-        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.15s' }}></div>
-        <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce'></div>
-      </div>
-    )}
-    
+    <>
+      {spinnner && (
+        <Spinner/>
+      )}
+
       <SingleJobView job={selectedJob} isOpenView={isOpenView} setIsOpenView={setIsOpenView} />
       <div className="min-h-screen mt-28 md:min-h-fit sm:min-h-fit">
         <div className="pb-12 overflow-x-auto bg-white  m-10">
@@ -938,9 +1018,11 @@ function JobList() {
                       <div className="mx-12">
                         <button
                           type="submit"
+                          disabled={proccessing}
                           className="mt-6 group relative w-full flex justify-center py-2 px-4 border border-transparent text-md font-medium rounded-md text-white bg-blue-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-800 transition duration-150 ease-in-out"
                         >
-                          Post Job
+                          {proccessing ? 'Posting...' : 'Post Job'}
+
                         </button>
                       </div>
                     </form>

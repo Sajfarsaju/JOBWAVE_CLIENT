@@ -5,6 +5,7 @@ const initialState = {
     token: null,
     firstName: null,
     id: null,
+    isActive: true,
 };
 
 const userAuthSlice = createSlice({
@@ -23,9 +24,14 @@ const userAuthSlice = createSlice({
             state.token = null;
             state.id = null;
         },
+        updateUserStatus: (state, action) => {
+            console.log(state.isActive)
+            state.isActive = action.payload.isActive;
+        },
+
     }
 });
 
-export const { userLogin, userLogout } = userAuthSlice.actions;
+export const { userLogin, userLogout , updateUserStatus} = userAuthSlice.actions;
 
 export default userAuthSlice.reducer;

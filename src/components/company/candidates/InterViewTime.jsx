@@ -7,6 +7,9 @@ import Footer from "../home/Footer"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { Button, Checkbox, IconButton, Tooltip } from "@mui/material"
+import Spinner from "../../Spinner"
+
+
 export default function InterViewTime() {
 
   const companyId = useSelector((state) => state.company.id);
@@ -100,12 +103,7 @@ export default function InterViewTime() {
       /> } */}
 
         {spinnner ? (
-          <div className='space-x-4 flex items-center justify-center min-h-screen' >
-            <span className='sr-only'>Loading...</span>
-            <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.3s' }}></div>
-            <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce' style={{ animationDelay: '-0.15s' }}></div>
-            <div className='h-8 w-8 border-t-4 border-b-4 border-t-green-500 border-b-green-700 rounded-full animate-bounce'></div>
-          </div>
+         <Spinner/>
         ) : (
           <div className="h-auto flex flex-col items-center justify-center mt-32">
 
@@ -136,10 +134,10 @@ export default function InterViewTime() {
 
               {/* Only mobile screens */}
               <div className="sm:hidden w-full  flex items-center">
-                <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2 mb-auto border-b-2 border-emerald-500">
+                <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2 mb-auto">
                   <Link to={'/company/candidates'}>Pending</Link>
                 </div>
-                <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2">
+                <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2 border-b-2 border-emerald-500">
                   <Link to={'/company/candidates/interviewTimes'}>Interview time</Link>
                 </div>
                 <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2">

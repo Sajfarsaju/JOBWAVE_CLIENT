@@ -248,7 +248,7 @@ function Register() {
         {/* <button className='btn mt-2 bg-blue-500 w-24' onClick={() => setOpenModal(true)}>Open</button>
 
 {openModal && ( */}
-      <div className="bg-gradient-to-tr from-[#e2e8f0] to-[#94a3b8] opacity-100 mx-auto sm:w-full max-w-2xl bg-slate-300 rounded-lg shadow-2xl shadow-stone-500 overflow-hidden">
+      <div className="bg-gradient-to-tr from-[#e2e8f0] to-[#94a3b8] opacity-100 mx-auto sm:w-full max-w-2xl bg-slate-300 rounded-lg shadow-sm shadow-slate-400 overflow-hidden">
         {/* modal close btn */}
        {/* <div className="flex justify-end p-2">
                   <button
