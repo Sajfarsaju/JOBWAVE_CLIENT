@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Axios_Instance from "../../../api/userAxios"
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { Link, useLocation } from "react-router-dom"
+import { Link } from "react-router-dom"
 import Navbar from "../../company/home/Navbar"
 import Footer from "../home/Footer"
 import axios from "axios"
@@ -13,7 +13,6 @@ export default function HiredCandidates() {
 
   const companyId = useSelector((state) => state.company.id);
 
-  const { pathname } = useLocation();
   const [spinnner, setspinnner] = useState(true);
   const [hiredCandidate, setHiredCandidate] = useState([])
   const [reload, setReload] = useState(false)
@@ -40,9 +39,9 @@ export default function HiredCandidates() {
       <Navbar />
 
       {spinnner ? (
-        
-        <Spinner/>
-     
+
+        <Spinner />
+
       ) : (
 
         <div className="h-auto flex flex-col items-center justify-center mt-32">
@@ -116,28 +115,7 @@ export default function HiredCandidates() {
                         <p className="font-bold">Status: <span>{candidate?.status}</span></p>
                       </div>
                     </div>
-                    {/* <div className="mt-4">
-                            <p className="font-bold break-all">Interview Time: <span>{formattedDateTime(candidate?.interViewTime)}</span></p>
-                          </div> */}
-                    {/* <div className="mt-4 flex items-center">
-                            <Tooltip title="Mark as interview completed">
-                              <p className="text-md xl:text-lg lg:text-lg text-green-600">Interview is over?</p>
-                            </Tooltip>
-                            <Tooltip title="Mark as interview completed">
-                              <IconButton onClick={() => setshowHireButton(!showHireButton)}>
-                                <Checkbox />
-                              </IconButton>
-                            </Tooltip>
-                            {showHireButton ? (
-                              <Button
-                                style={{ backgroundColor: 'rgb(132, 204, 22)' }} 
-                                variant="contained"
-                                onClick={() => hireCandidate(candidate._id)}
-                              >
-                                Hire
-                              </Button>
-                            ):(null)}
-                          </div> */}
+
                   </div>
                 </div>
               ))

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import Axios_Instance from "../../../api/userAxios"
-import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Link, useLocation } from "react-router-dom"
 import Navbar from "../../company/home/Navbar"
 import Footer from "../home/Footer"
+import { toast } from 'react-hot-toast';
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { Button, Checkbox, IconButton, Tooltip } from "@mui/material"
@@ -16,25 +16,10 @@ export default function InterViewTime() {
 
   const { pathname } = useLocation();
   const [spinnner, setspinnner] = useState(true);
-  const [showHireButton, setshowHireButton] = useState(false);
   const [shortlistDetail, setShortlistDetail] = useState([])
   const [reload, setReload] = useState(false)
-  // const [applicationId, setApplicationId] = useState('')
-  // const [isOpenShortlistModal, setIsOpenShortlistModal] = useState(false);
-  // const [candidates, setCandidates] = useState([]);
-
-  // useEffect(() => {
-  //   (async function fetchCandidates() {
-  //     try {
-  //       await Axios_Instance.get('/company/candidates').then((res) => {
-  //         setspinnner(false)
-  //         setCandidates(res.data.candidates)
-  //       })
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   })()
-  // }, [reload]);
+  const [showHireButtonArray, setShowHireButtonArray] = useState([]);
+  const [proccessing, setProccessing] = useState(false);
 
   useEffect(() => {
     (async function fetchShortlistDetails() {
@@ -42,6 +27,7 @@ export default function InterViewTime() {
         await Axios_Instance.get(`/company/shortlist?companyId=${companyId}`).then((res) => {
           setspinnner(false)
           setShortlistDetail(res.data.shortlistedDetail)
+          setShowHireButtonArray(res.data.shortlistedDetail.map(() => false));
         })
 
 
@@ -73,13 +59,23 @@ export default function InterViewTime() {
     return `${formattedDate}`;
   };
 
+  const toggleHireButton = (index) => {
+    setShowHireButtonArray(prevArray => {
+      const updatedArray = [...prevArray];
+      updatedArray[index] = !updatedArray[index];
+      return updatedArray;
+    });
+  };
+
   const hireCandidate = async (shortlistedId, applicationId) => {
 
     try {
+      setProccessing(true)
       await Axios_Instance.post(`/company/hired`, { shortlistedId, applicationId, newStatus: 'Hired' }).then((res) => {
 
         if (res.status === 200) {
-
+          toast.success('Hired successfully')
+          setProccessing(false)
           setReload(!reload)
         }
       })
@@ -87,6 +83,7 @@ export default function InterViewTime() {
 
     } catch (error) {
       console.log(error)
+      setProccessing(false)
     }
   }
 
@@ -94,16 +91,8 @@ export default function InterViewTime() {
     <>
       <Navbar />
       <>
-        {/* {isOpenShortlistModal && 
-     <ShortListCandidate 
-          isOpenShortlistModal={isOpenShortlistModal} 
-          setIsOpenShortlistModal={setIsOpenShortlistModal} 
-          userId={userId}
-          applicationId={applicationId}
-      /> } */}
-
         {spinnner ? (
-         <Spinner/>
+          <Spinner />
         ) : (
           <div className="h-auto flex flex-col items-center justify-center mt-32">
 
@@ -192,19 +181,19 @@ export default function InterViewTime() {
                         <p className="text-md xl:text-lg lg:text-lg text-green-600">Interview is over?</p>
                       </Tooltip>
                       <Tooltip title="Mark as interview completed">
-                        <IconButton onClick={() => setshowHireButton(!showHireButton)}>
+                        <IconButton onClick={() => toggleHireButton(index)}>
                           <Checkbox />
                         </IconButton>
                       </Tooltip>
-                      {showHireButton ? (
+                      {showHireButtonArray[index] && (
                         <Button
                           style={{ backgroundColor: '#00ff00' }}
                           variant="contained"
-                          onClick={() => hireCandidate(ShortListCandidate._id, ShortListCandidate.applicationId)}
+                          onClick={() => hireCandidate(ShortListCandidate._id, ShortListCandidate.applicationId, index)}
                         >
-                          Hire
+                          {proccessing ? 'Hiring...' : 'Hire'}
                         </Button>
-                      ) : (null)}
+                      )}
                     </div>
                   </div>
                 </div>

@@ -148,7 +148,7 @@ export default function Profile() {
         <Spinner />
       )}
       {/* Spinner */}
-      <div className="min-h-fit bg-white flex flex-col items-center relative">
+      <div className="lg:h-auto md:h-auto xl:h-auto sm:min-h-screen bg-white flex flex-col items-center relative">
         <div className="min-w-full mt-24  lg:h-60 xl:h-60 md:h-40 h-40 relative">
           <img
             src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dGVjaHxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
