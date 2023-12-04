@@ -101,12 +101,7 @@ function JobSection({ searchQuery }) {
 
     const fetchUserSubscription = async () => {
             try{
-            const response = await axios.get(`http://localhost:4005/plan?userId=${userId}`,{
-            headers: {
-              'Authorization': `Bearer ${token}`
-              // Add other headers if needed
-            }
-          });
+            const response = await Axios_Instance.get(`/plan?userId=${userId}`);
             if (response.status === 200) {
                 setUserData(response.data.user);
             }
@@ -132,19 +127,14 @@ function JobSection({ searchQuery }) {
     const [jobTotalLength, setJobTotalLength] = useState();
     async function fetchJobs() {
         try {
-            const res = await axios.get(`http://localhost:4005/jobs`, {
+            const res = await Axios_Instance.get(`/jobs`, {
                 params: {
                     userId,
                     search: searchQuery,                
                     limit,
                     filters: selectedFilters.join(','),
                     worktype: selectedWorkTypes.join(',')
-                },
-                headers: {
-                  'Authorization': `Bearer ${token}`
-                  // Add other headers if needed
-                }
-              });
+                }});
             setSkelton(false)
             setJobs(res.data.Jobs);
             setUniqueCategories(res.data.uniqueCategories)

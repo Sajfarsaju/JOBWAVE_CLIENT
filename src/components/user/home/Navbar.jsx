@@ -42,12 +42,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield}) {
 
   async function getUser() {
     try {
-      const res = await axios.get('http://localhost:4005/profile',{
-        headers: {
-          'Authorization': `Bearer ${token}`
-          // Add other headers if needed
-        }
-      });
+      const res = await Axios_Instance.get('/profile');
       if(res.status === 200 ){
 
         setData(res?.data?.user)

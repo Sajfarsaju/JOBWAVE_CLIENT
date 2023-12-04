@@ -21,12 +21,7 @@ export default function AppliedJobs() {
 
       try {
         setSpinner(true)
-        const response = await axios.get('http://localhost:4005/applied_jobs',{
-          headers: {
-            'Authorization': `Bearer ${token}`
-            // Add other headers if needed
-          }
-        });
+        const response = await Axios_Instance.get('/applied_jobs');
 
         if (response.status === 200) {
           setSpinner(false)

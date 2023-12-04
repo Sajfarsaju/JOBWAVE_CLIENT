@@ -21,12 +21,7 @@ function userpro() {
 
   useEffect(() => {
     async function getUser() {
-      const res = await axios.get('http://localhost:4005/profile',{
-        headers: {
-          'Authorization': `Bearer ${token}`
-          // Add other headers if needed
-        }
-      });
+      const res = await Axios_Instance.get('/profile');
       setUserData(res.data.user);
       // setSkills(res.data.skills)
     }

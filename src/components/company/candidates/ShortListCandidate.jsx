@@ -50,12 +50,7 @@ export default function ShortListCandidate({ isOpenShortlistModal, setIsOpenShor
       try {
         setProccessing(true)
 
-        const res = await Axios_Instance.post('/company/shortlist', { selectedOption, interviewTime, userId, companyId, applicationId, jobId, jobTitle },
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+        const res = await Axios_Instance.post('/company/shortlist', { selectedOption, interviewTime, userId, companyId, applicationId, jobId, jobTitle });
         if (res.data.success) {
           setProccessing(false)
           toast.success('Shortlisted and Mail sented successfully')

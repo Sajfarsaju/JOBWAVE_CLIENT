@@ -12,13 +12,7 @@ export default function PlanModal({ setOpenPlanModal, openPlanModal }) {
   const handlePayment = async (planAmt, planType) => {
     console.log("planAmt:", planAmt, "planType:", planType)
     try {
-      const res = await Axios_Instance.post('/user_plan', { planAmt, planType },
-      {
-          headers: {
-              'Authorization': `Bearer ${token}`
-          }
-      }
-  );
+      const res = await Axios_Instance.post('/user_plan', { planAmt, planType });
         window.location.href = res.data.url ? res.data.url : null;
       
 
