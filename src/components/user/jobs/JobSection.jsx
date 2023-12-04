@@ -101,15 +101,22 @@ function JobSection({ searchQuery }) {
 
     const fetchUserSubscription = async () => {
             try{
-            const response = await Axios_Instance.get(`/plan?userId=${userId}`);
+            const response = await axios.get(`http://localhost:4005/plan?userId=${userId}`,{
+            headers: {
+              'Authorization': `Bearer ${token}`
+              // Add other headers if needed
+            }
+          });
             if (response.status === 200) {
                 setUserData(response.data.user);
             }
 
     }catch(error){
         console.log(error);
-        if (error.response?.status === 401) {
+        
+        if (error.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
             dispatch(userLogout());
+            toast.error(error?.response?.data?.errMsg);
         }
     }
 }
@@ -125,15 +132,19 @@ function JobSection({ searchQuery }) {
     const [jobTotalLength, setJobTotalLength] = useState();
     async function fetchJobs() {
         try {
-            const res = await Axios_Instance.get(`/jobs`, {
+            const res = await axios.get(`http://localhost:4005/jobs`, {
                 params: {
                     userId,
-                    search: searchQuery,
+                    search: searchQuery,                
                     limit,
                     filters: selectedFilters.join(','),
                     worktype: selectedWorkTypes.join(',')
+                },
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                  // Add other headers if needed
                 }
-            });
+              });
             setSkelton(false)
             setJobs(res.data.Jobs);
             setUniqueCategories(res.data.uniqueCategories)
@@ -142,9 +153,10 @@ function JobSection({ searchQuery }) {
 
         } catch (error) {
             console.log(error);
-            if (error.response?.status === 401) {
+            
+            if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
                 dispatch(userLogout());
-                toast.error(error?.response?.data?.errMsg);
+                toast.error(error?.res?.data?.errMsg);
             }
 
         }

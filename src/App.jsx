@@ -73,7 +73,7 @@ function App() {
         <Route path='/profile' element={userAuth ? <ProfilePage/> : <Navigate to='/login'/>}></Route>
         <Route path='/profile/applied_jobs' element={userAuth ? <AppliedJobsPage/> : <Navigate to='/login'/>}></Route>
         <Route path='/login_with_phone' element={userAuth ? <Navigate to='/'/> : <PhoneLogin/>}></Route>
-        <Route path='/support' element={userAuth ? <Userpro/> : <Navigate to='/login'/>}></Route>
+        {/* <Route path='/support' element={userAuth ? <Userpro/> : <Navigate to='/login'/>}></Route> */}
         <Route path='/chats/:companyId' element={userAuth ? <Chatpage/> : <Navigate to='/login'/>}></Route>
         {/* Payment Status Company */}
         <Route path='/payment_successfully' element={<PaymentsuccessUser/>} />

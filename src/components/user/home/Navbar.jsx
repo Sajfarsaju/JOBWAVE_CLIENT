@@ -9,6 +9,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Logo from '../../../../public/JobWave2-fotor-bg-remover-20230817153930.png'
 import toast from 'react-hot-toast'
+import axios from 'axios';
 
 
 
@@ -38,21 +39,29 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield}) {
     return classes.filter(Boolean).join(' ');
   }
   const [data, setData] = useState([])
-  useEffect(() => {
 
-    async function getUser() {
-      try {
-        const res = await Axios_Instance.get('/profile')
-        setData(res?.data?.user)
-
-      } catch (error) {
-        console.log(error);
-        if (error.res?.status === 401) {
-          dispatch(userLogout());
-          toast.error(error?.response?.data?.errMsg);
+  async function getUser() {
+    try {
+      const res = await axios.get('http://localhost:4005/profile',{
+        headers: {
+          'Authorization': `Bearer ${token}`
+          // Add other headers if needed
         }
+      });
+      if(res.status === 200 ){
+
+        setData(res?.data?.user)
+      }
+
+    } catch (error) {
+      console.log(error);
+      if (error.res?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
+        dispatch(userLogout());
+        toast.error(error?.response?.data?.errMsg);
       }
     }
+  }
+  useEffect(() => {
 
     getUser()
   }, [reRender])

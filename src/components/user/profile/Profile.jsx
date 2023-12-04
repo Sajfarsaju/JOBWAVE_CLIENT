@@ -4,11 +4,14 @@ import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import Spinner from '../../Spinner';
 import { userLogout } from '../../../store/slice/userSlice';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux'
+import axios from 'axios';
 
 function Profile( {setReRender , reRender} ) {
 
   const dispatch = useDispatch()
+
+  const { token } = useSelector((state) => state.user);
 
   const [userData, setUserData] = useState([]);
   const [reloadProfile, setReloadProfile] = useState(false);
@@ -21,15 +24,24 @@ function Profile( {setReRender , reRender} ) {
     async function getUser() {
       try{
 
-        const res = await Axios_Instance.get('/profile')
+        const res = await axios.get('http://localhost:4005/profile',{
+          headers: {
+            'Authorization': `Bearer ${token}`
+            // Add other headers if needed
+          }
+        });
+        if(res.status === 200){
+
           setspinnner(false)
           setUserData(res.data.user)
+        }
       }catch(error){
         console.log(error)
-        if (error.res?.status === 401) {
-          dispatch(userLogout());
-          toast.error(error?.res?.data?.errMsg);
-        }
+        console.log('status;',error.res)
+            if (error.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+                dispatch(userLogout());
+                toast.error(error?.res?.data?.errMsg);
+            }
       }
     }
 
@@ -236,7 +248,7 @@ function Profile( {setReRender , reRender} ) {
       <Spinner/>
     )}
     {/* Spinner */}
-    <div className='h-auto mt-12'>
+    <div className='lg:h-auto md:h-auto xl:h-auto sm:h-screen mt-12'>
       <div className=" max-w-xl mx-auto mt-4">
         {/* Profile Card */}
         {/* <div className="bg-white shadow-2xl rounded-lg flex overflow-hidden mb-4">

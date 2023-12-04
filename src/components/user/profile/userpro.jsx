@@ -3,14 +3,10 @@ import Navbar from '../home/Navbar';
 import Footer from '../../company/home/Footer';
 import { useSelector } from 'react-redux';
 import Axios_Instance from '../../../api/userAxios';
-// import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import MoreVertIcon from '@mui/icons-material/MoreVertOutlined';
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast';
-import { MdDeleteForever } from 'react-icons/md'
 import { FiDelete } from 'react-icons/fi'
+import axios from 'axios';
 
 
 function userpro() {
@@ -25,7 +21,12 @@ function userpro() {
 
   useEffect(() => {
     async function getUser() {
-      const res = await Axios_Instance.get('/profile')
+      const res = await axios.get('http://localhost:4005/profile',{
+        headers: {
+          'Authorization': `Bearer ${token}`
+          // Add other headers if needed
+        }
+      });
       setUserData(res.data.user);
       // setSkills(res.data.skills)
     }

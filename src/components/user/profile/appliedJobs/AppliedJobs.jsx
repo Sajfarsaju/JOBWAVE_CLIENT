@@ -2,9 +2,16 @@ import  { useEffect, useState } from 'react'
 import Axios_Instance from '../../../../api/userAxios';
 import { Link } from 'react-router-dom';
 import Spinner from '../../../Spinner';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { userLogout } from '../../../../store/slice/userSlice';
+import toast from 'react-hot-toast';
 
 export default function AppliedJobs() {
 
+  const { token } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch()
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [spinner, setSpinner] = useState(false)
 
@@ -14,7 +21,12 @@ export default function AppliedJobs() {
 
       try {
         setSpinner(true)
-        const response = await Axios_Instance.get('/applied_jobs');
+        const response = await axios.get('http://localhost:4005/applied_jobs',{
+          headers: {
+            'Authorization': `Bearer ${token}`
+            // Add other headers if needed
+          }
+        });
 
         if (response.status === 200) {
           setSpinner(false)
@@ -23,7 +35,11 @@ export default function AppliedJobs() {
 
 
       } catch (error) {
-        console.log(error)
+        console.log(error);
+        if (error.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+          dispatch(userLogout());
+          toast.error(error?.res?.data?.errMsg);
+      }
       }
     })()
   }, [])
