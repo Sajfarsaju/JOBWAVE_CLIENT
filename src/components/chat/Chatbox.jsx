@@ -1,14 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
-import { useSelector } from "react-redux";
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineArrowLeft } from 'react-icons/ai'
 import Axios_Instance from '../../api/userAxios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { socketConnection } from '../../context/UserAuthContext';
-
+import { userLogout } from '../../store/slice/userSlice';
+import toast from 'react-hot-toast';
 
 export default function Chatbox({ senderRole, reciverRole }) {
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { companyId } = useParams();
 
   const [inboxChatList, setInboxChatList] = useState([]);
@@ -58,6 +60,11 @@ export default function Chatbox({ senderRole, reciverRole }) {
         }
       } catch (error) {
         console.log(error);
+
+        if (error?.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
+          dispatch(userLogout());
+          toast.error(error?.response?.data?.errMsg);
+      }
       }
     })();
   }, [senderRole]);
@@ -150,25 +157,37 @@ export default function Chatbox({ senderRole, reciverRole }) {
     setSelectedChat(selectedChat);
     setIsChatOpen(true);
 
-    if (senderRole === 'users') {
-      navigate(`/chats/${companyId}`)
-      Axios_Instance.get(`/openChat?chatId=${chatId}`).then((res) => {
+    try{
 
-        if (res.status === 200) {
-          setSpinner(false)
-          setAllMessages(res.data.allMessages);
-        }
-      })
-    } else {
-      // navigate(`/chats/${userId}`)
-      Axios_Instance.get(`/company/openChat?chatId=${chatId}`).then((res) => {
+      if (senderRole === 'users') {
+        navigate(`/chats/${companyId}`)
+        Axios_Instance.get(`/openChat?chatId=${chatId}`).then((res) => {
+  
+          if (res.status === 200) {
+            setSpinner(false)
+            setAllMessages(res.data.allMessages);
+          }
+        })
+      } else {
+        // navigate(`/chats/${userId}`)
+        Axios_Instance.get(`/company/openChat?chatId=${chatId}`).then((res) => {
+  
+          if (res.status === 200) {
+            setSpinner(false)
+            setAllMessages(res.data.allMessages);
+          }
+        })
+      }
 
-        if (res.status === 200) {
-          setSpinner(false)
-          setAllMessages(res.data.allMessages);
-        }
-      })
+    }catch(error){
+      console.log(error);
+
+      if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+        dispatch(userLogout());
+        toast.error(error?.res?.data?.errMsg);
     }
+    }
+
   }
 
 

@@ -4,16 +4,14 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { FunnelIcon, MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
 import Axios_Instance from '../../../api/userAxios';
 import { Link, useNavigate } from 'react-router-dom'
-import NoSearchResultImg from '../../../assets/search_no_result.png'
 import PlanModal from '../subscriptionPlan/PlanModal'
 import Skelton from './Skelton'
-import axios from 'axios';
 import { useSelector } from 'react-redux'
-import { MdUnfoldMore } from "react-icons/md";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux'
 import { userLogout } from '../../../store/slice/userSlice'
+import NoResultGif from '../../../assets/097297f8e21d501ba45d7ce437ed77bd.gif'
 
 
 function JobSection({ searchQuery }) {
@@ -21,6 +19,7 @@ function JobSection({ searchQuery }) {
     const navigate = useNavigate()
 
     const dispatch = useDispatch()
+
 
     const userId = useSelector((state) => state.user.id)
     const { token } = useSelector((state) => state.user)
@@ -49,11 +48,7 @@ function JobSection({ searchQuery }) {
     }, [Jobs, searchQuery]);
     // End
 
-    // Filter
-    // const uniqueCategories = [...new Set(Jobs?.map((job) => job?.jobCategory))];
-    // const uniqueWorkTypes = [...new Set(Jobs?.map((job) => job?.workType))];
-
-
+    
     const [selectedWorkTypes, setSelectedWorkTypes] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [filteredJobs, setFilteredJobs] = useState(SearchJobs);
@@ -100,24 +95,24 @@ function JobSection({ searchQuery }) {
 
 
     const fetchUserSubscription = async () => {
-            try{
+        try {
             const response = await Axios_Instance.get(`/plan?userId=${userId}`);
             if (response.status === 200) {
                 setUserData(response.data.user);
             }
 
-    }catch(error){
-        console.log(error);
-        
-        if (error.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
-            dispatch(userLogout());
-            toast.error(error?.response?.data?.errMsg);
+        } catch (error) {
+            console.log(error);
+
+            if (error.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
+                dispatch(userLogout());
+                toast.error(error?.response?.data?.errMsg);
+            }
         }
     }
-}
     useEffect(() => {
 
-    fetchUserSubscription()
+        fetchUserSubscription()
     }, [])
 
     //? FETCH JOBS
@@ -130,11 +125,12 @@ function JobSection({ searchQuery }) {
             const res = await Axios_Instance.get(`/jobs`, {
                 params: {
                     userId,
-                    search: searchQuery,                
+                    search: searchQuery,
                     limit,
                     filters: selectedFilters.join(','),
                     worktype: selectedWorkTypes.join(',')
-                }});
+                }
+            });
             setSkelton(false)
             setJobs(res.data.Jobs);
             setUniqueCategories(res.data.uniqueCategories)
@@ -143,7 +139,7 @@ function JobSection({ searchQuery }) {
 
         } catch (error) {
             console.log(error);
-            
+
             if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
                 dispatch(userLogout());
                 toast.error(error?.res?.data?.errMsg);
@@ -155,18 +151,13 @@ function JobSection({ searchQuery }) {
         fetchJobs()
     }, [token, searchQuery, limit, selectedFilters, selectedWorkTypes])
 
-    //     const currentDate = new Date();
-    //     const filteredJobsForDateChecking = Jobs.filter((job) => {
-    //        const jobDeadline = new Date(job.deadline);
-    //        return currentDate <= jobDeadline;
-    //    });
-    // const reversedJobs = Jobs.slice().reverse();
     //? FETCH JOBS
 
 
     const getTimeDifference = (postedDate) => {
         const currentDate = new Date();
         const postedTime = new Date(postedDate);
+
         const timeDifference = currentDate - postedTime;
 
         const minutes = Math.floor(timeDifference / (1000 * 60));
@@ -183,8 +174,10 @@ function JobSection({ searchQuery }) {
             return `${days} day${days > 1 ? 's' : ''} ago`;
         } else if (hours > 0) {
             return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-        } else {
+        } else if (minutes > 0) {
             return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        } else {
+            return `few seconds ago`
         }
     };
 
@@ -491,15 +484,15 @@ function JobSection({ searchQuery }) {
                                         </div>
                                     )}
                                     {/*  */}
-                                    <div className="flex flex-wrap">
+                                    <div className={`flex flex-wrap`}>
                                         {Jobs.length === 0 ? (
-                                            <div className="w-auto text-center">
-                                                <p className="text-lg font-semibold text-gray-600">No search results found.</p>
-                                                <div className='mt-1 flex justify-center items-center w-full h-auto'>
+                                            <div className="mx-auto w-auto text-center">
+                                                <p className="text-lg font-semibold text-gray-600">No results found.</p>
+                                                <div className='mt-1 flex justify-center items-center w-90 h-80'>
                                                     <img
-                                                        src={NoSearchResultImg}
+                                                        src={NoResultGif}
                                                         alt="No Result"
-                                                        className="mx-auto max-w-60 max-h-60 h-auto"
+                                                        className="mx-auto w-full h-full "
                                                     />
                                                 </div>
                                             </div>

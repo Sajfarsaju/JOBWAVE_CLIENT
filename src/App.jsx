@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux'
 import CompanyRegisterPage from './pages/company/RegisterPage'
 import CompanyHomepage from './pages/company/HomePage'
 import AdminLoginPage from './pages/admin/LoginPage'
-// import WelcomeModalHome from './components/user/WelcomeModalHome'
 import DashboardPage from './pages/admin/DashboardPage'
 import CategoryPage from './pages/admin/categoryPage'
 import Login from './components/Login'
@@ -18,7 +17,6 @@ import Userpro from './components/user/profile/userpro'
 import NotFoundPage from './pages/404Page'
 import UsersPage from './pages/admin/usersPage'
 import PhoneLogin from './components/PhoneLogin'
-// import VerifyEmail from './components/emailVerify/verifyEmail'
 import ForgotPassword from './components/forgot-password/Forgot-password'
 import PaymentSuccess from './components/company/paymentStatus/paymentSuccess'
 import PaymentFailure from './components/company/paymentStatus/paymentFailure'
@@ -55,10 +53,6 @@ function App() {
         <Route path="*" element={<NotFoundPage />} />
         {/* 404 Page */}
 
-        {/* Forgot-password */}
-        {/* <Route path='/:id/verify/:token' element={<VerifyEmail/>} /> */}
-        {/* Forgot-password */}
-
         {/* Forgot Pass Route*/}
         <Route path='/forgot_password' element={<ForgotPassword/>} />
         {/* Email Verify Route */}
@@ -72,8 +66,8 @@ function App() {
         <Route path='/jobs/jobview/:jobId' element={userAuth ? <JobSinglePage/> : <Navigate to='/login'/>}></Route>
         <Route path='/profile' element={userAuth ? <ProfilePage/> : <Navigate to='/login'/>}></Route>
         <Route path='/profile/applied_jobs' element={userAuth ? <AppliedJobsPage/> : <Navigate to='/login'/>}></Route>
-        <Route path='/login_with_phone' element={userAuth ? <Navigate to='/'/> : <PhoneLogin/>}></Route>
-        {/* <Route path='/support' element={userAuth ? <Userpro/> : <Navigate to='/login'/>}></Route> */}
+        <Route path='/login_with_otp' element={userAuth ? <Navigate to='/'/> : <PhoneLogin/>}></Route>
+        <Route path='/support' element={userAuth ? <Userpro/> : <Navigate to='/login'/>}></Route>
         <Route path='/chats/:companyId' element={userAuth ? <Chatpage/> : <Navigate to='/login'/>}></Route>
         {/* Payment Status Company */}
         <Route path='/payment_successfully' element={<PaymentsuccessUser/>} />

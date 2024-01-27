@@ -1,15 +1,9 @@
 import { useEffect, useState } from 'react'
 import Axios_Instance from '../../api/userAxios'
-import { useDispatch } from 'react-redux'
 // import { userLogout} from '../../store/slice/userSlice'
 import toast from 'react-hot-toast'
 import Spinner from '../../components/Spinner';
 function UsersList() {
-
-  const dispatch = useDispatch()
-
-  // const {blockedUserIds} = useSelector((state) => state.user);
-  // console.log('user:', blockedUserIds)
 
   const [usersList, setUsersList] = useState([])
   const [spinner, setSpinner] = useState(false)

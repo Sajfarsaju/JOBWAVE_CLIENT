@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Axios_Instance from '../../../api/userAxios';
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast';
-import axios from 'axios';
+import { userLogout } from '../../../store/slice/userSlice';
 
 
 
@@ -12,6 +12,7 @@ function SingleJob() {
   const [isModalOpen, setModalOpen] = useState(false);
   const { jobId } = useParams();
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const userId = useSelector((state) => state.user.id)
   const [singleJob, setSingleJob] = useState({})
   const [CoverLetter, setCoverLetter] = useState('')
@@ -113,6 +114,12 @@ function SingleJob() {
 
       } catch (error) {
         setProccessing(false)
+
+        if (error?.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
+          dispatch(userLogout());
+          toast.error(error?.response?.data?.errMsg);
+        }
+
         if (error.response.status === 400) {
           return toast.error(error?.response?.data?.errMsg)
         } else {
@@ -135,6 +142,10 @@ function SingleJob() {
       const response = await Axios_Instance.get(`/jobview/${jobId}`);
       setSingleJob(response.data.singleJob);
     } catch (error) {
+      if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+        dispatch(userLogout());
+        toast.error(error?.res?.data?.errMsg);
+      }
       console.log(error.response.data.errMsg);
     }
 

@@ -1,16 +1,11 @@
 import { useState } from 'react'
-import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { Link, useNavigate } from 'react-router-dom';
-import { useUserAuth } from '../context/UserAuthContext';
 import { toast } from 'react-hot-toast';
 import Axios_Instance from '../api/userAxios'
 import { useDispatch } from 'react-redux'
 import { userLogin } from '../store/slice/userSlice';
 import { ResendOTP } from "otp-input-react";
-import { RecaptchaVerifier } from "firebase/auth";
-import { signInWithPhoneNumber } from "firebase/auth";
-import { auth } from "../api/firebase";
 import TextField from '@mui/material/TextField';
 
 
@@ -20,243 +15,178 @@ function PhoneLogin() {
   const dispatch = useDispatch();
 
   const [proccessing, setProccessing] = useState(false)
-  const [number, setNumber] = useState('');
-  console.log('number;', number)
-  const [otp, setOtp] = useState('');
+  const [email, setEmail] = useState('')
+  const [userOtp, setUserOtp] = useState('')
+  const [otpId, setOtpId] = useState('')
   const [isOpenForm, setIsOpenForm] = useState(true);
   const [isOpenOtpForm, setIsOpenOtpForm] = useState(false)
-  const [confirmObj, setConfirmObj] = useState('');
-  const [isComponentMounted, setComponentMounted] = useState(false);
-
-  const { setUpRecaptcha } = useUserAuth();
 
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const [token, setToken] = useState('');
   const [id, setId] = useState('');
   var isActive
-  console.log('otp;', otp)
 
-  const handleChangeOTP = (e) => {
-    const newValue = e.target.value;
 
-    if (e.nativeEvent.inputType === 'deleteContentBackward') {
-
-      setOtp((prevOtp) => prevOtp.slice(0, -1));
-
-    } else {
-
-      if (newValue.length <= 6) {
-        setOtp((prevOtp) => {
-          const newOtp = prevOtp + newValue;
-
-          return newOtp.slice(0, 6);
-        });
-      }
-    }
-    const currentIndex = otp.length;
-    if (currentIndex < 5 && newValue !== '') {
-      document.getElementById(`otp-input-${currentIndex + 1}`).focus();
-    }
-  };
-
-  function onCaptchVerify() {
-    console.log('first');
-    console.log(window.recaptchaVerifier);
-  
-    const recaptchaContainer = document.getElementById("recaptcha-container");
-  
-    if (!window.recaptchaVerifier && recaptchaContainer) {
-      console.log('heyyyy');
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        {
-          size: "invisible",
-          callback: (response) => {},
-          "expired-callback": () => {},
-        }
-      );
-  
-      console.log("RecaptchaVerifier created:", window.recaptchaVerifier);
-    }
-  }
 
   //*************************GET OTP***************************************
   const getOtp = async (e) => {
     e.preventDefault();
 
     setProccessing(true)
+    const emailRegex = /^[a-z]{3}[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    console.log('email;', email)
 
-
-    const Number = number.replace(/^91/, '')
-
-    const phoneRegex = /^(?:(?:\+|0{0,2})91(\s*[-]\s*)?|[0]?)?[6789]\d{9}$/;
-
-    // if (!phoneRegex.test(number.trim()) || number.trim().length !== 10) toast.error("Enter a valid 10-digit phone number")
-    if (number === '' || number.trim().length === 0 || !phoneRegex.test(Number.trim())) {
-      return toast.error('Please enter a valid 10-digit phone number');
+    if (email === '' || email.trim().length === 0 || !emailRegex.test(email.trim())) {
+      setProccessing(false)
+      return toast.error('Please enter a valid email');
     }
 
     try {
-      const backendResponse = await Axios_Instance.post('/phoneLogin', { Number })
-      if (backendResponse.status === 200) {
 
+      const backendResponse = await Axios_Instance.post('/otpLogin', { email, action: 'sendOtp&SaveOtp' })
+      if (backendResponse.status === 200 || backendResponse?.data?.message === "Otp sented your mail") {
 
         setName(backendResponse?.data?.name);
         setRole(backendResponse?.data?.role);
         setToken(backendResponse?.data?.token);
         setId(backendResponse?.data?.id);
+        setOtpId(backendResponse?.data?.otpId)
         isActive = backendResponse?.data?.isActive;
 
         if (isActive) {
-          //* Login with Phone OTP response
-          // const response = await setUpRecaptcha(number)
-          await onCaptchVerify();
-
-          const formatedNumber = `+${number}`
-          console.log('formatedNumber;',formatedNumber)
-          const appVerifier = window.recaptchaVerifier;
-          signInWithPhoneNumber(auth, formatedNumber, appVerifier)
-            .then((confirmationResult) => {
-              if (confirmationResult) {
-
-                setConfirmObj(confirmationResult);
-                setIsOpenForm(false)
-                setIsOpenOtpForm(true)
-                setProccessing(false)
-                console.log("otp sended");
-              }
-
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-
-          // if (response) {
-          //   setConfirmObj(response)
-          //   setIsOpenForm(false)
-          //   setIsOpenOtpForm(true)
-          // }
-
+          setIsOpenForm(false)
+          setIsOpenOtpForm(true)
+          setProccessing(false)
+          toast.success(backendResponse.data.message)
+          console.log("otp sended");
 
         } else {
           setProccessing(false)
           toast.error('Your account is blocked')
         }
+      } else {
+        setProccessing(false)
       }
 
     } catch (error) {
       setProccessing(false)
-      if (error.response?.status === 401) {
+      if (error.response?.status === 401 && error.response?.data?.errMsg === 'Your account has been blocked') {
+        toast.error(error?.response?.data?.errMsg);
+
+      } else if (error.response?.data?.errMsg === 'You are not registered with this email. Please proceed to the registration page.') {
         toast.error(error?.response?.data?.errMsg);
 
         setTimeout(() => {
           navigate('/signup');
         }, 3000);
-
       } else {
         setProccessing(false)
+        toast.error('Please try again later')
         console.log(error)
       }
     }
   };
+
   //*************************END GET OTP***************************************
 
   //*************************VERIFY OTP***************************************
-  const verifyOtp = async (e) => {
-    e.preventDefault()
-    let confirmed;
 
-    if (otp === '' || otp === null || otp.trim().length === 0) return toast.error('Enter a valid OTP');
+  const verifyOtp = async (e) => {
+    e.preventDefault();
+    setProccessing(true)
 
     try {
-      setProccessing(true)
-      confirmed = await confirmObj.confirm(otp)
+      const response = await Axios_Instance.post('/otpLogin', { userId: id, userOtp, action: 'verifyOtp' })
 
-      if (confirmed) {
+      if (response.status === 200 || response.data.success) {
         setProccessing(false)
+        setUserOtp('')
         dispatch(userLogin({ name, token, role, id }));
         navigate('/')
         toast.success(`Welcome ${name}`);
+
       } else {
         setProccessing(false)
-        toast.error(confirmed.message);
-        toast.error('Invalid OTP. Please check and try again.');
+        toast.error('Something went wrong, please try again')
       }
-    } catch (error) {
+    } catch (err) {
       setProccessing(false)
-      console.log(error)
-      if (!confirmed) {
-        toast.error('Invalid OTP. Please check and try again.');
-
+      if (err.response?.status === 401) {
+        toast.error(err?.response?.data?.errMsg);
+      } else {
+        toast.error('Something went wrong, please try again')
+        console.log(err)
       }
     }
   }
-
   //*************************END VERIFY OTP***************************************
 
   //************************* RESEND OTP***************************************
 
-
-  // useEffect(() => {
-  //   onCaptchVerify();
-  // }, [isOpenForm]);
-  //   useEffect(() => {
-  //     setComponentMounted(true);
-  //     return () => setComponentMounted(false);
-  // }, []);
-
-  // useEffect(() => {
-  //     if (isComponentMounted) {
-  //         onCaptchVerify();
-  //     }
-  // }, [isComponentMounted]);
-
-  //??? 
   const resendOtp = async () => {
-    onCaptchVerify()
-    const phoneNumber = `+${number}`;
-    console.log('phoneNumber;', phoneNumber)
-    const appVerifier = window.recaptchaVerifier;
 
-    signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-      .then((confirmationResult) => {
-        console.log(confirmationResult)
-        setConfirmObj(confirmationResult);
-        console.log("otp sended", confirmationResult);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    // console.log('setuprecaptcha:', phoneNumber);
+    try {
+      setUserOtp('')
+      const response = await Axios_Instance.post('/otpLogin', { email, action: 'resendOtp', otpId })
 
-    // const recaptchaVerifier = new RecaptchaVerifier(
-    //   auth,
-    //   'resend-otp',
-    //   {}
-    // );
-    // recaptchaVerifier.render();
-    // return signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+      if (response.status === 200) {
+        toast.success(response.data.message)
+      }
+    } catch (error) {
+      if (error.response?.status === 401 && error.response?.data?.errMsg === 'Your account has been blocked') {
+        toast.error(error?.response?.data?.errMsg);
+
+      } else {
+        setProccessing(false)
+        toast.error('Please try again later')
+        console.log(error)
+      }
+    }
+
   }
   //*************************END RESEND OTP***************************************
+ 
+  const handleChangeOTP = (e) => {
+    const newValue = e.target.value;
 
+    if (e.nativeEvent.inputType === 'deleteContentBackward') {
+
+      setUserOtp((prevOtp) => prevOtp.slice(0, -1));
+
+    } else {
+
+      if (newValue.length <= 6) {
+        setUserOtp((prevOtp) => {
+          const newOtp = prevOtp + newValue;
+
+          return newOtp.slice(0, 6);
+        });
+      }
+    }
+    const currentIndex = userOtp.length;
+    if (currentIndex < 5 && newValue !== '') {
+      document.getElementById(`otp-input-${currentIndex + 1}`).focus();
+    }
+  };
   return (
     <>
-      {/* Recaptcha div*/}
-      <div id="recaptcha-container" ></div>
-      {/*  */}
+
       {isOpenForm && (
         <div className='flex justify-center items-center h-screen bg-slate-100'>
           <div className='text-center w-96 p-10 py-16 dark:bg-white rounded-sm shadow-lg shadow-gray-400'>
-            <h2 className='mb-8 text-lg font-serif'>Sign in with your phone</h2>
+            <h2 className='mb-8 text-lg font-serif'>Sign in with your email</h2>
+
             <form onSubmit={getOtp}>
-              <div className='mb-3' aria-controls='formBasicPhoneNumber'>
-                <PhoneInput
-                  placeholder='Enter phone number'
-                  country={'in'}
-                  value={number}
-                  onChange={setNumber}
+              <div>
+                <label htmlFor="first_name" className="block text-sm font-medium text-black dark:text-black"></label>
+                <input
+                  type="text"
+                  id="first_name"
+                  className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Entre your email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
               <div className='flex justify-center mt-8'>
@@ -289,13 +219,6 @@ function PhoneLogin() {
             <h2 className='mb-8 text-lg font-serif text-green-500'>Please enter your OTP and proceed to login.</h2>
             <form onSubmit={verifyOtp} className=''>
               <div className='mb-3 space-x-3 flex justify-center items-center' aria-controls='formBasicPhoneNumber'>
-                {/* <input
-                  className='py-2  px-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 w-full'
-                  type='text'
-                  placeholder='Enter OTP'
-                  onChange={(e) => setOtp(e.target.value)}
-                /> */}
-
                 {[...Array(6).keys()].map((index) => (
                   <TextField
                     key={index}
@@ -303,7 +226,7 @@ function PhoneLogin() {
                     margin="normal"
                     id={`otp-input-${index}`}
                     type="text"
-                    value={otp[index] || ''}
+                    value={userOtp[index] || ''}
                     onChange={handleChangeOTP}
                     className="w-10  mx-2 text-3xl text-center focus:outline-none"
                     InputProps={{

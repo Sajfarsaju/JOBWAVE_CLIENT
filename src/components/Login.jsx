@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-// import VisibilityOffIcon from '@mui/icons-material/Visibility';
 import { AiFillEyeInvisible } from 'react-icons/ai';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Axios_Instance from '../api/userAxios'
 import { companyLogin } from '../store/slice/companySlice';
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { userLogin } from '../store/slice/userSlice';
 import toast from 'react-hot-toast';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -23,8 +22,6 @@ function Login({ logerName, url }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  // modal state
-  // const [openModal, setOpenModal] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [proccessing, setProccessing] = useState(false)
@@ -286,9 +283,9 @@ function Login({ logerName, url }) {
           </form>
           <div className="w-11/12 ml-4 mt-6">
             <div className='bg-gray-500 h-0.5' ></div>
-            <Link to={'/login_with_phone'}>
+            <Link to={'/login_with_otp'}>
               <button className='mt-6 group relative w-full flex justify-center py-2 px-3 border border-transparent text-md font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:border-emerald-700 focus:shadow-outline-indigo active:bg-emerald-800 transition duration-150 ease-in-out'>
-                Sign in with Phone
+                Sign in with Otp
               </button>
             </Link>
           </div>

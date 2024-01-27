@@ -1,18 +1,8 @@
 import { useEffect, useState } from 'react'
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/Visibility';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Autocomplete from '@mui/material/Autocomplete';
 import Axios_Instance from '../../../api/userAxios';
@@ -28,11 +18,6 @@ function JobList() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [spinnner, setspinnner] = useState(true);
 
-  // const [JobData, setJobData] = useState(
-  //   {
-
-  //   }
-  //   )
   const [jobTitle, setJobTitle] = useState('');
   const [jobCategory, setJobCategory] = useState('');
   const [workType, setWorkType] = useState("");
@@ -49,7 +34,6 @@ function JobList() {
 
   const [JobList, setJobList] = useState([])
   const [CategoryList, setCategoryList] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
   const [subscriptionPlan, setSubscriptionPlan] = useState([])
   const [proccessing, setProccessing] = useState(false);
 
@@ -90,23 +74,6 @@ function JobList() {
   };
   //? *********************END LOGO SETUP **********************
 
-  // vacancy
-  // const handleVacancyChange = (e) => {
-  //   console.log("prrr")
-  //   setVacancy(e.target.value);
-  // const inputValue = e.target.value;
-  // const parsedValue = parseInt(inputValue, 10);
-  // console.log('Parsed vacancy:', parsedValue);
-  // if (!isNaN(parsedValue)) {
-  //   setVacancy(parsedValue);
-  //   console.log('Parsed vacancy:', parsedValue); // Add this line for debugging
-  // } else {
-  //   console.log('Invalid vacancy input:', inputValue); // Add this line for debugging
-  // }
-  // };
-  // const formData = new FormData();
-  // formData.append('logo', logo);
-
   const resetForm = () => {
     setOpenModal(false)
     setJobTitle('');
@@ -123,10 +90,6 @@ function JobList() {
     setJobResponsibilities('');
     setBenefits('');
   }
-
-  const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
-  };
 
   const fetchSubscriptionPlan = async () => {
 
@@ -207,17 +170,17 @@ function JobList() {
     if (!workType) {
       errors.workType = 'Work type is required';
     }
-    
-    if (!salaryRange ) {
+
+    if (!salaryRange) {
       errors.salaryRange = 'Salary range is required';
     }
-    
-    if (!workplace || workplace.trim().length===0) {
+
+    if (!workplace || workplace.trim().length === 0) {
       errors.workplace = 'Workplace is required';
-    } else if (!alphabetRegex.test(workplace)){
+    } else if (!alphabetRegex.test(workplace)) {
       errors.workplace = 'Workplace must contain only alphabetic characters';
     }
-    
+
     if (!vacancy) {
       errors.vacancy = 'Vacancy is required';
     } else if (isNaN(vacancy) || vacancy <= 0) {
@@ -357,18 +320,6 @@ function JobList() {
     '30k-40k',
     '40k-50k',
   ];
-  const [movieOptions, setMovieOptions] = useState([
-    'The Shawshank Redemption',
-    'The Godfather',
-    'The Dark Knight',
-    'Pulp Fiction',
-    'Schindler\'s List',
-    'Forrest Gump',
-    'The Matrix',
-    'Goodfellas',
-    'Inception',
-    'The Lord of the Rings: The Fellowship of the Ring',
-  ]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -388,11 +339,12 @@ function JobList() {
     setIsOpenView(true)
   };
 
+  const isDeadlineExpired = (deadline) => new Date(deadline) < new Date();
 
   return (
     <>
       {spinnner && (
-        <Spinner/>
+        <Spinner />
       )}
 
       <SingleJobView job={selectedJob} isOpenView={isOpenView} setIsOpenView={setIsOpenView} />
@@ -495,9 +447,11 @@ function JobList() {
                             </td>
 
                             <td className="px-6 py-4 whitespace-no-wrap">
-                              <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 ">
-                                <span className="h-2 w-3 rounded-full bg-green-600"></span>
-                                <h2 className="text-sm font-medium text-green-600">Actively recruting</h2>
+                              <div className={`inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 ${isDeadlineExpired(job.deadline) ? 'bg-red-300 text-white' : 'bg-green-100 dark:bg-green-200 text-green-600'}`}>
+                                <span className={`h-2 w-3 rounded-full ${isDeadlineExpired(job.deadline) ? 'bg-red-600' : 'bg-green-600'}`}></span>
+                                <h2 className={`text-sm font-medium ${isDeadlineExpired(job.deadline) ? 'text-red-600' : 'text-green-600'}`}>
+                                  {isDeadlineExpired(job.deadline) ? 'Expired' : 'Actively recruiting'}
+                                </h2>
                               </div>
                             </td>
                           </>

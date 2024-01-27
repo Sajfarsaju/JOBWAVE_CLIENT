@@ -4,26 +4,15 @@ import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-// import VisibilityOffIcon from '@mui/icons-material/Visibility';
 import { AiFillEyeInvisible } from 'react-icons/ai';
 import Axios_Instance from '../../api/userAxios'
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { GoogleAuthProvider, RecaptchaVerifier, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../api/firebase';
 import defaultProfile from "../../assets/defaultProfile.jpeg";
-import axios from 'axios';
-import { useUserAuth } from '../../context/UserAuthContext';
-
-
-// import Input from '@mui/material/Input';
-// import FilledInput from '@mui/material/FilledInput';
-// import OutlinedInput from '@mui/material/OutlinedInput';
-// import InputLabel from '@mui/material/InputLabel';
-// import FormHelperText from '@mui/material/FormHelperText';
-// import FormControl from '@mui/material/FormControl';
-// import Visibility from '@mui/icons-material/Visibility';
-// import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { userLogin } from '../../store/slice/userSlice';
+import { useDispatch } from 'react-redux';
 
 
 
@@ -31,6 +20,7 @@ const Register = () => {
 
 
   const Navigate = useNavigate()
+  const dispatch = useDispatch();
   // JobSeeker title color
   const color = 'Jobseeker'
   const [showPassword, setShowPassword] = useState(false);
@@ -46,7 +36,7 @@ const Register = () => {
 
     }
   );
-  
+
   const [googleSignupData, setGoogleSignupData] = useState(
     {
       firstName: "",
@@ -72,10 +62,15 @@ const Register = () => {
     if (firstName.trim().length < 4) {
       errors.firstName = "Enter a valid First name";
 
-    } else if (!nameRegex.test(firstName.trim()) || !nameRegex.test(lastName.trim())) {
+    } else if (!nameRegex.test(firstName.trim())) {
       errors.firstName = "Name should contain only alphabetic characters";
     }
 
+    if (lastName.trim().length < 1) {
+      errors.lastName = "Enter a valid Last name";
+    } else if (!nameRegex.test(lastName.trim())) {
+      errors.lastName = "Name should contain only alphabetic characters";
+    }
     if (!emailRegex.test(email)) errors.email = "Enter a valid email address";
 
     if (password.trim().length === 0) errors.password = "Password must be at least 6 character long"
@@ -83,7 +78,6 @@ const Register = () => {
     if (password.trim().length < 6) errors.password = "Password must be at least 6 character long"
 
     if (!phoneRegex.test(phone.trim()) || phone.trim().length !== 10) errors.phone = "Enter a valid 10-digit phone number";
-
 
 
     return errors;
@@ -107,7 +101,7 @@ const Register = () => {
         if (!response.ok) {
           console.log(`Failed to fetch default profile image. HTTP status ${response.status}`);
         }
-  
+
         const blob = await response.blob();
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -118,7 +112,7 @@ const Register = () => {
         console.error("Error fetching default profile image:", error.message);
       }
     };
-  
+
     fetchImageAndSetFormData();
   }, []);
 
@@ -130,30 +124,32 @@ const Register = () => {
     if (Object.keys(errors).length === 0) {
       try {
         setProccessing(true)
-       
-        formData.action = 'checkBackendResponse';
-        const response = await Axios_Instance.post('/signup', formData );
+
+        formData.action = 'checkBackendResponse&saveOTP';
+        const response = await Axios_Instance.post('/signup', formData);
 
         if (response.status === 200) {
           setProccessing(false)
+          toast.success(response.data.message)
           const showOtpForm = true
-          formData.action = 'saveData'
-          Navigate('/verifyPhone', { state: { formData , showOtpForm} });
+          Navigate('/verifyPhone', { state: { formData, showOtpForm } });
         }
 
       } catch (error) {
         setProccessing(false)
-          console.log(error);
-          if (error.response?.status === 401) {
-            toast.error(error?.response?.data?.errMsg)
-          }
-        
+        console.log(error);
+        if (error.response?.status === 401) {
+          toast.error(error?.response?.data?.errMsg)
+        }
+
       }
 
-    } else if (Object.keys(errors).length === 4) {
+    } else if (Object.keys(errors).length === 5) {
       toast.error("All fields must be required");
     } else if (errors.firstName) {
       toast.error(errors.firstName);
+    } else if (errors.lastName) {
+      toast.error(errors.lastName);
     } else if (errors.email) {
       toast.error(errors.email);
     } else if (errors.phone) {
@@ -164,7 +160,7 @@ const Register = () => {
 
   };
 
-  
+
   const handleGoogleSignup = async () => {
     try {
 
@@ -173,7 +169,7 @@ const Register = () => {
       const credentials = GoogleAuthProvider.credentialFromResult(data);
 
       const user = data.user
-      console.log("user;", user)
+      
       const nameParts = user?.displayName.split(' ');
       googleSignupData.email = user?.email;
       googleSignupData.firstName = nameParts[0];
@@ -184,7 +180,13 @@ const Register = () => {
       const response = await Axios_Instance.post('google_signup', googleSignupData);
 
       if (response.status === 200) {
+        const name = response?.data?.name;
+        const role = response?.data?.role;
+        const token = response?.data?.token;
+        const id = response?.data?.id;
         toast.success(response.data.message);
+        console.log(response.data)
+        dispatch(userLogin({ name, token, role, id }));
         Navigate('/');
       }
 
@@ -198,34 +200,9 @@ const Register = () => {
     }
   }
 
-//   //*************************GET OTP***************************************
-
-//     (async function getOtp () {
-
-//         try {
-//             //* Login with Phone OTP response
-//             const action = 'signupNumberVerify'
-//             const response = await setUpRecaptcha(formData.phone,action)
-//             console.log('response;',response)
-//             if (response) {
-//                 setConfirmObj(response)
-//                 // setIsOpenForm(false)
-//                 // setIsOpenOtpForm(true)
-//                 console.log('otp:', otp)
-//             }
-
-//         } catch (error) {
-//             console.log(error)
-
-//         }
-//     })()
-// //*************************END GET OTP***************************************
-
 
   return (
     <>
-{/* {showSignupForm && ( */}
-
       <div className="bg-gradient-to-tr from-[#f1f5f9] to-[#cbd5e1] opacity-100 min-h-screen flex flex-col justify-center px-6 py-12 lg:px-8">
         {/* <button className='btn mt-2 bg-blue-500 w-24' onClick={() => setOpenModal(true)}>Open</button>
 
@@ -402,12 +379,12 @@ const Register = () => {
                 </Grid>
               </Grid>
               <div className="mx-10">
-                 
+
                 <Link type='submit' onClick={handleSubmit} className="flex items-center justify-center bg-gradient-to-r from-slate-400 to-slate-300 mt-4 text-white rounded-lg shadow-md shadow-slate-500">
 
                   <h1 className="px-4 py-3  text-center dark:text-blue-700 font-bold">
-                    {proccessing ? 'Processing...' : 'Signup'}
-                    </h1>
+                    {proccessing ? 'Processing...' : 'Get Otp'}
+                  </h1>
                 </Link>
 
 
@@ -437,7 +414,7 @@ const Register = () => {
         </div>
         {/* )} */}
       </div>
-{/* )} */}
+      {/* )} */}
 
 
 

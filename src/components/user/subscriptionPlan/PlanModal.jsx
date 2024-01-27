@@ -2,12 +2,14 @@ import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import Axios_Instance from '../../../api/userAxios';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { userLogout } from '../../../store/slice/userSlice';
+import toast from 'react-hot-toast';
 
 export default function PlanModal({ setOpenPlanModal, openPlanModal }) {
 
   const {token} = useSelector((state)=>state.user)
+  const dispatch = useDispatch()
 
   const handlePayment = async (planAmt, planType) => {
     console.log("planAmt:", planAmt, "planType:", planType)
@@ -17,6 +19,10 @@ export default function PlanModal({ setOpenPlanModal, openPlanModal }) {
       
 
     } catch (error) {
+      if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+        dispatch(userLogout());
+        toast.error(error?.res?.data?.errMsg);
+    }
       console.log(error)
     }
   }

@@ -13,7 +13,7 @@ import axios from 'axios';
 
 
 
-function Navbar({ searchValue, setSearchQuery, reRender, showSearchield}) {
+function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
 
   const navigate = useNavigate()
   const { pathname } = useLocation();
@@ -43,7 +43,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield}) {
   async function getUser() {
     try {
       const res = await Axios_Instance.get('/profile');
-      if(res.status === 200 ){
+      if (res.status === 200) {
 
         setData(res?.data?.user)
       }
@@ -159,7 +159,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield}) {
       </div>
     </nav> */}
 
-      <Disclosure as="nav" className="bg-slate-100 shadow-xl ">
+      <Disclosure as="nav" className="bg-slate-100 shadow-md ">
         {({ open }) => (
           <>
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -392,6 +392,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield}) {
                   Support
                 </Link>
                 {/* Search */}
+                {/* {showSearchield && ( */}
                 <div className="relative mt-2 mx-3">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                     <svg className="w-4 h-4  text-gray-600 dark:text-slate-950" viewBox="0 0 24 24" fill="none">
@@ -428,6 +429,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield}) {
                     </button>
                   </div>
                 </div>
+                // )}
                 {/*  */}
               </div>
             </Disclosure.Panel>

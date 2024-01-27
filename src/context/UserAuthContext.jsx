@@ -3,7 +3,6 @@ import { RecaptchaVerifier } from "firebase/auth";
 import { signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../api/firebase";
 import { io } from 'socket.io-client';
-// import { BACKEND_URL } from '../constants/userAPI';
 
 
 const userAuthContext = createContext();
@@ -16,40 +15,9 @@ export const WebSocketProvider = WebSocketContext.Provider;
 
 export function UserAuthContextProvider({ children }) {
     
-    const isRecaptchaRendered = useRef(false);
-     function setUpRecaptcha(number) {
-        
-        if (!isRecaptchaRendered.current) {
-        
-            const formattedPhoneNumber = `+${number}`;
-            console.log('setuprecaptcha:', formattedPhoneNumber);
     
-                const recaptchaVerifier = new RecaptchaVerifier(
-                    auth,
-                    'recaptcha-container',
-                    {}
-                );
-                recaptchaVerifier.render();
-                isRecaptchaRendered.current = true;
-                return signInWithPhoneNumber(auth, formattedPhoneNumber, recaptchaVerifier);
-        }
-
-    }
-    function setUpRecaptchaForResetPass(number) {
-
-        const formattedPhoneNumber = `+${number}`;
-        console.log('setUpRecaptchaForResetPass:', formattedPhoneNumber)
-        const recaptchaVerifier = new RecaptchaVerifier(
-            auth,
-            'recaptcha-container',
-            {}
-        );
-        recaptchaVerifier.render()
-        return signInWithPhoneNumber(auth, formattedPhoneNumber, recaptchaVerifier);
-
-    }
     return (
-        <userAuthContext.Provider value={{ setUpRecaptcha, setUpRecaptchaForResetPass }}>
+        <userAuthContext.Provider value={{ }}>
             {children}
         </userAuthContext.Provider>
     );

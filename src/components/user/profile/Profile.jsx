@@ -1,42 +1,279 @@
+// import { useEffect, useState } from 'react'
+// import Axios_Instance from '../../../api/userAxios'
+// import { toast } from 'react-hot-toast';
+// import { Link } from 'react-router-dom';
+// import Spinner from '../../Spinner';
+// import { userLogout } from '../../../store/slice/userSlice';
+// import { useSelector, useDispatch } from 'react-redux'
+// import axios from 'axios';
+
 import { useEffect, useState } from 'react'
-import Axios_Instance from '../../../api/userAxios'
-import { toast } from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import Footer from '../../company/home/Footer';
+import { useDispatch, useSelector } from 'react-redux';
+import Axios_Instance from '../../../api/userAxios';
+import { Link } from 'react-router-dom'
+import toast from 'react-hot-toast';
+import { FiDelete } from 'react-icons/fi'
+import TextField from '@mui/material/TextField';
+import { IoIosArrowDropright } from "react-icons/io";
 import Spinner from '../../Spinner';
 import { userLogout } from '../../../store/slice/userSlice';
-import { useSelector, useDispatch } from 'react-redux'
-import axios from 'axios';
 
-function Profile( {setReRender , reRender} ) {
+function Profile({ setReRender, reRender }) {
 
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
+
+  // const { to84ken } = useSelector((state) => state.user);
+
+  // const [userData, setUserData] = useState([]);
+  // const [reloadProfile, setReloadProfile] = useState(false);
+  // const [spinnner, setspinnner] = useState(true);
+  // const [proccessing, setProccessing] = useState(false);
+  // let userId = userData._id
+
+  // useEffect(() => {
+
+  //   async function getUser() {
+  //     try{
+
+  //       const res = await Axios_Instance.get('/profile');
+  //       if(res.status === 200){
+
+  //         setspinnner(false)
+  //         setUserData(res.data.user)
+  //       }
+  //     }catch(error){
+  //       console.log(error)
+  //       console.log('status;',error.res)
+  //           if (error.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+  //               dispatch(userLogout());
+  //               toast.error(error?.res?.data?.errMsg);
+  //           }
+  //     }
+  //   }
+
+  //   getUser();
+  // }, [reloadProfile])
+
+
+  // //**************************UPDATE PROFILE*****************//
+  // const [profileEditModal, setProfileEditModal] = useState(false);
+  // const [updatedUserData, setUpdatedUserData] = useState({ ...userData });
+  // const [selectedImage, setSelectedImage] = useState(null);
+
+  // function isValidImage(logo) {
+  //   const validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+
+  //   const extension = logo.substr(logo.lastIndexOf('.')).toLowerCase();
+
+  //   return validExtensions.includes(extension);
+  // }
+
+  // const handleImageChange = (img) => {
+  //   if (isValidImage(img?.target?.files[0].name)) {
+  //     let reader = new FileReader()
+  //     reader.readAsDataURL(img.target.files[0])
+  //     reader.onload = () => {
+  //       setSelectedImage(reader.result)
+  //     }
+  //     reader.onerror = (err) => {
+  //       console.log(err);
+  //     }
+  //   } else {
+  //     toast.error('Invalid file type. Please upload a JPEG, PNG, or WEBP image file.')
+  //   }
+  // };
+
+  // const handleProfileInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setUpdatedUserData((prevData) => ({
+  //     ...prevData,setUserData,
+  //     [name]: value,
+  //   }));
+  // };
+
+  // const handleProfileSave = async () => {
+  //   try {
+  //     let profile = selectedImage || userData.profile;
+
+  //     console.log('updatedUserData:',updatedUserData)
+  //     setProccessing(true)
+  //     const response = await Axios_Instance.patch(`/profile/${userId}`, { ...updatedUserData, profile })
+  //     if (response.status === 200) {
+  //       setProccessing(false)
+  //       setUserData(updatedUserData);
+  //       // setUserData(response?.data?.updatedUser)
+  //       setReloadProfile(!reloadProfile)
+  //       setReRender(!reRender)
+  //       setProfileEditModal(false);
+  //     } else {
+  //       setProccessing(false)
+  //       console.error('Failed to update user information');
+  //     }
+  //   } catch (error) {
+  //     setProccessing(false)
+  //     if(error?.response?.status===400){
+  //       toast.error(error?.response?.data?.errMsg)
+  //     }else{
+  //       toast.error("An error occurred")
+  //     }
+  //     console.error('An error occurred:', error);
+  //   }
+  // };
+  // //********************END UPDATE PROFILE***************//
+
+  // //*********SKILLS********** *//
+  // const skillsArray = ['JavaScript', 'React', 'Node.js', 'MongoDB', 'Python',
+  // 'Redux', 'HTML-CSS', 'SQL', 'Git-GitHub', 'Express.js',
+  // 'Angular', 'Vue.js', 'TypeScript', 'AWS', 'Firebase',
+  // 'RESTful API Design', 'Java', 'Flutter'];
+
+  // const handleSkill = async (skill) => {
+  //   try {
+
+  //     const res = await Axios_Instance.post(`/profile/${skill}`, {})
+  //     setUserData(res.data.user)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
+  // const handleRemoveSkill = async (skill) => {
+  //   try {
+
+  //     const res = await Axios_Instance.post(`/profile/${skill}`, { action: 'remove' })
+
+  //     setUserData(res.data.user)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+  // //*********END SKILLS********** *//
+
+  // //***********************BIO*****************//
+  // const [bioEditModal, setBioEditModal] = useState(false);
+  // const [bio, setBio] = useState("");
+
+  // const validateBioForm = () => {
+  //   const errors = {};
+  //   const bioRegex = /^[A-Za-z\s.,'-]+$/;
+
+  //   if (!bio || bio.trim().length === 0) {
+  //     errors.commen = "Bio is required"
+  //   }
+  //   if (!bioRegex.test(bio)) {
+  //     errors.bio = 'Bio should only contain alphabets.';
+  //   }
+  //   return errors;
+  // }
+
+
+  // const handleSaveBio = async (e) => {
+  //   e.preventDefault();
+  //   const errors = validateBioForm()
+
+  //   if (Object.keys(errors).length === 0) {
+  //     try {
+  //       setProccessing(true)
+
+  //       const response = await Axios_Instance.post(`/profile`, {
+  //         action: 'updateBio',
+  //         bio: bio,
+  //       });
+
+  //       if (response.status === 200) {
+  //         setProccessing(false)
+  //         console.log(response.data.user, "bio data");
+  //         setUserData((prevData) => ({
+  //           ...prevData,
+  //           bio: bio,
+  //         }));
+
+  //         setBioEditModal(false);
+  //       }
+  //     } catch (error) {
+  //       if (error.response.status === 400 || error.response.status === 404) {
+  //         toast.error(error?.response?.data?.errMsg)
+  //       }
+  //       console.error("Error saving bio:", error);
+  //     }
+  //   }else if(errors.commen){
+  //     toast.error(errors.commen)
+  //   }else{
+  //     toast.error(errors.bio)
+  //   }
+  // };
+  // //*********************END BIO*****************//
+
+
+  // const [isDropdownOpenArray, setIsDropdownOpenArray] = useState([false, false, false]);
+
+  // const toggleDropdown = (index) => {
+  //   const updatedArray = [...isDropdownOpenArray];
+  //   updatedArray[index] = !updatedArray[index];
+  //   setIsDropdownOpenArray(updatedArray);
+  // };
+
+  // // const [experience, setExperience] = useState({
+  // //   role: '',
+  // //   yearOfExp: '',
+  // //   compName: '',
+  // // });
+  // // console.log("client exp:",experience)
+
+  // // const handleExpChange = (e) => {
+  // //   const { name, value } = e.target;
+  // //   setExperience({
+  // //     ...experience,
+  // //     [name]: value,
+  // //   });
+  // // };
+
+  // // const handleSaveExperience = async (e) => {
+  // //   e.preventDefault();
+
+  // //   try {
+  // //     const response = Axios_Instance.post(`/profile`,{
+  // //       actionn: 'add-experience',
+  // //       experience,
+  // //     }, {
+  // //       headers: {
+  // //         Authorization: `Bearer ${token}`,
+  // //       },
+  // //     });
+  // //     setUserData(response.data.user);
+  // //     setReRender(!reRender)
+  // //   } catch (error) {
+  // //     toast.error(error);
+  // //   }
+  // // }
+
 
   const { token } = useSelector((state) => state.user);
-
+  const dispatch = useDispatch()
   const [userData, setUserData] = useState([]);
+  const [newSkill, setNewSkill] = useState('');
   const [reloadProfile, setReloadProfile] = useState(false);
-  const [spinnner, setspinnner] = useState(true);
   const [proccessing, setProccessing] = useState(false);
-  let userId = userData._id
+  const [spinnner, setspinnner] = useState(true);
+  const userId = useSelector((state) => state.user.id)
 
   useEffect(() => {
-
     async function getUser() {
-      try{
+      try {
 
         const res = await Axios_Instance.get('/profile');
-        if(res.status === 200){
-
+        if (res.status === 200) {
           setspinnner(false)
-          setUserData(res.data.user)
+          setUserData(res.data.user);
         }
-      }catch(error){
+      } catch (error) {
         console.log(error)
-        console.log('status;',error.res)
-            if (error.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
-                dispatch(userLogout());
-                toast.error(error?.res?.data?.errMsg);
-            }
+
+        if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+          dispatch(userLogout());
+          toast.error(error?.res?.data?.errMsg);
+        }
       }
     }
 
@@ -46,8 +283,10 @@ function Profile( {setReRender , reRender} ) {
 
   //**************************UPDATE PROFILE*****************//
   const [profileEditModal, setProfileEditModal] = useState(false);
+  const [experncesEditModal, setExpernceEditModal] = useState(false)
   const [updatedUserData, setUpdatedUserData] = useState({ ...userData });
   const [selectedImage, setSelectedImage] = useState(null);
+
 
   function isValidImage(logo) {
     const validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
@@ -72,67 +311,200 @@ function Profile( {setReRender , reRender} ) {
     }
   };
 
-  const handleProfileInputChange = (e) => {
-    const { name, value } = e.target;
-    setUpdatedUserData((prevData) => ({
-      ...prevData,setUserData,
-      [name]: value,
-    }));
-  };
 
+  //******************** PROFILE & BIO   ****************
   const handleProfileSave = async () => {
     try {
-      let profile = selectedImage || userData.profile;
-      
-      console.log('updatedUserData:',updatedUserData)
       setProccessing(true)
-      const response = await Axios_Instance.patch(`/profile/${userId}`, { ...updatedUserData, profile })
+
+      const updatedProfileData = {
+        profileImage: selectedImage || userData.profile,
+        bio: bio,
+        action: 'updateProfile'
+      };
+
+      const response = await Axios_Instance.patch(`/profile/${userId}`, updatedProfileData)
       if (response.status === 200) {
+        toast.success("Updated successful")
         setProccessing(false)
-        setUserData(updatedUserData);
-        // setUserData(response?.data?.updatedUser)
-        setReloadProfile(!reloadProfile)
-        setReRender(!reRender)
+
+        setUserData({
+          ...userData,
+          profile: updatedProfileData.profileImage,
+          bio: updatedProfileData.bio,
+        });
+        // setReloadProfile(!reloadProfile)
+        // setReRender(!reRender)
         setProfileEditModal(false);
       } else {
-        setProccessing(false)
         console.error('Failed to update user information');
       }
     } catch (error) {
       setProccessing(false)
-      if(error?.response?.status===400){
+      if (error?.response?.status === 400 || error?.response?.status === 404) {
         toast.error(error?.response?.data?.errMsg)
-      }else{
-        toast.error("An error occurred")
+      } else {
+        console.log("An error occurred")
+      }
+
+      if (error?.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
+        dispatch(userLogout());
+        toast.error(error?.response?.data?.errMsg);
       }
       console.error('An error occurred:', error);
     }
   };
-  //********************END UPDATE PROFILE***************//
 
-  //*********SKILLS********** *//
-  const skillsArray = ['JavaScript', 'React', 'Node.js', 'MongoDB', 'Python',
-  'Redux', 'HTML-CSS', 'SQL', 'Git-GitHub', 'Express.js',
-  'Angular', 'Vue.js', 'TypeScript', 'AWS', 'Firebase',
-  'RESTful API Design', 'Java', 'Flutter'];
 
-  const handleSkill = async (skill) => {
-    try {
 
-      const res = await Axios_Instance.post(`/profile/${skill}`, {})
-      setUserData(res.data.user)
-    } catch (error) {
-      console.log(error)
+  //********************UPDATE PERSONAL DETAILS****************//
+  const [UpdateBasicDataModal, setUpdateBasicDataModal] = useState(false);
+  const [firstName, setFirstName] = useState()
+  const [lastName, setLastName] = useState()
+  const [email, setEmail] = useState()
+
+
+  const clickedBasicEditButton = () => {
+    // *Storing previous value into updating state as initial value
+    setFirstName(userData.firstName)
+    setLastName(userData.lastName)
+    setEmail(userData.email)
+    setUpdateBasicDataModal(true)
+  }
+
+
+  const validateBasicData = () => {
+    const errors = {}
+
+    if (firstName.trim() === '' && firstName.length >= 0) {
+      errors.firstName = "Enter a valid First name";
+    }
+
+    const emailRegex = /^[a-z]{3}[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    const nameRegex = /^[A-Za-z\s]+$/;
+
+    if (firstName.trim().length < 4) {
+      errors.firstName = "Enter a valid First name";
+
+    } else if (!nameRegex.test(firstName.trim())) {
+      errors.firstName = "Name should contain only alphabetic characters";
+    }
+
+    if (lastName.trim().length < 1) {
+      errors.lastName = "Enter a valid Last name";
+    } else if (!nameRegex.test(lastName.trim())) {
+      errors.lastName = "Name should contain only alphabetic characters";
+    }
+    console.log(email)
+    if (!emailRegex.test(email)) errors.email = "Enter a valid email address";
+
+    return errors;
+  }
+
+  const handlePersonalData = async (e) => {
+    e.preventDefault()
+
+    const errors = validateBasicData()
+
+
+    if (Object.keys(errors).length === 0) {
+      try {
+        setProccessing(true)
+
+        await Axios_Instance.patch(`/profile/${userId}`, { firstName, lastName, email, action: 'updatePersonal' }).then((response) => {
+
+          if (response.status === 200) {
+
+            setProccessing(false)
+
+            toast.success("Updated success")
+            setUserData({
+              ...userData,
+              firstName: firstName ? firstName : userData.firstName,
+              lastName: lastName ? lastName : userData.lastName,
+              email: email ? email : userData.email
+            });
+          }
+          setUpdateBasicDataModal(false)
+        })
+      } catch (error) {
+        setProccessing(false)
+
+        if (error?.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
+          dispatch(userLogout());
+          toast.error(error?.response?.data?.errMsg);
+        }
+
+        console.log(error)
+
+      }
+
+    } else if (Object.keys(errors).length === 3) {
+      toast.error("All fields must be required");
+    } else if (errors.firstName) {
+      toast.error(errors.firstName);
+    } else if (errors.lastName) {
+      toast.error(errors.lastName);
+    } else if (errors.email) {
+      toast.error(errors.email);
     }
   }
 
-  const handleRemoveSkill = async (skill) => {
+
+  //********************END UPDATE PROFILE***************//
+
+  //*********SKILLS********** *//
+  const handleAddSkill = async () => {
+
+    try {
+      const skillRegex = /^[A-Za-z\s]+$/;
+      if (newSkill.trim().length === 0) return toast.error('Fill a skill')
+      if (!skillRegex.test(newSkill.trim())) return toast.error('Skill should contain only alphabetic characters')
+
+      const response = await Axios_Instance.patch(`/skills`, {
+        skill: newSkill,
+        action: 'add_skill'
+      });
+
+      if (response.status === 200) {
+        toast.success(`Added new ${newSkill} skill`)
+        setUserData(response.data.user)
+        setNewSkill('');
+
+      } else {
+        console.error('Failed to add skill');
+      }
+    } catch (error) {
+
+      if (error?.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
+        dispatch(userLogout());
+        toast.error(error?.response?.data?.errMsg);
+      }
+
+      if (error.response?.status === 404 || error.response?.status === 402) {
+        toast.error(error?.response?.data?.errMsg)
+      } else {
+        console.error('An error occurred:', error);
+      }
+    }
+  };
+
+  const handleRemoveSkill = async (skillToRemove) => {
     try {
 
-      const res = await Axios_Instance.post(`/profile/${skill}`, { action: 'remove' })
-
-      setUserData(res.data.user)
+      const res = await Axios_Instance.patch(`/skills`, {
+        skill: skillToRemove,
+        action: 'remove'
+      })
+      if (res.status === 200) {
+        toast.success(`Removed your ${skillToRemove} skill`)
+        setUserData(res.data.user)
+      }
     } catch (error) {
+      if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+        dispatch(userLogout());
+        toast.error(error?.res?.data?.errMsg);
+      }
       console.log(error)
     }
   }
@@ -159,10 +531,9 @@ function Profile( {setReRender , reRender} ) {
   const handleSaveBio = async (e) => {
     e.preventDefault();
     const errors = validateBioForm()
-    
+
     if (Object.keys(errors).length === 0) {
       try {
-        setProccessing(true)
 
         const response = await Axios_Instance.post(`/profile`, {
           action: 'updateBio',
@@ -170,7 +541,6 @@ function Profile( {setReRender , reRender} ) {
         });
 
         if (response.status === 200) {
-          setProccessing(false)
           console.log(response.data.user, "bio data");
           setUserData((prevData) => ({
             ...prevData,
@@ -180,19 +550,23 @@ function Profile( {setReRender , reRender} ) {
           setBioEditModal(false);
         }
       } catch (error) {
+        if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+          dispatch(userLogout());
+          toast.error(error?.res?.data?.errMsg);
+        }
+
         if (error.response.status === 400 || error.response.status === 404) {
           toast.error(error?.response?.data?.errMsg)
         }
         console.error("Error saving bio:", error);
       }
-    }else if(errors.commen){
+    } else if (errors.commen) {
       toast.error(errors.commen)
-    }else{
+    } else {
       toast.error(errors.bio)
     }
   };
   //*********************END BIO*****************//
-
 
   const [isDropdownOpenArray, setIsDropdownOpenArray] = useState([false, false, false]);
 
@@ -202,258 +576,472 @@ function Profile( {setReRender , reRender} ) {
     setIsDropdownOpenArray(updatedArray);
   };
 
-  // const [experience, setExperience] = useState({
-  //   role: '',
-  //   yearOfExp: '',
-  //   compName: '',
-  // });
-  // console.log("client exp:",experience)
-
-  // const handleExpChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setExperience({
-  //     ...experience,
-  //     [name]: value,
-  //   });
-  // };
-
-  // const handleSaveExperience = async (e) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const response = Axios_Instance.post(`/profile`,{
-  //       actionn: 'add-experience',
-  //       experience,
-  //     }, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //     setUserData(response.data.user);
-  //     setReRender(!reRender)
-  //   } catch (error) {
-  //     toast.error(error);
-  //   }
-  // }
 
   return (
+    //     <>
+    //     {/* Spinner */}
+    //     {spinnner && (
+    //       <Spinner/>
+    //     )}
+    //     {/* Spinner */}
+    //     <div className='lg:h-auto md:h-auto xl:h-auto sm:h-screen mt-12'>
+    //       <div className=" max-w-xl mx-auto mt-4">
+    //         {/* Profile Card */}
+    //         {/* <div className="bg-white shadow-2xl rounded-lg flex overflow-hidden mb-4">
+    //             <img src="../../../../public/walpaper 1.jpeg" alt=""/>
+    //           <div className="p-4">
+    //             <h2 className="text-2xl font-semibold">{data.firstName} {data.lastName}</h2>
+    //             <p className="text-gray-600">{data.email}</p>
+    //             <p className="text-gray-500 text-sm">{data.phone}</p>
+    //           </div>
+    //         </div> */}
+    //         {/* Profile Card */}
+    //         <div className="bg-slate-200 shadow-slate-200 shadow-2xl rounded-lg flex overflow-hidden mb-4 relative">
+    //           {/*Edit icon*/}
+    //           <button onClick={()=> setProfileEditModal(true)} className="absolute top-2 right-3 text-gray-800 transition-colors duration-200 dark:hover:text-emerald-500 dark:text-gray-900 hover:text-yellow-500 focus:outline-none">
+    //               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+    //                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+    //               </svg>
+    //             </button>
+    //             {/*  */}
+
+    //           {/* 3 dot  */}
+    //   {isDropdownOpenArray.map((isDropdownOpen, index) => (
+    //     <div key={index}>
+    //       <div
+    //         className={`absolute top-10 right-2 rounded-full w-8 h-7 flex items-center justify-center ${
+    //           isDropdownOpen ? 'bg-gray-200' : ''
+    //         }`}
+    //         onClick={() => toggleDropdown(index)}
+    //       >
+    //         <svg
+    //           xmlns="http://www.w3.org/2000/svg"
+    //           fill="none"
+    //           viewBox="0 0 24 24"
+    //           strokeWidth={1.5}
+    //           stroke="currentColor"
+    //           className="w-6 h-6 cursor-pointer"
+    //         >
+    //           <path
+    //             strokeLinecap="round"
+    //             strokeLinejoin="round"
+    //             d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+    //           />
+    //         </svg>
+    //       </div>
+    //       {isDropdownOpen && (
+    //         <div className="absolute top-10 right-8 bg-gray-600 z-50 border-gray-300 rounded-lg py-2 px-4">
+    //           <Link
+    //             to={'/profile/applied_jobs'}
+    //             className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-500 dark:hover:text-white"
+    //           >
+    //             View applied jobs
+    //           </Link>
+
+    //           {/* <Link
+    //             to={'#'}
+    //             className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:hover:bg-gray-500 dark:text-gray-100 hover-bg-gray-100 dark:hover-bg-gray-700 dark:hover-text-white"
+    //           >
+    //             Settings
+    //           </Link>
+
+    //           <Link
+    //             to={'#'}
+    //             className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:hover:bg-gray-500 dark:text-gray-100 hover-bg-gray-100 dark:hover-bg-gray-700 dark:hover-text-white"
+    //           >
+    //             Keyboard shortcuts
+    //           </Link> */}
+    //         </div>
+    //       )}
+    //     </div>
+    //   ))}
+    //   {/* End 3 dot */}
+
+    //           {/* Profile Image */}
+    //           {/* <img className='w-20 h-28' accept="image/*" src={selectedImage ? selectedImage : userData?.profile} alt="" /> */}
+    //           <img className='w-20 h-28' accept="image/*" src={ userData?.profile} alt="" />
+    //           {/* User Information */}
+    //           <div className="p-4">
+    //             <h2 className="text-2xl font-semibold">{userData.firstName} {userData.lastName}</h2>
+    //             <p className="text-gray-600">{userData.email}</p>
+    //             <p className="text-gray-500 text-sm">{userData.phone}</p>
+    //           </div>
+    //         </div>
+
+    //         {/* Edit Form of User Information */}
+    //         {profileEditModal && (
+    //           <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50 backdrop-blur-sm">
+    //             <div className="bg-white shadow-2xl rounded-lg p-6">
+    //               <h2 className="text-2xl font-semibold mb-4">Edit Profile</h2>
+    //               <form>
+    //                 <div className="mb-4">
+    //                   <label className="block text-center text-gray-800 text-sm mb-1" htmlFor="profileImage">
+    //                     Profile Image
+    //                   </label>
+    //                   <div className='flex justify-center'>
+    //                   <img className='w-24 h-28' src={selectedImage ? selectedImage : userData?.profile} alt="profile" />
+    //                   </div>
+    //                   <input
+    //                     type="file"
+    //                     name="profileImage"
+    //                     id="profileImage"
+    //                     accept="image/*"
+    //                     onChange={handleImageChange}
+    //                     className="block w-full px-3 py-2 mt-2 text-sm text-gray-800 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-900 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full dark:file:bg-gray-200 dark:file:text-gray-900 dark:text-gray-900 placeholder-gray-400/70 dark:placeholder-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-300 dark:bg-white dark:focus:border-blue-300"
+    //                   />
+    //                 </div>
+    //                 <div className="mb-4">
+    //                   <label className="block text-gray-800 text-sm mb-1" htmlFor="firstName">
+    //                     First Name
+    //                   </label>
+    //                   <input
+    //                     type="text"
+    //                     name="firstName"
+    //                     id="firstName"
+    //                     className="w-full border border-gray-300 rounded-md py-2 px-3"
+    //                     placeholder={userData.firstName}
+    //                     onChange={handleProfileInputChange}
+    //                   />
+    //                 </div>
+    //                 <div className="mb-4">
+    //                   <label className="block text-gray-800 text-sm mb-1" htmlFor="lastName">
+    //                     Last Name
+    //                   </label>
+    //                   <input
+    //                     type="text"
+    //                     name="lastName"
+    //                     id="lastName"
+    //                     className="w-full border border-gray-300 rounded-md py-2 px-3"
+    //                     placeholder={userData.lastName}
+    //                     onChange={handleProfileInputChange}
+    //                   />
+    //                 </div>
+    //                 <div className="mb-4">
+    //                   <label className="block text-gray-800 text-sm mb-1" htmlFor="email">
+    //                     Email
+    //                   </label>
+    //                   <input
+    //                     type="email"
+    //                     name="email"
+    //                     id="email"
+    //                     className="w-full border border-gray-300 rounded-md py-2 px-3"
+    //                     placeholder={userData.email}
+    //                     onChange={handleProfileInputChange}
+    //                   />
+    //                 </div>
+    //                 {/* <div className="mb-4">
+    //                   <label className="block text-gray-600 text-sm mb-1" htmlFor="phone">
+    //                     Phone
+    //                   </label>
+    //                   <input
+    //                     type="text"
+    //                     name="phone"
+    //                     id="phone"
+    //                     className="w-full border border-gray-300 rounded-md py-2 px-3"
+    //                     placeholder={userData.phone}
+    //                     onChange={handleProfileInputChange}
+    //                   />
+    //                 </div> */}
+    //                 <div className="text-center">
+    //                   <button
+    //                     type="button"
+    //                     onClick={handleProfileSave}
+    //                     className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+    //                     disabled={proccessing}
+    //                   >
+    //                      {proccessing ? "Saving..." : "Save"}
+    //                   </button>
+    //                   <button
+    //                     type="button"
+    //                     onClick={()=>setProfileEditModal(false)}
+    //                     className="bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none ml-2"
+    //                     disabled={proccessing}
+    //                     >
+    //                     Cancel
+    //                   </button>
+    //                 </div>
+    //               </form>
+    //             </div>
+    //           </div>
+    //         )}
+
+    //         {/*  */}
+
+
+    //         {/* Bio Card */}
+    //         <div className="bg-slate-200 shadow-xl shadow-slate-200 rounded-lg overflow-hidden mb-4">
+    //           <div className="p-4 relative">
+    //             <button
+    //               className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded-md"
+    //               onClick={() => setBioEditModal(true)}
+    //             >
+    //               Edit
+    //             </button>
+    //             <h3 className="text-lg font-semibold mb-2">Bio</h3>
+    //             <p className="text-gray-600">{userData.bio}</p>
+    //           </div>
+    //         </div>
+
+    //         {bioEditModal && (
+    //           <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50 backdrop-blur-sm">
+    //             <div className="bg-white shadow-2xl rounded-lg p-6">
+    //               <h2 className="text-xl font-semibold mb-4">Edit bio</h2>
+    //               <form >
+    //                 <div className="mb-4">
+    //                   <label className="block text-gray-600 text-sm mb-1" htmlFor="bio">
+    //                     Bio
+    //                   </label>
+    //                   <textarea
+    //                     name="bio"
+    //                     id="bio"
+    //                     className="w-full border border-gray-300 rounded-md py-2 px-3 h-40"
+    //                     // placeholder="Enter your bio here"
+    //                     // value={userData.bio}
+    //                     placeholder={userData.bio}
+    //                     onChange={(e) => setBio(e.target.value)}
+    //                   />
+
+    //                 </div>
+    //                 <div className="text-center">
+
+    //                 <button
+    //     type="button"
+    //     className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+    //     onClick={handleSaveBio}
+    //     disabled={proccessing}
+    // >
+    //     {proccessing ? "Saving..." : "Save"}
+    // </button>
+
+    //                   <button
+    //                     type="button"
+    //                     onClick={() => setBioEditModal(false)}
+    //                     className="bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none ml-2"
+    //                   >
+    //                     Cancel
+    //                   </button>
+    //                 </div>
+    //               </form>
+    //             </div>
+    //           </div>
+    //         )}
+
+    //         {/* bio modal end */}
+    //          {/* Skills Card */}
+    //          <div className="bg-slate-200  shadow-xl shadow-slate-200 rounded-lg overflow-hidden mb-4">
+    //           {/* Skills */}
+    //           <div className="p-4">
+    //             <h3 className="text-lg font-semibold mb-2">Skills</h3>
+    //             <div className="flex flex-wrap gap-2">
+    //               {
+    //                 skillsArray.map((skill) => (
+    //                   userData.skills?.includes(skill) ? (
+
+    //                       <span
+    //                         key={skill}
+    //                         className="bg-green-300 text-green-900 px-2 py-1 rounded-full text-xs cursor-pointer"
+    //                         onClick={() => handleRemoveSkill(skill)}
+    //                       >
+    //                         {skill}
+    //                         <span key={skill} className='cursor-pointer'>&#45;</span>
+    //                       </span>
+
+    //                   ) : (
+    //                     <span
+    //                       key={skill}
+    //                       className="bg-red-300 text-red-900 px-2 py-1 rounded-full text-xs cursor-pointer"
+    //                       onClick={() => handleSkill(skill)}
+    //                     >
+    //                       {skill} <span className='cursor-pointer'>&#43;</span>
+    //                     </span>
+    //                   )
+    //                 ))
+    //               }
+    //             </div>
+    //           </div>
+    //         </div>
+
+    //         {/* Experience Card */}
+    //         {/* <div className="bg-slate-200 shadow-2xl shadow-slate-200 rounded-lg overflow-hidden mb-4">
+    //           <div className="p-4 relative">
+    //             <button
+    //               className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded-md"
+    //               onClick={() => setExpernceEditModal(true)}
+    //             >
+    //               Add
+    //             </button>
+
+    //             <h3 className="text-lg font-semibold mb-2">Experience</h3>
+    //             <div className="space-y-2">
+    //               <div className="flex justify-between">
+    //                 <p className="text-gray-600">Web Developer</p>
+    //                 <p className="text-gray-500 text-sm">Jan 2020 - Present</p>
+    //               </div>
+    //               <p className="text-gray-600">Company XYZ, New York</p>
+    //             </div>
+    //           </div>
+    //         </div> */}
+
+    //         {/* <>
+    //         {experncesEditModal && (
+    //           <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50 backdrop-blur-sm">
+    //             <div className="bg-white shadow-2xl rounded-lg p-6">
+    //               <h2 className="text-2xl font-semibold mb-4">Add Experience</h2>
+    //               <form >
+    //               <div className="mb-4">
+    //   <label className="block text-gray-600 text-sm mb-1" htmlFor="jobTitle">
+    //         Role
+    //   </label>
+    //   <input
+    //     name="role"
+    //     type='text'
+    //     id="role"
+    //     className="w-full border border-gray-300 rounded-md py-2 px-3"
+    //     value={experience.role}
+    //     onChange={handleExpChange}
+    //   />
+
+    // </div>
+    //                 <div className="mb-4">
+    //                   <label className="block text-gray-600 text-sm mb-1" htmlFor="startDate">
+    //                     Years of experience
+    //                   </label>
+    //                   <input
+    //                     type="text"
+    //                     name="yearOfExp"
+    //                     id="yearOfExp"
+    //                     className="w-full border border-gray-300 rounded-md py-2 px-3"
+    //                     value={experience.yearOfExp}
+    //                     onChange={handleExpChange}
+    //                   />
+    //                 </div>
+    //                 <div className="mb-4">
+    //                   <label className="block text-gray-600 text-sm mb-1" htmlFor="company">
+    //                     Company name
+    //                   </label>
+    //                   <input
+    //                     type="text"
+    //                     name="compName"
+    //                     id="compName"
+    //                     className="w-full border border-gray-300 rounded-md py-2 px-3"
+    //                     value={experience.compName}
+    //                     onChange={handleExpChange}
+    //                   />
+    //                 </div>
+    //                 <div className="text-center">
+    //                   <button
+    //                     type="button"
+    //                     onClick={handleSaveExperience}
+    //                     className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+    //                   >
+    //                     Save
+    //                   </button>
+    //                   <button
+    //                     type="button"
+    //                     onClick={() => {
+    //                       setExpernceEditModal(false)
+    //                       setExperience('')
+    //                     }}
+    //                     className="bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none ml-2"
+    //                   >
+    //                     Cancel
+    //                   </button>
+    //                 </div>
+    //               </form>
+    //             </div>
+    //           </div>
+    //         )}
+    //         </> */}
+
+    //         {/* Education Card */}
+    //         {/* <div className="bg-white shadow-2xl rounded-lg overflow-hidden mb-4">
+    //           <div className="p-4">
+    //             <h3 className="text-lg font-semibold mb-2">Education</h3>
+    //             <div className="space-y-2">
+    //               <div className="flex justify-between">
+    //                 <p className="text-gray-600">Bachelor's Degree in Computer Science</p>
+    //                 <p className="text-gray-500 text-sm">2016 - 2020</p>
+    //               </div>
+    //               <p className="text-gray-600">University of ABC, New York</p>
+    //             </div>
+    //           </div>
+    //         </div> */}
+    //       </div>
+    //     </div>
+    //     </>
     <>
-    {/* Spinner */}
-    {spinnner && (
-      <Spinner/>
-    )}
-    {/* Spinner */}
-    <div className='lg:h-auto md:h-auto xl:h-auto sm:h-screen mt-12'>
-      <div className=" max-w-xl mx-auto mt-4">
-        {/* Profile Card */}
-        {/* <div className="bg-white shadow-2xl rounded-lg flex overflow-hidden mb-4">
-            <img src="../../../../public/walpaper 1.jpeg" alt=""/>
-          <div className="p-4">
-            <h2 className="text-2xl font-semibold">{data.firstName} {data.lastName}</h2>
-            <p className="text-gray-600">{data.email}</p>
-            <p className="text-gray-500 text-sm">{data.phone}</p>
-          </div>
-        </div> */}
-        {/* Profile Card */}
-        <div className="bg-slate-200 shadow-slate-200 shadow-2xl rounded-lg flex overflow-hidden mb-4 relative">
-          {/*Edit icon*/}
-          <button onClick={()=> setProfileEditModal(true)} className="absolute top-2 right-3 text-gray-800 transition-colors duration-200 dark:hover:text-emerald-500 dark:text-gray-900 hover:text-yellow-500 focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+      {/* <Navbar /> */}
+
+      {/* Spinner */}
+      {spinnner && (
+        <Spinner />
+      )}
+      {/* Spinner */}
+
+      <div className="p-4 flex flex-wrap">
+        {/* Left Side - User Profile */}
+        <div className="w-full lg:w-1/4 p-4">
+          <div className="bg-slate-100 p-4 relative rounded-lg shadow-md shadow-gray-300">
+
+            {/*Edit icon*/}
+            <button onClick={() => setProfileEditModal(true)} className="absolute top-12 right-3  transition-colors duration-200 dark:hover:text-emerald-500 dark:text-gray-900 hover:text-yellow-500 focus:outline-none">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
               </svg>
             </button>
             {/*  */}
-
-          {/* 3 dot  */}
-  {isDropdownOpenArray.map((isDropdownOpen, index) => (
-    <div key={index}>
-      <div
-        className={`absolute top-10 right-2 rounded-full w-8 h-7 flex items-center justify-center ${
-          isDropdownOpen ? 'bg-gray-200' : ''
-        }`}
-        onClick={() => toggleDropdown(index)}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-6 h-6 cursor-pointer"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-          />
-        </svg>
-      </div>
-      {isDropdownOpen && (
-        <div className="absolute top-10 right-8 bg-gray-600 z-50 border-gray-300 rounded-lg py-2 px-4">
-          <Link
-            to={'/profile/applied_jobs'}
-            className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-500 dark:hover:text-white"
-          >
-            View applied jobs
-          </Link>
-
-          {/* <Link
-            to={'#'}
-            className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:hover:bg-gray-500 dark:text-gray-100 hover-bg-gray-100 dark:hover-bg-gray-700 dark:hover-text-white"
-          >
-            Settings
-          </Link>
-
-          <Link
-            to={'#'}
-            className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:hover:bg-gray-500 dark:text-gray-100 hover-bg-gray-100 dark:hover-bg-gray-700 dark:hover-text-white"
-          >
-            Keyboard shortcuts
-          </Link> */}
-        </div>
-      )}
-    </div>
-  ))}
-  {/* End 3 dot */}
-
-          {/* Profile Image */}
-          {/* <img className='w-20 h-28' accept="image/*" src={selectedImage ? selectedImage : userData?.profile} alt="" /> */}
-          <img className='w-20 h-28' accept="image/*" src={ userData?.profile} alt="" />
-          {/* User Information */}
-          <div className="p-4">
-            <h2 className="text-2xl font-semibold">{userData.firstName} {userData.lastName}</h2>
-            <p className="text-gray-600">{userData.email}</p>
-            <p className="text-gray-500 text-sm">{userData.phone}</p>
+            <img
+              src={userData?.profile}
+              alt="User Profile"
+              className="w-32 h-32 mx-auto rounded-full hover:brightness-75"
+            />
+            <p className="text-center mt-4 font-semibold">
+              {userData.bio}
+            </p>
           </div>
+
+          {/* View applied jobs */}
+          <Link to={'/profile/applied_jobs'}>
+
+            <div className="flex items-center justify-between mt-8 bg-slate-100 dark:hover:bg-slate-200 p-4 rounded-lg shadow-md shadow-gray-300">
+              <div >
+                <h2 className="text-lg font-semibold">Your Applied Jobs</h2>
+
+              </div>
+              <IoIosArrowDropright className="ml-4 w-6 h-6 text-green-600" />
+            </div>
+          </Link>
+          {/*  */}
+
         </div>
 
-        {/* Edit Form of User Information */}
         {profileEditModal && (
           <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50 backdrop-blur-sm">
-            <div className="bg-white shadow-2xl rounded-lg p-6">
+            <div className="bg-white shadow-2xl rounded-sm p-6">
               <h2 className="text-2xl font-semibold mb-4">Edit Profile</h2>
               <form>
                 <div className="mb-4">
-                  <label className="block text-center text-gray-800 text-sm mb-1" htmlFor="profileImage">
+                  <label className="block text-center text-sm mb-1" htmlFor="profileImage">
                     Profile Image
                   </label>
                   <div className='flex justify-center'>
-                  <img className='w-24 h-28' src={selectedImage ? selectedImage : userData?.profile} alt="profile" />
+                    <img className='w-24 h-24 rounded-full ' src={selectedImage ? selectedImage : userData?.profile} alt="" />
                   </div>
                   <input
                     type="file"
                     name="profileImage"
                     id="profileImage"
-                    accept="image/*"
                     onChange={handleImageChange}
-                    className="block w-full px-3 py-2 mt-2 text-sm text-gray-800 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-900 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full dark:file:bg-gray-200 dark:file:text-gray-900 dark:text-gray-900 placeholder-gray-400/70 dark:placeholder-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-300 dark:bg-white dark:focus:border-blue-300"
-                  />
+                    className="block w-full px-3 py-2 mt-2 text-sm text-gray-800 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-900 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full dark:file:bg-gray-200 dark:file:text-gray-900 dark:text-gray-900 placeholder-gray-400/70 dark:placeholder-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-300 dark:bg-white dark:focus:border-blue-300" />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-800 text-sm mb-1" htmlFor="firstName">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    id="firstName"
-                    className="w-full border border-gray-300 rounded-md py-2 px-3"
-                    placeholder={userData.firstName}
-                    onChange={handleProfileInputChange}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-800 text-sm mb-1" htmlFor="lastName">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    className="w-full border border-gray-300 rounded-md py-2 px-3"
-                    placeholder={userData.lastName}
-                    onChange={handleProfileInputChange}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-800 text-sm mb-1" htmlFor="email">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    className="w-full border border-gray-300 rounded-md py-2 px-3"
-                    placeholder={userData.email}
-                    onChange={handleProfileInputChange}
-                  />
-                </div>
-                {/* <div className="mb-4">
-                  <label className="block text-gray-600 text-sm mb-1" htmlFor="phone">
-                    Phone
-                  </label>
-                  <input
-                    type="text"
-                    name="phone"
-                    id="phone"
-                    className="w-full border border-gray-300 rounded-md py-2 px-3"
-                    placeholder={userData.phone}
-                    onChange={handleProfileInputChange}
-                  />
-                </div> */}
-                <div className="text-center">
-                  <button
-                    type="button"
-                    onClick={handleProfileSave}
-                    className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
-                    disabled={proccessing}
-                  >
-                     {proccessing ? "Saving..." : "Save"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={()=>setProfileEditModal(false)}
-                    className="bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none ml-2"
-                    disabled={proccessing}
-                    >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/*  */}
-       
-
-        {/* Bio Card */}
-        <div className="bg-slate-200 shadow-xl shadow-slate-200 rounded-lg overflow-hidden mb-4">
-          <div className="p-4 relative">
-            <button
-              className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded-md"
-              onClick={() => setBioEditModal(true)}
-            >
-              Edit
-            </button>
-            <h3 className="text-lg font-semibold mb-2">Bio</h3>
-            <p className="text-gray-600">{userData.bio}</p>
-          </div>
-        </div>
-
-        {bioEditModal && (
-          <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50 backdrop-blur-sm">
-            <div className="bg-white shadow-2xl rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Edit bio</h2>
-              <form >
-                <div className="mb-4">
-                  <label className="block text-gray-600 text-sm mb-1" htmlFor="bio">
+                  <label className="block text-gray-800 text-sm mb-1" htmlFor="bio">
                     Bio
                   </label>
                   <textarea
                     name="bio"
                     id="bio"
-                    className="w-full border border-gray-300 rounded-md py-2 px-3 h-40"
+                    className="w-full border border-gray-300 rounded-md py-2 px-3 h-20"
                     // placeholder="Enter your bio here"
                     // value={userData.bio}
                     placeholder={userData.bio}
@@ -461,146 +1049,18 @@ function Profile( {setReRender , reRender} ) {
                   />
 
                 </div>
-                <div className="text-center">
-                  
-                <button
-    type="button"
-    className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
-    onClick={handleSaveBio}
-    disabled={proccessing}
->
-    {proccessing ? "Saving..." : "Save"}
-</button>
 
-                  <button
-                    type="button"
-                    onClick={() => setBioEditModal(false)}
-                    className="bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none ml-2"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* bio modal end */}
-         {/* Skills Card */}
-         <div className="bg-slate-200  shadow-xl shadow-slate-200 rounded-lg overflow-hidden mb-4">
-          {/* Skills */}
-          <div className="p-4">
-            <h3 className="text-lg font-semibold mb-2">Skills</h3>
-            <div className="flex flex-wrap gap-2">
-              {
-                skillsArray.map((skill) => (
-                  userData.skills?.includes(skill) ? (
-
-                      <span
-                        key={skill}
-                        className="bg-green-300 text-green-900 px-2 py-1 rounded-full text-xs cursor-pointer"
-                        onClick={() => handleRemoveSkill(skill)}
-                      >
-                        {skill}
-                        <span key={skill} className='cursor-pointer'>&#45;</span>
-                      </span>
-
-                  ) : (
-                    <span
-                      key={skill}
-                      className="bg-red-300 text-red-900 px-2 py-1 rounded-full text-xs cursor-pointer"
-                      onClick={() => handleSkill(skill)}
-                    >
-                      {skill} <span className='cursor-pointer'>&#43;</span>
-                    </span>
-                  )
-                ))
-              }
-            </div>
-          </div>
-        </div>
-
-        {/* Experience Card */}
-        {/* <div className="bg-slate-200 shadow-2xl shadow-slate-200 rounded-lg overflow-hidden mb-4">
-          <div className="p-4 relative">
-            <button
-              className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded-md"
-              onClick={() => setExpernceEditModal(true)}
-            >
-              Add
-            </button>
-
-            <h3 className="text-lg font-semibold mb-2">Experience</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <p className="text-gray-600">Web Developer</p>
-                <p className="text-gray-500 text-sm">Jan 2020 - Present</p>
-              </div>
-              <p className="text-gray-600">Company XYZ, New York</p>
-            </div>
-          </div>
-        </div> */}
-
-        {/* <>
-        {experncesEditModal && (
-          <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50 backdrop-blur-sm">
-            <div className="bg-white shadow-2xl rounded-lg p-6">
-              <h2 className="text-2xl font-semibold mb-4">Add Experience</h2>
-              <form >
-              <div className="mb-4">
-  <label className="block text-gray-600 text-sm mb-1" htmlFor="jobTitle">
-        Role
-  </label>
-  <input
-    name="role"
-    type='text'
-    id="role"
-    className="w-full border border-gray-300 rounded-md py-2 px-3"
-    value={experience.role}
-    onChange={handleExpChange}
-  />
-  
-</div>
-                <div className="mb-4">
-                  <label className="block text-gray-600 text-sm mb-1" htmlFor="startDate">
-                    Years of experience
-                  </label>
-                  <input
-                    type="text"
-                    name="yearOfExp"
-                    id="yearOfExp"
-                    className="w-full border border-gray-300 rounded-md py-2 px-3"
-                    value={experience.yearOfExp}
-                    onChange={handleExpChange}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-600 text-sm mb-1" htmlFor="company">
-                    Company name
-                  </label>
-                  <input
-                    type="text"
-                    name="compName"
-                    id="compName"
-                    className="w-full border border-gray-300 rounded-md py-2 px-3"
-                    value={experience.compName}
-                    onChange={handleExpChange}
-                  />
-                </div>
                 <div className="text-center">
                   <button
                     type="button"
-                    onClick={handleSaveExperience}
+                    onClick={handleProfileSave}
                     className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
                   >
-                    Save
+                    {proccessing ? 'Saving...' : 'Save'}
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      setExpernceEditModal(false)
-                      setExperience('')
-                    }}
+                    onClick={() => setProfileEditModal(false)}
                     className="bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none ml-2"
                   >
                     Cancel
@@ -610,23 +1070,175 @@ function Profile( {setReRender , reRender} ) {
             </div>
           </div>
         )}
-        </> */}
 
-        {/* Education Card */}
-        {/* <div className="bg-white shadow-2xl rounded-lg overflow-hidden mb-4">
-          <div className="p-4">
-            <h3 className="text-lg font-semibold mb-2">Education</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <p className="text-gray-600">Bachelor's Degree in Computer Science</p>
-                <p className="text-gray-500 text-sm">2016 - 2020</p>
+
+
+
+        {/* Right Side - User Information */}
+        <div className="w-full lg:w-3/4 p-4 ">
+          {/* Job Seeker Information */}
+          <div className="bg-slate-100 rounded-lg shadow-md shadow-gray-300 p-6 relative">
+            <h2 className="text-2xl font-bold  mb-4">Basic details</h2>
+            {/*Edit icon*/}
+            <button
+              onClick={clickedBasicEditButton}
+              className="absolute top-6 right-5  transition-colors duration-200 dark:hover:text-emerald-500 dark:text-gray-900 hover:text-yellow-500 focus:outline-none">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+              </svg>
+            </button>
+            {/*  */}
+
+            <div className="border-t border-gray-300 mb-4"></div>
+
+            <div className="flex items-center space-x-4">
+              <div className="w-2/3">
+                <p className="text-xl font-semibold text-gray-800">
+                  {userData.firstName} {userData.lastName}
+                </p>
+                <p className="text-gray-800">Email: {userData.email}</p>
+                <p className="text-gray-800">Phone: {userData.phone}</p>
               </div>
-              <p className="text-gray-600">University of ABC, New York</p>
+              <div className="w-1/3">
+                {/* You can add an avatar or profile picture here */}
+                <img
+                  src={userData.profile}
+                  alt="Profile Avatar"
+                  className="w-16 h-16 rounded-full object-cover"
+                />
+              </div>
             </div>
           </div>
-        </div> */}
+
+          {UpdateBasicDataModal && (
+            <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50 backdrop-blur-sm">
+              <div className="bg-white shadow-2xl rounded-sm p-6">
+                <h2 className="text-2xl font-semibold mb-4">Edit Personal Details</h2>
+                <form className="flex flex-col items-center">
+
+                  <div className="mb-4 w-full">
+                    <TextField
+                      required
+                      id="outlined-required"
+                      name="firstName"
+                      label="First name"
+                      defaultValue={userData.firstName ? userData.firstName : ''}
+                      placeholder="Enter your first name"
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                    {/* <TextField id="filled-basic" label="First name" variant="filled" fullWidth placeholder="Enter your first name" /> */}
+                  </div>
+                  <div className="mb-4 w-full">
+                    <TextField
+                      required
+                      id="outlined-required"
+                      name="lastName"
+                      label="Last name"
+                      defaultValue={userData.lastName ? userData.lastName : ''}
+                      placeholder="Enter your last name"
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  </div>
+                  <div className="mb-4 w-full">
+                    <TextField
+                      required
+                      id="outlined-required"
+                      name="email"
+                      label="Email"
+                      defaultValue={userData.email ? userData.email : ''}
+                      placeholder="Enter your email"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+                      onClick={handlePersonalData}
+                    >
+                      {proccessing ? 'Saving...' : 'Save'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setUpdateBasicDataModal(false)}
+                      className="bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none ml-2"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+
+          {/* Skills Card */}
+          <div className="mt-4 bg-slate-100 p-4 rounded-lg shadow-md shadow-gray-300">
+            <h2 className="text-lg font-semibold mb-2">Skills</h2>
+            <div className="bg-gray-100 p-4 rounded">
+              <input
+                type="text"
+                placeholder="Add Skill"
+                className="w-2/3 p-2 border rounded-l"
+                value={newSkill}
+                onChange={(e) => setNewSkill(e.target.value)}
+              />
+              <button
+                className="bg-blue-500 text-white px-4 rounded-r"
+                onClick={handleAddSkill}
+              >
+                Add
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {userData.skills && userData.skills.map((skill, index) => (
+                <span
+                  key={index}
+                  className="bg-green-300 text-green-900 px-2 py-2 rounded-sm text-sm font-medium flex items-center "
+
+                >
+                  {skill}
+                  <FiDelete
+                    onClick={() => handleRemoveSkill(skill)}
+                    className="ml-2 w-5 h-5 text-red-600 cursor-pointer" />
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Experience Card */}
+          {/* <div className="mt-4 bg-slate-100 p-4 rounded-lg shadow-md shadow-gray-300">
+            <h2 className="text-lg font-semibold">Experience</h2>
+            
+            <div className="mb-4">
+              <div className="flex justify-between">
+                <p className="font-semibold">Job Title 1</p>
+                <p>Company Name 1</p>
+                <p>Location 1</p>
+                <p>Start Date - End Date</p>
+              </div>
+              <p className="mt-2">
+                Description of responsibilities and achievements in this role.
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <div className="flex justify-between">
+                <p className="font-semibold">Job Title 2</p>
+                <p>Company Name 2</p>
+                <p>Location 2</p>
+                <p>Start Date - End Date</p>
+              </div>
+              <p className="mt-2">
+                Description of responsibilities and achievements in this role.
+              </p>
+            </div>
+          </div> */}
+
+        </div>
       </div>
-    </div>
+      <Footer />
     </>
   )
 }
