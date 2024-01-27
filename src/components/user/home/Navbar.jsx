@@ -202,7 +202,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
                       >Browse Jobs
                       </Link>
                       <Link
-                        to={'/support'}
+                        to={'#'}
                         className={`rounded-md px-3 py-2 text-md font-serif font-medium hover:text-emerald-700 text-gray-900 "
                         ${pathname === '/support' ? 'dark:text-emerald-500 border-b-2 border-emerald-500 ' : 'text-gray-900 '
                           }`}
@@ -429,7 +429,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
                     </button>
                   </div>
                 </div>
-                // )}
+                {/* // )} */}
                 {/*  */}
               </div>
             </Disclosure.Panel>
