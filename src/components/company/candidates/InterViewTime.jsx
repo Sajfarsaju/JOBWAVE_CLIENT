@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom"
 import Navbar from "../../company/home/Navbar"
 import Footer from "../home/Footer"
 import { toast } from 'react-hot-toast';
-import axios from "axios"
 import { useSelector } from "react-redux"
 import { Button, Checkbox, IconButton, Tooltip } from "@mui/material"
 import Spinner from "../../Spinner"

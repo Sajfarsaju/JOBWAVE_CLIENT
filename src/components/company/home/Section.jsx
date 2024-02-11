@@ -62,113 +62,115 @@ function Section() {
 
   return (
     <>
-    {/* Spinner */}
-    {spinnner && (
-      <Spinner/>
-    )}
-    {/* Spinner */}
-      {companyData.subscriptionPlan ? (
-
-        <div className=" relative isolate overflow-hidden py-24 sm:py-32">
-          <img
-            src="https://wallpapers.com/images/featured/consultant-0bb0flkn9zvgvg9v.jpg"
-            alt=""
-            className="absolute inset-0 -z-10 h-full w-full object-cover object-right md:object-center p"
-          />
-          <div
-            className="hidden sm:absolute sm:-top-10 sm:right-1/2 sm:-z-10 sm:mr-10 sm:block sm:transform-gpu sm:blur-3xl"
-            aria-hidden="true"
-          >
-            <div
-              className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
-              style={{
-                clipPath:
-                  'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-              }}
-            />
-          </div>
-          <div
-            className="absolute -top-52 left-1/2 -z-10 -translate-x-1/2 transform-gpu blur-3xl sm:top-[-28rem] sm:ml-16 sm:translate-x-0 sm:transform-gpu"
-            aria-hidden="true"
-          >
-            <div
-              className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
-              style={{
-                clipPath:
-                  'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-              }}
-            />
-          </div>
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl lg:mx-0">
-              <h2 className="text-4xl font-bold tracking-tight text-blue-900 sm:text-6xl">Work with us</h2>
-              <p className="mt-6 text-lg font-medium leading-8 text-blue-900">
-                Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet
-                fugiat veniam occaecat fugiat aliqua.
-              </p>
-            </div>
-            <div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
-              <div className="grid grid-cols-1 gap-x-8 gap-y-6 text-base font-bold leading-7 text-blue-900 sm:grid-cols-2 md:flex lg:gap-x-10">
-                {links.map((link) => (
-                  <a key={link.name} href={link.href}>
-                    {link.name} <span aria-hidden="true">&rarr;</span>
-                  </a>
-                ))}
-              </div>
-              <dl className="mt-16 grid grid-cols-1 gap-8 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4">
-                {stats.map((stat) => (
-                  <div key={stat.name} className="flex flex-col-reverse">
-                    <dt className="text-base font-semibold leading-7 text-blue-900">{stat.name}</dt>
-                    <dd className="text-2xl font-bold leading-9 tracking-tight text-blue-900">{stat.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-        </div>
+      {/* Spinner */}
+      {spinnner ? (
+        <Spinner />
       ) : (
 
-        <section className="bg-gray-100 md:mt-24 sm:mt-32 lg:py-12 lg:-mt-1 xl:-mt-1 lg:flex lg:justify-center">
-          <div className="overflow-hidden lg:hover:scale-105 lg:duration-1000 bg-white shadow-lg shadow-gray-400 mt-16 lg:mx-8 lg:flex lg:max-w-6xl lg:w-full lg:shadow-md lg:rounded-xl">
-            <div className="lg:w-1/2 lg:py-8">
-              <div className="h-64 bg-cover lg:h-full" style={{ backgroundImage: `url('https://media.istockphoto.com/id/1361433464/photo/portraits-of-young-diverse-people.jpg?s=612x612&w=0&k=20&c=7y-hTiVfSWv6Q1dY44wPxAqCYcMQHcDjDKJgIn6sX_o=')` }}></div>
-            </div>
 
-            <div className="max-w-xl px-6  py-12 lg:max-w-5xl lg:w-1/2 ">
-              <h2 className="text-3xl font-semibold text-gray-800 md:text-4xl">
-                Transform Your Hiring Process
-              </h2>
+        <>
+          {companyData.subscriptionPlan ? (
 
-              <p className="mt-4 text-gray-800 dark:text-gray-800">
-                Is your company ready to <span className="text-blue-600">redefine</span> its workforce strategy? We empower you to
-                <span className="text-blue-600">take charge</span>. With our <span className="text-blue-600">innovative</span>
-                job posting platform, you can effortlessly attract top talent in the industry. Showcase your company as a
-                <span className="text-blue-600">premier</span> employer and <span className="text-blue-600">transform</span> your hiring process.
-              </p>
-
-              <p className="mt-4 text-gray-800 dark:text-gray-800">
-                Our <span className="text-blue-600">cutting-edge</span> features guarantee that your job listings
-                <span className="text-blue-600">shine</span> and reach a broad audience. It's time to
-                <span className="text-blue-600">make your mark</span>, unlock new opportunities, and
-                <span className="text-blue-600">shape</span> the future of your organization. Join us on this
-                <span className="text-blue-600">transformative journey </span> towards success by exploring our
-                <span className="text-blue-600"> subscription plans.</span>
-              </p>
-
-
-
-
-              <div className="inline-flex w-full mt-6 sm:w-auto">
-                <button onClick={() => setIsOpen(true)} className="inline-flex items-center justify-center w-full px-6 py-2 text-md font-semibold text-white duration-300 rounded-lg bg-emerald-600 hover:bg-emerald-500">
-                  Get Started
-                </button>
+            <div className=" relative isolate overflow-hidden py-24 sm:py-32">
+              <img
+                src="https://wallpapers.com/images/featured/consultant-0bb0flkn9zvgvg9v.jpg"
+                alt=""
+                className="absolute inset-0 -z-10 h-full w-full object-cover object-right md:object-center p"
+              />
+              <div
+                className="hidden sm:absolute sm:-top-10 sm:right-1/2 sm:-z-10 sm:mr-10 sm:block sm:transform-gpu sm:blur-3xl"
+                aria-hidden="true"
+              >
+                <div
+                  className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
+                  style={{
+                    clipPath:
+                      'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+                  }}
+                />
+              </div>
+              <div
+                className="absolute -top-52 left-1/2 -z-10 -translate-x-1/2 transform-gpu blur-3xl sm:top-[-28rem] sm:ml-16 sm:translate-x-0 sm:transform-gpu"
+                aria-hidden="true"
+              >
+                <div
+                  className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
+                  style={{
+                    clipPath:
+                      'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+                  }}
+                />
+              </div>
+              <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                <div className="mx-auto max-w-2xl lg:mx-0">
+                  <h2 className="text-4xl font-bold tracking-tight text-blue-900 sm:text-6xl">Work with us</h2>
+                  <p className="mt-6 text-lg font-medium leading-8 text-blue-900">
+                    Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet
+                    fugiat veniam occaecat fugiat aliqua.
+                  </p>
+                </div>
+                <div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
+                  <div className="grid grid-cols-1 gap-x-8 gap-y-6 text-base font-bold leading-7 text-blue-900 sm:grid-cols-2 md:flex lg:gap-x-10">
+                    {links.map((link) => (
+                      <a key={link.name} href={link.href}>
+                        {link.name} <span aria-hidden="true">&rarr;</span>
+                      </a>
+                    ))}
+                  </div>
+                  <dl className="mt-16 grid grid-cols-1 gap-8 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4">
+                    {stats.map((stat) => (
+                      <div key={stat.name} className="flex flex-col-reverse">
+                        <dt className="text-base font-semibold leading-7 text-blue-900">{stat.name}</dt>
+                        <dd className="text-2xl font-bold leading-9 tracking-tight text-blue-900">{stat.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          ) : (
+
+            <section className="bg-gray-100 md:mt-24 sm:mt-32 lg:py-12 lg:-mt-1 xl:-mt-1 lg:flex lg:justify-center">
+              <div className="overflow-hidden lg:hover:scale-105 lg:duration-1000 bg-white shadow-lg shadow-gray-400 mt-16 lg:mx-8 lg:flex lg:max-w-6xl lg:w-full lg:shadow-md lg:rounded-xl">
+                <div className="lg:w-1/2 lg:py-8">
+                  <div className="h-64 bg-cover lg:h-full" style={{ backgroundImage: `url('https://media.istockphoto.com/id/1361433464/photo/portraits-of-young-diverse-people.jpg?s=612x612&w=0&k=20&c=7y-hTiVfSWv6Q1dY44wPxAqCYcMQHcDjDKJgIn6sX_o=')` }}></div>
+                </div>
+
+                <div className="max-w-xl px-6  py-12 lg:max-w-5xl lg:w-1/2 ">
+                  <h2 className="text-3xl font-semibold text-gray-800 md:text-4xl">
+                    Transform Your Hiring Process
+                  </h2>
+
+                  <p className="mt-4 text-gray-800 dark:text-gray-800">
+                    Is your company ready to <span className="text-blue-600">redefine</span> its workforce strategy? We empower you to
+                    <span className="text-blue-600">take charge</span>. With our <span className="text-blue-600">innovative</span>
+                    job posting platform, you can effortlessly attract top talent in the industry. Showcase your company as a
+                    <span className="text-blue-600">premier</span> employer and <span className="text-blue-600">transform</span> your hiring process.
+                  </p>
+
+                  <p className="mt-4 text-gray-800 dark:text-gray-800">
+                    Our <span className="text-blue-600">cutting-edge</span> features guarantee that your job listings
+                    <span className="text-blue-600">shine</span> and reach a broad audience. It's time to
+                    <span className="text-blue-600">make your mark</span>, unlock new opportunities, and
+                    <span className="text-blue-600">shape</span> the future of your organization. Join us on this
+                    <span className="text-blue-600">transformative journey </span> towards success by exploring our
+                    <span className="text-blue-600"> subscription plans.</span>
+                  </p>
+
+
+
+
+                  <div className="inline-flex w-full mt-6 sm:w-auto">
+                    <button onClick={() => setIsOpen(true)} className="inline-flex items-center justify-center w-full px-6 py-2 text-md font-semibold text-white duration-300 rounded-lg bg-emerald-600 hover:bg-emerald-500">
+                      Get Started
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+        </>
       )}
-
-
 
       {isOpen && (
 

@@ -3,6 +3,9 @@ import Navbar from '../home/Navbar';
 import Footer from '../../company/home/Footer';
 import { useSelector } from 'react-redux';
 import Axios_Instance from '../../../api/userAxios';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { AiFillEyeInvisible } from 'react-icons/ai';
+import IconButton from '@mui/material/IconButton';
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast';
 import { FiDelete } from 'react-icons/fi'
@@ -11,6 +14,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { IoIosArrowDropright } from "react-icons/io";
 import Spinner from '../../Spinner';
+import { Input, InputAdornment } from '@mui/material';
 
 
 function userpro() {
@@ -25,6 +29,13 @@ function userpro() {
   const [spinnner, setspinnner] = useState(true);
   const userId = useSelector((state) => state.user.id)
 
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const inputPasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
   useEffect(() => {
     async function getUser() {
       const res = await Axios_Instance.get('/profile');
@@ -38,267 +49,6 @@ function userpro() {
   }, [reloadProfile])
 
 
-  //**************************UPDATE PROFILE*****************//
-  const [profileEditModal, setProfileEditModal] = useState(false);
-  const [experncesEditModal, setExpernceEditModal] = useState(false)
-  const [updatedUserData, setUpdatedUserData] = useState({ ...userData });
-  const [selectedImage, setSelectedImage] = useState(null);
-
-
-  function isValidImage(logo) {
-    const validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
-
-    const extension = logo.substr(logo.lastIndexOf('.')).toLowerCase();
-
-    return validExtensions.includes(extension);
-  }
-
-  const handleImageChange = (img) => {
-    if (isValidImage(img?.target?.files[0].name)) {
-      let reader = new FileReader()
-      reader.readAsDataURL(img.target.files[0])
-      reader.onload = () => {
-        setSelectedImage(reader.result)
-      }
-      reader.onerror = (err) => {
-        console.log(err);
-      }
-    } else {
-      toast.error('Invalid file type. Please upload a JPEG, PNG, or WEBP image file.')
-    }
-  };
-
-  const handleProfileInputChange = (e) => {
-    const { name, value } = e.target;
-    setUpdatedUserData((prevData) => ({
-      ...prevData, setUserData,
-      [name]: value,
-    }));
-  };
-
-  //******************** PROFILE & BIO   ****************
-  const handleProfileSave = async () => {
-    try {
-
-      const updatedProfileData = {
-        profileImage: selectedImage || userData.profile,
-        bio: bio,
-        action: 'updateProfile'
-      };
-
-      const response = await Axios_Instance.patch(`/profilee/${userId}`, updatedProfileData)
-      if (response.status === 200) {
-        setUserData({
-          ...userData,
-          profile: updatedProfileData.profileImage,
-          bio: updatedProfileData.bio,
-        });
-        // setReloadProfile(!reloadProfile)
-        // setReRender(!reRender)
-        setProfileEditModal(false);
-      } else {
-        console.error('Failed to update user information');
-      }
-    } catch (error) {
-      if (error?.response?.status === 400 || error?.response?.status === 404) {
-        toast.error(error?.response?.data?.errMsg)
-      } else {
-        console.log("An error occurred")
-      }
-      console.error('An error occurred:', error);
-    }
-  };
-
-
-
-  //********************UPDATE PERSONAL DETAILS****************//
-  const [UpdateBasicDataModal, setUpdateBasicDataModal] = useState(false);
-  const [firstName, setFirstName] = useState()
-  const [lastName, setLastName] = useState()
-  const [email, setEmail] = useState()
-
-
-  const clickedBasicEditButton = () => {
-    // *Storing previous value into updating state as initial value
-    setFirstName(userData.firstName)
-    setLastName(userData.lastName)
-    setEmail(userData.email)
-    setUpdateBasicDataModal(true)
-  }
-
-
-  const validateBasicData = () => {
-    const errors = {}
-
-    if (firstName.trim() === '' && firstName.length >= 0) {
-      errors.firstName = "Enter a valid First nameee";
-    }
-
-    const emailRegex = /^[a-z]{3}[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    const nameRegex = /^[A-Za-z\s]+$/;
-
-    if (firstName.trim().length < 4) {
-      errors.firstName = "Enter a valid First name";
-
-    } else if (!nameRegex.test(firstName.trim())) {
-      errors.firstName = "Name should contain only alphabetic characters";
-    }
-
-    if (lastName.trim().length < 1) {
-      errors.lastName = "Enter a valid Last name";
-    } else if (!nameRegex.test(lastName.trim())) {
-      errors.lastName = "Name should contain only alphabetic characters";
-    }
-    console.log(email)
-    if (!emailRegex.test(email)) errors.email = "Enter a valid email address";
-    console.log('errors;', errors)
-    return errors;
-  }
-
-  const handlePersonalData = async (e) => {
-    e.preventDefault()
-
-    const errors = validateBasicData()
-
-
-    if (Object.keys(errors).length === 0) {
-      try {
-        setProccessing(true)
-
-        await Axios_Instance.patch(`/profilee/${userId}`, { firstName, lastName, email, action: 'updatePersonal' }).then((response) => {
-
-          if (response.status === 200) {
-
-            setProccessing(false)
-
-            toast.success("Updated success")
-            setUserData({
-              ...userData,
-              firstName: firstName ? firstName : userData.firstName,
-              lastName: lastName ? lastName : userData.lastName,
-              email: email ? email : userData.email
-            });
-          }
-          setUpdateBasicDataModal(false)
-        })
-      } catch (error) {
-        console.log(error)
-      }
-
-    } else if (Object.keys(errors).length === 3) {
-      toast.error("All fields must be required");
-    } else if (errors.firstName) {
-      toast.error(errors.firstName);
-    } else if (errors.lastName) {
-      toast.error(errors.lastName);
-    } else if (errors.email) {
-      toast.error(errors.email);
-    }
-  }
-
-
-  //********************END UPDATE PROFILE***************//
-
-  //*********SKILLS********** *//
-  const handleAddSkill = async () => {
-
-    try {
-      const skillRegex = /^[A-Za-z\s]+$/;
-      if (newSkill.trim().length === 0) return toast.error('Fill a skill')
-      if (!skillRegex.test(newSkill.trim())) return toast.error('Skill should contain only alphabetic characters')
-
-      const response = await Axios_Instance.patch(`/skills`, {
-        skill: newSkill,
-        action: 'add_skill'
-      });
-
-      if (response.status === 200) {
-        toast.success(`Added new ${newSkill} skill`)
-        setUserData(response.data.user)
-        setNewSkill('');
-
-      } else {
-        console.error('Failed to add skill');
-      }
-    } catch (error) {
-      if (error.response?.status === 401) {
-        toast.error(error?.response?.data?.errMsg)
-      } else {
-        console.error('An error occurred:', error);
-      }
-    }
-  };
-
-  const handleRemoveSkill = async (skillToRemove) => {
-    try {
-
-      const res = await Axios_Instance.patch(`/skills`, {
-        skill: skillToRemove,
-        action: 'remove'
-      })
-      if (res.status === 200) {
-        toast.success(`Removed your ${skillToRemove} skill`)
-        setUserData(res.data.user)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  //*********END SKILLS********** *//
-
-  //***********************BIO*****************//
-  const [bioEditModal, setBioEditModal] = useState(false);
-  const [bio, setBio] = useState("");
-
-  const validateBioForm = () => {
-    const errors = {};
-    const bioRegex = /^[A-Za-z\s.,'-]+$/;
-
-    if (!bio || bio.trim().length === 0) {
-      errors.commen = "Bio is required"
-    }
-    if (!bioRegex.test(bio)) {
-      errors.bio = 'Bio should only contain alphabets.';
-    }
-    return errors;
-  }
-
-
-  const handleSaveBio = async (e) => {
-    e.preventDefault();
-    const errors = validateBioForm()
-
-    if (Object.keys(errors).length === 0) {
-      try {
-
-        const response = await Axios_Instance.post(`/profile`, {
-          action: 'updateBio',
-          bio: bio,
-        });
-
-        if (response.status === 200) {
-          console.log(response.data.user, "bio data");
-          setUserData((prevData) => ({
-            ...prevData,
-            bio: bio,
-          }));
-
-          setBioEditModal(false);
-        }
-      } catch (error) {
-        if (error.response.status === 400 || error.response.status === 404) {
-          toast.error(error?.response?.data?.errMsg)
-        }
-        console.error("Error saving bio:", error);
-      }
-    } else if (errors.commen) {
-      toast.error(errors.commen)
-    } else {
-      toast.error(errors.bio)
-    }
-  };
-  //*********************END BIO*****************//
-
   const [isDropdownOpenArray, setIsDropdownOpenArray] = useState([false, false, false]);
 
   const toggleDropdown = (index) => {
@@ -306,278 +56,204 @@ function userpro() {
     updatedArray[index] = !updatedArray[index];
     setIsDropdownOpenArray(updatedArray);
   };
-  
+
 
   return (
     <>
       <Navbar />
-
-      {/* Spinner */}
-      {spinnner && (
-        <Spinner />
-      )}
-      {/* Spinner */}
-
-      <div className="p-4 flex flex-wrap">
-        {/* Left Side - User Profile */}
-        <div className="w-full lg:w-1/4 p-4">
-          <div className="bg-slate-100 p-4 relative rounded-lg shadow-lg shadow-gray-300">
-
-            {/*Edit icon*/}
-            <button onClick={() => setProfileEditModal(true)} className="absolute top-12 right-3  transition-colors duration-200 dark:hover:text-emerald-500 dark:text-gray-900 hover:text-yellow-500 focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-              </svg>
-            </button>
-            {/*  */}
-            <img
-              src={userData?.profile}
-              alt="User Profile"
-              className="w-32 h-32 mx-auto rounded-full hover:brightness-75"
-            />
-            <p className="text-center mt-4 font-semibold">
-              {userData.bio}
-            </p>
+      {/* <div className="flex items-center justify-center h-screen relative">
+        <img
+          className="absolute lg:top-6 xl:top-6 top-12 left-1/2 transform -translate-x-1/2 w-20 h-20 mb-8"
+          src="/public/JobWave2-fotor-bg-remover-20230817153930.png"
+          alt="Logo"
+        />
+        <div className=" w-96 relative bg-white p-8 shadow-xl shadow-slate-300">
+          
+          <div className=" text-center text-slate-500 text-base font-dm-sans uppercase leading-none mb-8">
+            Log In
           </div>
-
-          {/* View applied jobs */}
-          <Link to={'/profile/applied_jobs'}>
-
-            <div className="flex items-center justify-between mt-8 bg-slate-100 dark:hover:bg-slate-200 p-4 rounded-lg shadow-lg shadow-gray-300">
-              <div >
-                <h2 className="text-lg font-semibold">Your Applied Jobs</h2>
-                
-              </div>
-              <IoIosArrowDropright className="ml-4 w-6 h-6 text-green-600" />
+          <form className="w-full">
+            <div className="mb-4">
+              <label htmlFor="email" className="text-indigo-950 text-base font-dm-sans capitalize leading-relaxed block">
+                Email Address
+              </label>
+              <Input
+                type="email"
+                id="email"
+                name="email"
+                className="w-full h-12 border border-stone-300 rounded px-3 leading-relaxed focus:outline-none focus:ring focus:border-blue-700"
+              />
             </div>
-          </Link>
-          {/*  */}
-
-        </div>
-
-        {profileEditModal && (
-          <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50 backdrop-blur-sm">
-            <div className="bg-white shadow-2xl rounded-sm p-6">
-              <h2 className="text-2xl font-semibold mb-4">Edit Profile</h2>
-              <form>
-                <div className="mb-4">
-                  <label className="block text-center text-sm mb-1" htmlFor="profileImage">
-                    Profile Image
-                  </label>
-                  <div className='flex justify-center'>
-                    <img className='w-24 h-24 rounded-full ' src={selectedImage ? selectedImage : userData?.profile} alt="" />
-                  </div>
-                  <input
-                    type="file"
-                    name="profileImage"
-                    id="profileImage"
-                    onChange={handleImageChange}
-                    className="block w-full px-3 py-2 mt-2 text-sm text-gray-800 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-900 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full dark:file:bg-gray-200 dark:file:text-gray-900 dark:text-gray-900 placeholder-gray-400/70 dark:placeholder-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-300 dark:bg-white dark:focus:border-blue-300" />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-800 text-sm mb-1" htmlFor="bio">
-                    Bio
-                  </label>
-                  <textarea
-                    name="bio"
-                    id="bio"
-                    className="w-full border border-gray-300 rounded-md py-2 px-3 h-20"
-                    // placeholder="Enter your bio here"
-                    // value={userData.bio}
-                    placeholder={userData.bio}
-                    onChange={(e) => setBio(e.target.value)}
-                  />
-
-                </div>
-
-                <div className="text-center">
-                  <button
-                    type="button"
-                    onClick={handleProfileSave}
-                    className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setProfileEditModal(false)}
-                    className="bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none ml-2"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
+            <div className="mb-4">
+              <label htmlFor="password" className="text-indigo-950 text-base font-dm-sans capitalize leading-relaxed block">
+                Password
+              </label>
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                name="password"
+                className="w-full h-12 border border-stone-300 rounded px-3 leading-relaxed focus:outline-none focus:ring focus:border-blue-700"
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={inputPasswordVisibility} edge="end">
+                      {showPassword ? <AiFillEyeInvisible /> : <VisibilityIcon />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
             </div>
-          </div>
-        )}
-
-
-
-
-        {/* Right Side - User Information */}
-        <div className="w-full lg:w-3/4 p-4 ">
-          {/* Job Seeker Information */}
-          <div className="bg-slate-100 rounded-lg shadow-lg shadow-gray-300 p-6 relative">
-            <h2 className="text-2xl font-bold  mb-4">Basic details</h2>
-            {/*Edit icon*/}
             <button
-              onClick={clickedBasicEditButton}
-              className="absolute top-6 right-5  transition-colors duration-200 dark:hover:text-emerald-500 dark:text-gray-900 hover:text-yellow-500 focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-              </svg>
+              type="submit"
+              className="w-full h-11 bg-blue-700 rounded text-white uppercase font-dm-sans leading-none"
+            >
+              Log In
             </button>
-            {/*  */}
-
-            <div className="border-t border-gray-300 mb-4"></div>
-
-            <div className="flex items-center space-x-4">
-              <div className="w-2/3">
-                <p className="text-xl font-semibold text-gray-800">
-                  {userData.firstName} {userData.lastName}
-                </p>
-                <p className="text-gray-800">Email: {userData.email}</p>
-                <p className="text-gray-800">Phone: {userData.phone}</p>
-              </div>
-              <div className="w-1/3">
-                {/* You can add an avatar or profile picture here */}
-                <img
-                  src={userData.profile}
-                  alt="Profile Avatar"
-                  className="w-16 h-16 rounded-full object-cover"
-                />
-              </div>
+            <div className="flex items-center mt-4">
+              <div className="border-t border-stone-300 w-full"></div>
+              <div className="mx-4 text-slate-500 text-base font-dm-sans leading-loose">or</div>
+              <div className="border-t border-stone-300 w-full"></div>
             </div>
-          </div>
+            <button
+              type="button"
+              className="w-full h-11 border-2 border-gray-200 rounded text-gray-700 uppercase font-dm-sans leading-none mt-4 flex items-center justify-center"
+            >
+              <img src="your-google-image-url" alt="Google" className="mr-2" />
+              Continue with Google
+            </button>
+            <p className="text-slate-500 text-base font-dm-sans leading-loose mt-4">
+              Already have an account? <span className="text-blue-700">Login</span>
+            </p>
+          </form>
+        </div>
+      </div> */}
 
-          {UpdateBasicDataModal && (
-            <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50 backdrop-blur-sm">
-              <div className="bg-white shadow-2xl rounded-sm p-6">
-                <h2 className="text-2xl font-semibold mb-4">Edit Personal Details</h2>
-                <form className="flex flex-col items-center">
+      <div className="container max-w-full mx-auto py-10 px-6 ">
 
-                  <div className="mb-4 w-full">
-                    <TextField
-                      required
-                      id="outlined-required"
-                      name="firstName"
-                      label="First name"
-                      defaultValue={userData.firstName ? userData.firstName : ''}
-                      placeholder="Enter your first name"
-                      onChange={(e) => setFirstName(e.target.value)}
-                    />
-                    {/* <TextField id="filled-basic" label="First name" variant="filled" fullWidth placeholder="Enter your first name" /> */}
-                  </div>
-                  <div className="mb-4 w-full">
-                    <TextField
-                      required
-                      id="outlined-required"
-                      name="lastName"
-                      label="Last name"
-                      defaultValue={userData.lastName ? userData.lastName : ''}
-                      placeholder="Enter your last name"
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
-                  </div>
-                  <div className="mb-4 w-full">
-                    <TextField
-                      required
-                      id="outlined-required"
-                      name="email"
-                      label="Email"
-                      defaultValue={userData.email ? userData.email : ''}
-                      placeholder="Enter your email"
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
+        <div className="max-w-sm mx-auto lg:mr-20 xl:mr-20">
+          <div className="relative flex flex-wrap">
+            <div className="w-full relative">
+              <div className=" mt-2 shadow-xl shadow-slate-300 p-8 lg:max-w-[400px] md:max-w-[400px] xl:max-w-[400px] sm:max-w-[300px]  mx-auto bg-white rounded-md">
+                <div className="mb-5 pb-1 text-left font-base">
+                <p className="mb-2 font-dm-sans text-xl font-semibold text-gray-800">
+                Start Your Career With Us!
+</p>
+<p className='font-dm-sans text-gray-700 text-md'>
+  Create your account and explore job opportunities that match your skills and aspirations.
+</p>
+                </div>
 
-                  <div className="text-center">
+                <form className="mt-8">
+                  <div className="mx-auto max-w-lg">
+                    <div className="py-2">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">First name</span>
+                      <input
+                        placeholder=""
+                        type="text"
+                    name='firstName'
+                        className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                      />
+                    </div>
+                    <div className="py-2">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">Last name</span>
+                      <input
+                        placeholder=""
+                        type="text"
+                    name='lastName'
+                        className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                      />
+                    </div>
+                    <div className="py-2">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">Email</span>
+                      <input
+                        placeholder=""
+                        type="email"
+                    name='email'
+                        className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                      />
+                    </div>
+                    <div className="py-2">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">Phone number</span>
+                      <input
+                        placeholder=""
+                        type="text"
+                        name='phone'
+                        className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                      />
+                    </div>
+                    <div className="py-2">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">Password</span>
+                      <div className="relative">
+                        <input
+                          placeholder=""
+                          type={showPassword ? 'text' : 'password'}
+                          className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                        />
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm font-dm-sans leading-5 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
+                          {showPassword ? (
+
+                            <svg
+                              className="h-3.5 text-gray-700"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 640 512"
+                            >
+                              <path
+                                fill="currentColor"
+                                d="M320 400c-75.85 0-137.25-58.71-142.9-133.11L72.2 185.82c-13.79 17.3-26.48 35.59-36.72 55.59a32.35 32.35 0 0 0 0 29.19C89.71 376.41 197.07 448 320 448c26.91 0 52.87-4 77.89-10.46L346 397.39a144.13 144.13 0 0 1-26 2.61zm313.82 58.1l-110.55-85.44a331.25 331.25 0 0 0 81.25-102.07 32.35 32.35 0 0 0 0-29.19C550.29 135.59 442.93 64 320 64a308.15 308.15 0 0 0-147.32 37.7L45.46 3.37A16 16 0 0 0 23 6.18L3.37 31.45A16 16 0 0 0 6.18 53.9l588.36 454.73a16 16 0 0 0 22.46-2.81l19.64-25.27a16 16 0 0 0-2.82-22.45zm-183.72-142l-39.3-30.38A94.75 94.75 0 0 0 416 256a94.76 94.76 0 0 0-121.31-92.21A47.65 47.65 0 0 1 304 192a46.64 46.64 0 0 1-1.54 10l-73.61-56.89A142.31 142.31 0 0 1 320 112a143.92 143.92 0 0 1 144 144c0 21.63-5.29 41.79-13.9 60.11z"
+                              ></path>
+                            </svg>
+                          ) : (
+                            <svg
+                              className="h-3.5 text-gray-700"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 576 512"
+                            >
+                              <path
+                                fill="currentColor"
+                                d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"
+                              ></path>
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type='submit'
+                      className="mt-3 font-dm-sans text-lg font-semibold bg-[#2557a7] hover:bg-[#1a4a8e] w-full text-white rounded-sm px-6 h-10 block shadow-xl hover:text-white"
+                    >
+                      Singup
+                    </button>
+                    <div className=" flex items-center mt-4">
+                      <div className="border-t border-stone-300 w-full"></div>
+                      <div className="mx-4 text-slate-500 text-base font-dm-sans leading-loose">or</div>
+                      <div className="border-t border-stone-300 w-full"></div>
+                    </div>
+                    {/*  */}
                     <button
                       type="button"
-                      className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
-                      onClick={handlePersonalData}
+                      className="active:bg-slate-200 w-full h-10 border-2 border-gray-200 rounded-sm text-gray-700 uppercase font-dm-sans leading-none mt-4 flex items-center justify-center sm:justify-start px-4"
                     >
-                      {proccessing ? 'Saving...' : 'Save'}
+                      <svg className="h-7 w-7 md:h-7 md:w-7 lg:h-8 lg:w-10 mr-2 md:mr-4 lg:mr-6" viewBox="0 0 40 40">
+                        <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#FFC107" />
+                        <path d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z" fill="#FF3D00" />
+                        <path d="M20 36.6667C24.305 36.6667 28.2167 35.0192 31.1742 32.34L26.0159 27.975C24.3425 29.2425 22.2625 30 20 30C15.665 30 11.9842 27.2359 10.5975 23.3784L5.16254 27.5659C7.92087 32.9634 13.5225 36.6667 20 36.6667Z" fill="#4CAF50" />
+                        <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.7592 25.1975 27.56 26.805 26.0133 27.9758C26.0142 27.975 26.0150 27.975 26.0158 27.9742L31.1742 32.3392C30.8092 32.6708 36.6667 28.3333 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#1976D2" />
+                      </svg>
+                      <span className='text-xs md:text-sm lg:text-sm font-dm-sans self-center'>Signup with Google</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setUpdateBasicDataModal(false)}
-                      className="bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none ml-2"
-                    >
-                      Cancel
-                    </button>
+                    {/*  */}
+                    <p className="text-gray-600 text-center font-dm-sans leading-loose mt-4">
+                    Already a member? <Link to={"/login"} className="text-[#2557a7]">Signin</Link>
+                    </p>
                   </div>
                 </form>
               </div>
             </div>
-          )}
-
-
-          {/* Skills Card */}
-          <div className="mt-4 bg-slate-100 p-4 rounded-lg shadow-lg shadow-gray-300">
-            <h2 className="text-lg font-semibold mb-2">Skills</h2>
-            <div className="bg-gray-100 p-4 rounded">
-              <input
-                type="text"
-                placeholder="Add Skill"
-                className="w-2/3 p-2 border rounded-l"
-                value={newSkill}
-                onChange={(e) => setNewSkill(e.target.value)}
-              />
-              <button
-                className="bg-blue-500 text-white px-4 rounded-r"
-                onClick={handleAddSkill}
-              >
-                Add
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {userData.skills && userData.skills.map((skill, index) => (
-                <span
-                  key={index}
-                  className="bg-green-300 text-green-900 px-2 py-2 rounded-sm text-sm font-medium flex items-center "
-
-                >
-                  {skill}
-                  <FiDelete
-                    onClick={() => handleRemoveSkill(skill)}
-                    className="ml-2 w-5 h-5 text-red-600 cursor-pointer" />
-                </span>
-              ))}
-            </div>
           </div>
-
-          {/* Experience Card */}
-          {/* <div className="mt-4 bg-slate-100 p-4 rounded-lg shadow-lg shadow-gray-300">
-            <h2 className="text-lg font-semibold">Experience</h2>
-            
-            <div className="mb-4">
-              <div className="flex justify-between">
-                <p className="font-semibold">Job Title 1</p>
-                <p>Company Name 1</p>
-                <p>Location 1</p>
-                <p>Start Date - End Date</p>
-              </div>
-              <p className="mt-2">
-                Description of responsibilities and achievements in this role.
-              </p>
-            </div>
-
-            <div className="mb-4">
-              <div className="flex justify-between">
-                <p className="font-semibold">Job Title 2</p>
-                <p>Company Name 2</p>
-                <p>Location 2</p>
-                <p>Start Date - End Date</p>
-              </div>
-              <p className="mt-2">
-                Description of responsibilities and achievements in this role.
-              </p>
-            </div>
-          </div> */}
-
         </div>
       </div>
+
       <Footer />
     </>
   )

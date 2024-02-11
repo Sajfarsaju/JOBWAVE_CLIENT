@@ -47,9 +47,7 @@ const Register = () => {
     }
   );
 
-  const inputPasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-  };
+
 
   const validateFormData = () => {
     const { firstName, lastName, email, phone, password } = formData;
@@ -169,7 +167,7 @@ const Register = () => {
       const credentials = GoogleAuthProvider.credentialFromResult(data);
 
       const user = data.user
-      
+
       const nameParts = user?.displayName.split(' ');
       googleSignupData.email = user?.email;
       googleSignupData.firstName = nameParts[0];
@@ -202,223 +200,171 @@ const Register = () => {
 
 
   return (
-    <>
-      <div className="bg-gradient-to-tr from-[#f1f5f9] to-[#cbd5e1] opacity-100 min-h-screen flex flex-col justify-center px-6 py-12 lg:px-8">
-        {/* <button className='btn mt-2 bg-blue-500 w-24' onClick={() => setOpenModal(true)}>Open</button>
+    <div className='flex '>
 
-    {openModal && ( */}
-        <div className="mx-auto sm:w-full max-w-lg bg-gradient-to-tr from-[#94a3b8] to-[#e2e8f0] opacity-100 rounded-3xl shadow-sm shadow-slate-400 overflow-hidden">
-          {/* modal close btn */}
-          {/* <div className="flex justify-end p-2">
-                  <button
-                    type="button"
-                    className="text-slate-400  hover:bg-gray-200 hover:text-gray-800 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-                    onClick={() => setOpenModal(false)}
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </div> */}
-          {/*  */}
-          {/* <div className="py-4">
-            <img
-              className="mx-auto h-8 w-auto bg-indigo-600"
-              src="https://tailwindui.com/img/logos/mark.svg?color=white"
-              alt="JobWave"
-            />
-          </div> */}
-          {/* {clicked ? ( */}
-          <div className="px-11">
-            {/* <h2 className="text-xl font-bold leading-9  text-gray-900 text-center">
-              Are you Looking for Dream Job?!
-            </h2> */}
-            <h2 className="text-2xl font-bold leading-9 text-gray-900 text-center">
-              Sign up
-            </h2>
-            <div className="mt-7 flex ">
-              <div className="w-1/2 pr-2 shadow border-t border-blue-900">
-                <h1 className={`text-center text-lg ${color === 'Jobseeker' ? 'text-blue-900' : null}`}><Link to={'/signup'}> Jobseeker </Link></h1>
+      <div className="hidden sm:flex md:flex flex-col h-max w-full mt-24 ml-20">
+        <div className='-mb-28 w-full flex items-center justify-center'>
+          <img className='w-40 h-40' src="/src/assets/JOBWAVELOGO.png" alt="Logo" />
+        </div>
+        <div className='mt-0 w-full flex items-start justify-center'>
+          <img className='w-full' src="/src/assets/work-working-transparent.gif" alt="GIF" />
+        </div>
+      </div>
 
-              </div>
-              <div className="w-1/2 pr-2">
-                <h1 className='text-center text-lg'><Link to={'/company/signup'}> Employer </Link> </h1>
-
-              </div>
-            </div>
-
-            <form className="mt-8 space-y-4" onSubmit={handleSubmit} >
-
-              <Grid className='justify-center' container spacing={2}>
-                <Grid item xs={10}>
-                  <TextField
-                    id="firstName"
-                    label="First Name"
-                    variant="standard"
-                    type="text"
-                    name='firstName'
-                    onChange={handleChange}
-                    value={formData.firstName}
-                    fullWidth
-                    InputProps={{
-                      style: {
-                        padding: '4px 3px',
-                      },
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </Grid>
-
-                <Grid item xs={10}>
-                  <TextField
-                    id="lastName"
-                    label="Last Name"
-                    variant="standard"
-                    type="text"
-                    name='lastName'
-                    onChange={handleChange}
-                    value={formData.lastName}
-                    fullWidth
-
-                    InputProps={{
-                      style: {
-                        padding: '4px 3px',
-                      },
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </Grid>
-
-
-                <Grid item xs={10}>
-                  <TextField
-                    id="emailAddress"
-                    label="Email Address"
-                    variant="standard"
-                    type="email"
-                    name='email'
-                    onChange={handleChange}
-                    value={formData.email}
-                    fullWidth
-
-                    InputProps={{
-                      style: {
-                        padding: '4px 3px',
-                      },
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={10}>
-                  <TextField
-                    id="phoneNumber"
-                    label="Phone Number"
-                    variant="standard"
-                    type="text"
-                    name='phone'
-                    onChange={handleChange}
-                    value={formData.phone}
-                    fullWidth
-
-                    InputProps={{
-                      style: {
-                        padding: '4px 3px',
-                      },
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </Grid>
-
-                <Grid item xs={10}>
-                  <TextField
-                    id="Password"
-                    label="Password"
-                    variant="standard"
-                    name='password'
-                    onChange={handleChange}
-                    value={formData.password}
-                    fullWidth
-
-                    type={showPassword ? 'text' : 'password'}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={inputPasswordVisibility}
-                            edge="end"
-                          >
-                            {showPassword ? <AiFillEyeInvisible /> : <VisibilityIcon />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                      style: {
-                        padding: '4px 3px',
-                      },
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <div className="mx-10">
-
-                <Link type='submit' onClick={handleSubmit} className="flex items-center justify-center bg-gradient-to-r from-slate-400 to-slate-300 mt-4 text-white rounded-lg shadow-md shadow-slate-500">
-
-                  <h1 className="px-4 py-3  text-center dark:text-blue-700 font-bold">
-                    {proccessing ? 'Processing...' : 'Get Otp'}
-                  </h1>
-                </Link>
-
-
-              </div>
-            </form>
-            <div className="mx-10">
-
-              <div className='bg-gray-500 h-0.5 text-center mt-4' ></div>
-              <Link onClick={handleGoogleSignup} className="flex items-center justify-center bg-gradient-to-r from-slate-400 to-slate-300 mt-4 text-white rounded-lg shadow-md shadow-slate-500">
-                <div className="px-4 py-2">
-                  <svg className="h-7 w-7" viewBox="0 0 40 40">
-                    <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#FFC107" />
-                    <path d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z" fill="#FF3D00" />
-                    <path d="M20 36.6667C24.305 36.6667 28.2167 35.0192 31.1742 32.34L26.0159 27.975C24.3425 29.2425 22.2625 30 20 30C15.665 30 11.9842 27.2359 10.5975 23.3784L5.16254 27.5659C7.92087 32.9634 13.5225 36.6667 20 36.6667Z" fill="#4CAF50" />
-                    <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.7592 25.1975 27.56 26.805 26.0133 27.9758C26.0142 27.975 26.0150 27.975 26.0158 27.9742L31.1742 32.3392C30.8092 32.6708 36.6667 28.3333 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#1976D2" />
-                  </svg>
+      <div className="container max-w-full mx-auto py-3 px-6 ">
+        <div className="max-w-md mx-auto lg:mr-20 xl:mr-20">
+          <div className="relative flex flex-wrap">
+            <div className="w-full relative">
+              <div className="mt-2 shadow-xl shadow-slate-300 p-8 lg:w-auto xl:w-auto sm:w-full mx-auto bg-white rounded-md">
+                <div className="mb-3 pb-1 text-left font-base">
+                  <p className="mb-2 font-dm-sans text-xl font-semibold text-gray-800">
+                    Start Your Career With Us!
+                  </p>
+                  {/* <p className='font-dm-sans text-gray-700 text-md'>
+                  Create your account and explore job opportunities that match your skills and aspirations.
+                </p> */}
                 </div>
-                <h1 className="px-4 py-3 w-5/6 text-center dark:text-blue-700 font-bold">Signup with Google</h1>
-              </Link>
+
+                <form className="" onSubmit={handleSubmit}>
+
+                  <div className=" flex">
+                    <div className={`w-1/2 pr-2 border-t border-[#2557a7] rounded-md overflow-hidden ${color === 'Jobseeker' ? 'shadow-lg shadow-slate-100 bg-slate-100' : ''}`}>
+                      <h1 className="text-center font-dm-sans text-lg p-2">
+                        <Link to={'/signup'} className={`block ${color === 'Jobseeker' ? 'text-[#2557a7]' : null}`}>
+                          Jobseeker
+                        </Link>
+                      </h1>
+                    </div>
+
+                    <div className="w-1/2 pr-2 hover:bg-slate-50 hover:text-[#2557a7] border-t border-[#2557a7] rounded-md overflow-hidden">
+                      <h1 className="text-center font-dm-sans text-lg p-2">
+                        <Link to={'/company/signup'} className="block">
+                          Employer
+                        </Link>
+                      </h1>
+                    </div>
+                  </div>
+
+                  <div className="mx-auto max-w-lg">
+                    <div className="py-1">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">First name</span>
+                      <input
+                        type="text"
+                        name='firstName'
+                        onChange={handleChange}
+                        value={formData.firstName}
+                        className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                      />
+                    </div>
+                    <div className="">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">Last name</span>
+                      <input
+                        placeholder=""
+                        type="text"
+                        name='lastName'
+                        onChange={handleChange}
+                        value={formData.lastName}
+                        className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                      />
+                    </div>
+                    <div className="">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">Email</span>
+                      <input
+                        placeholder=""
+                        type="email"
+                        name='email'
+                        onChange={handleChange}
+                        value={formData.email}
+                        className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                      />
+                    </div>
+                    <div className="">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">Phone number</span>
+                      <input
+                        placeholder=""
+                        type="text"
+                        name='phone'
+                        onChange={handleChange}
+                        value={formData.phone}
+                        className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                      />
+                    </div>
+                    <div className="">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">Password</span>
+                      <div className="relative">
+                        <input
+                          name='password'
+                          onChange={handleChange}
+                          value={formData.password}
+                          type={showPassword ? 'text' : 'password'}
+                          className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                        />
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm font-dm-sans leading-5 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
+                          {showPassword ? (
+
+                            <svg
+                              className="h-3.5 text-gray-700"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 640 512"
+                            >
+                              <path
+                                fill="currentColor"
+                                d="M320 400c-75.85 0-137.25-58.71-142.9-133.11L72.2 185.82c-13.79 17.3-26.48 35.59-36.72 55.59a32.35 32.35 0 0 0 0 29.19C89.71 376.41 197.07 448 320 448c26.91 0 52.87-4 77.89-10.46L346 397.39a144.13 144.13 0 0 1-26 2.61zm313.82 58.1l-110.55-85.44a331.25 331.25 0 0 0 81.25-102.07 32.35 32.35 0 0 0 0-29.19C550.29 135.59 442.93 64 320 64a308.15 308.15 0 0 0-147.32 37.7L45.46 3.37A16 16 0 0 0 23 6.18L3.37 31.45A16 16 0 0 0 6.18 53.9l588.36 454.73a16 16 0 0 0 22.46-2.81l19.64-25.27a16 16 0 0 0-2.82-22.45zm-183.72-142l-39.3-30.38A94.75 94.75 0 0 0 416 256a94.76 94.76 0 0 0-121.31-92.21A47.65 47.65 0 0 1 304 192a46.64 46.64 0 0 1-1.54 10l-73.61-56.89A142.31 142.31 0 0 1 320 112a143.92 143.92 0 0 1 144 144c0 21.63-5.29 41.79-13.9 60.11z"
+                              ></path>
+                            </svg>
+                          ) : (
+                            <svg
+                              className="h-3.5 text-gray-700"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 576 512"
+                            >
+                              <path
+                                fill="currentColor"
+                                d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"
+                              ></path>
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type='submit'
+                      className="mt-3 font-dm-sans text-md font-semibold bg-[#2557a7] hover:bg-[#1a4a8e] w-full text-white rounded-sm px-6 h-10 block shadow-xl hover:text-white"
+                    >
+                      {proccessing ? 'Processing...' : 'Get Otp'}
+                    </button>
+                    <div className=" flex items-center mt-3">
+                      <div className="border-t border-stone-300 w-full"></div>
+                      <div className="mx-4 text-slate-500 text-base font-dm-sans leading-loose">or</div>
+                      <div className="border-t border-stone-300 w-full"></div>
+                    </div>
+                    {/*  */}
+                    <button
+                      onClick={handleGoogleSignup}
+                      className="active:bg-slate-200 w-full h-10 border-2 border-gray-200 rounded-sm text-gray-700 uppercase font-dm-sans leading-none mt-3 flex items-center justify-center sm:justify-start px-4"
+                    >
+                      <svg className="h-7 w-7 md:h-7 md:w-7 lg:h-8 lg:w-10 mr-2 md:mr-12 lg:mr-14" viewBox="0 0 40 40">
+                        <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#FFC107" />
+                        <path d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z" fill="#FF3D00" />
+                        <path d="M20 36.6667C24.305 36.6667 28.2167 35.0192 31.1742 32.34L26.0159 27.975C24.3425 29.2425 22.2625 30 20 30C15.665 30 11.9842 27.2359 10.5975 23.3784L5.16254 27.5659C7.92087 32.9634 13.5225 36.6667 20 36.6667Z" fill="#4CAF50" />
+                        <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.7592 25.1975 27.56 26.805 26.0133 27.9758C26.0142 27.975 26.0150 27.975 26.0158 27.9742L31.1742 32.3392C30.8092 32.6708 36.6667 28.3333 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#1976D2" />
+                      </svg>
+                      <span className='text-xs md:text-sm lg:text-sm font-dm-sans self-center'>Signup with Google</span>
+                    </button>
+                    {/*  */}
+                    <p className="text-gray-600 text-center font-dm-sans leading-loose mt-4">
+                      Already a member? <Link to={"/login"} className="text-[#2557a7]">Signin</Link>
+                    </p>
+                  </div>
+                </form>
+              </div>
             </div>
-
-
-            <p className="mt-6 text-center text-sm leading-5 text-gray-900">
-              Already a member? <Link to={"/login"} className="font-medium text-indigo-600 hover:text-indigo-800">Sign in</Link>
-            </p>
           </div>
         </div>
-        {/* )} */}
       </div>
-      {/* )} */}
-
-
-
-    </>
+    </div>
   )
 }
 

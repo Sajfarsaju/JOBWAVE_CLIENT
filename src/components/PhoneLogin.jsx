@@ -63,7 +63,7 @@ function PhoneLogin() {
 
         } else {
           setProccessing(false)
-          toast.error('Your account is blocked')
+          toast.error('Your account has been blocked')
         }
       } else {
         setProccessing(false)
@@ -112,7 +112,13 @@ function PhoneLogin() {
       }
     } catch (err) {
       setProccessing(false)
-      if (err.response?.status === 401) {
+       //? If blocked user 
+       if (err?.response?.data?.isBlocked) {
+        toast.error(err?.response?.data?.errMsg);
+
+      }
+
+      if (err.response?.status === 404) {
         toast.error(err?.response?.data?.errMsg);
       } else {
         toast.error('Something went wrong, please try again')
@@ -134,7 +140,8 @@ function PhoneLogin() {
         toast.success(response.data.message)
       }
     } catch (error) {
-      if (error.response?.status === 401 && error.response?.data?.errMsg === 'Your account has been blocked') {
+       //? If blocked user 
+       if (error?.response?.data?.isBlocked) {
         toast.error(error?.response?.data?.errMsg);
 
       } else {

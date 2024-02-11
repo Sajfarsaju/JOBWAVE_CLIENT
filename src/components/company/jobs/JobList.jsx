@@ -12,7 +12,6 @@ import { FaEye } from 'react-icons/fa'
 import Spinner from '../../Spinner';
 
 function JobList() {
-  const { token } = useSelector((state) => state.company);
   const [isOpenView, setIsOpenView] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -307,13 +306,13 @@ function JobList() {
     }
   };
 
-  const [workTypeList, setWorkTypeList] = useState([
+  const workTypeList = [
     "Full-time",
     "Part-time",
     "Contract",
     "Internship",
     "Freelance",
-  ]);
+  ]
   const salaryOptions = [
     '10k-20k',
     '20k-30k',
@@ -343,136 +342,138 @@ function JobList() {
 
   return (
     <>
-      {spinnner && (
+      {spinnner ? (
         <Spinner />
-      )}
+      ) : (
 
-      <SingleJobView job={selectedJob} isOpenView={isOpenView} setIsOpenView={setIsOpenView} />
-      <div className="min-h-screen mt-28 md:min-h-fit sm:min-h-fit">
-        <div className="pb-12 overflow-x-auto bg-white  m-10">
+        <>
 
-          {subscriptionPlan.subscriptionPlan ? (
-            <>
-              <div className="flex justify-end mb-2">
-                <button
-                  onClick={() => setOpenModal(true)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md"
-                >
-                  Post Job
-                </button>
-              </div>
+          <SingleJobView job={selectedJob} isOpenView={isOpenView} setIsOpenView={setIsOpenView} />
+          <div className="min-h-screen mt-28 md:min-h-fit sm:min-h-fit">
+            <div className="pb-12 overflow-x-auto bg-white  m-10">
 
-              <div className="w-full overflow-x-scroll">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead>
-                    <tr>
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        No
-                      </th>
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        Job Title
-                      </th>
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        Work Type
-                      </th>
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        Salary Range
-                      </th>
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        Vacancy
-                      </th>
-                      {/* <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+              {subscriptionPlan.subscriptionPlan ? (
+                <>
+                  <div className="flex justify-end mb-2">
+                    <button
+                      onClick={() => setOpenModal(true)}
+                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md"
+                    >
+                      Post Job
+                    </button>
+                  </div>
+
+                  <div className="w-full overflow-x-scroll">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead>
+                        <tr>
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            No
+                          </th>
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            Job Title
+                          </th>
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            Work Type
+                          </th>
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            Salary Range
+                          </th>
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            Vacancy
+                          </th>
+                          {/* <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                     Posted On
                   </th> */}
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        Deadline
-                      </th>
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        Logo
-                      </th>
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        Qualifications
-                      </th>
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        View
-                      </th>
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        Approval status
-                      </th>
-                      <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                        Job status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {jobsToShow.map((job, index) => (
-                      <tr key={job._id}>
-                        <td className="px-6 py-4 whitespace-no-wrap">
-                          {index + 1 + itemsPerPage * (currentPage - 1)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap">{job.jobTitle}</td>
-                        <td className="px-6 py-4 whitespace-no-wrap">{job.workType}</td>
-                        <td className="px-6 py-4 whitespace-no-wrap">{job.salaryRange}</td>
-                        <td className="px-6 py-4 whitespace-no-wrap">{job.vacancy}</td>
-                        {/* <td className="px-6 py-4 whitespace-no-wrap">
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            Deadline
+                          </th>
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            Logo
+                          </th>
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            Qualifications
+                          </th>
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            View
+                          </th>
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            Approval status
+                          </th>
+                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            Job status
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {jobsToShow.map((job, index) => (
+                          <tr key={job._id}>
+                            <td className="px-6 py-4 whitespace-no-wrap">
+                              {index + 1 + itemsPerPage * (currentPage - 1)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-no-wrap">{job.jobTitle}</td>
+                            <td className="px-6 py-4 whitespace-no-wrap">{job.workType}</td>
+                            <td className="px-6 py-4 whitespace-no-wrap">{job.salaryRange}</td>
+                            <td className="px-6 py-4 whitespace-no-wrap">{job.vacancy}</td>
+                            {/* <td className="px-6 py-4 whitespace-no-wrap">
                       {new Date(job.createdAt).toLocaleDateString()}
                     </td> */}
-                        <td className="px-6 py-4 whitespace-no-wrap">
-                          {new Date(job.deadline).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap">
-                          <img
-                            className='rounded-full'
-                            src={job.logo}
-                            alt="Job Logo"
-                            width="50"
-                            height="50"
-                          />
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap">{job.qualifications}</td>
-                        <td className="text-green-600 px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-sm sm:text-center whitespace-nowrap p-2 sm:p-3 text-center">
-
-                          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:text-gray-700">
-                            <FaEye onClick={() => viewSingleJob(job._id)} className="w-6 h-6" />
-                          </div>
-                        </td>
-
-                        {job.isPostAccepted && job.status === 'Active' ? (
-                          <>
                             <td className="px-6 py-4 whitespace-no-wrap">
-                              <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-200">
-                                <span className="h-1.5 w-1.5 bg-green-600"></span>
-                                <h2 className="text-sm font-medium text-green-700">Approved</h2>
-                              </div>
+                              {new Date(job.deadline).toLocaleDateString()}
                             </td>
-
                             <td className="px-6 py-4 whitespace-no-wrap">
-                              <div className={`inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 ${isDeadlineExpired(job.deadline) ? 'bg-red-300 text-white' : 'bg-green-100 dark:bg-green-200 text-green-600'}`}>
-                                <span className={`h-2 w-3 rounded-full ${isDeadlineExpired(job.deadline) ? 'bg-red-600' : 'bg-green-600'}`}></span>
-                                <h2 className={`text-sm font-medium ${isDeadlineExpired(job.deadline) ? 'text-red-600' : 'text-green-600'}`}>
-                                  {isDeadlineExpired(job.deadline) ? 'Expired' : 'Actively recruiting'}
-                                </h2>
-                              </div>
+                              <img
+                                className='rounded-full'
+                                src={job.logo}
+                                alt="Job Logo"
+                                width="50"
+                                height="50"
+                              />
                             </td>
-                          </>
-                        ) : (
-                          <>
-                            <td className="px-6 py-4 whitespace-no-wrap text-center">
-                              <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-yellow-200">
-                                <span className="h-1.5 w-1.5 rounded-full bg-yellow-600"></span>
-                                <h2 className="text-sm font-medium text-yellow-600">Pending</h2>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-no-wrap text-center">
-                              <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/70 ">
-                                <span className="h-1.5 w-1.5 rounded-full"></span>
-                                <h2 className="text-sm font-medium text-yellow-600">Approval Pending</h2>
-                              </div>
-                            </td>
-                          </>
-                        )}
+                            <td className="px-6 py-4 whitespace-no-wrap">{job.qualifications}</td>
+                            <td className="text-green-600 px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-sm sm:text-center whitespace-nowrap p-2 sm:p-3 text-center">
 
-                        {/* <td className="px-6 py-4 whitespace-no-wrap">
+                              <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:text-gray-700">
+                                <FaEye onClick={() => viewSingleJob(job._id)} className="w-6 h-6" />
+                              </div>
+                            </td>
+
+                            {job.isPostAccepted && job.status === 'Active' ? (
+                              <>
+                                <td className="px-6 py-4 whitespace-no-wrap">
+                                  <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-200">
+                                    <span className="h-1.5 w-1.5 bg-green-600"></span>
+                                    <h2 className="text-sm font-medium text-green-700">Approved</h2>
+                                  </div>
+                                </td>
+
+                                <td className="px-6 py-4 whitespace-no-wrap">
+                                  <div className={`inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 ${isDeadlineExpired(job.deadline) ? 'bg-red-300 text-white' : 'bg-green-100 dark:bg-green-200 text-green-600'}`}>
+                                    <span className={`h-1.5 w-1.5 ${isDeadlineExpired(job.deadline) ? 'bg-red-600' : 'bg-green-600'}`}></span>
+                                    <h2 className={`text-sm font-medium ${isDeadlineExpired(job.deadline) ? 'text-red-600' : 'text-green-600'}`}>
+                                      {isDeadlineExpired(job.deadline) ? 'Expired' : 'Actively recruiting'}
+                                    </h2>
+                                  </div>
+                                </td>
+                              </>
+                            ) : (
+                              <>
+                                <td className="px-6 py-4 whitespace-no-wrap text-center">
+                                  <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-yellow-200">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-yellow-600"></span>
+                                    <h2 className="text-sm font-medium text-yellow-600">Pending</h2>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-no-wrap text-center">
+                                  <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/70 ">
+                                    <span className="h-1.5 w-1.5 rounded-full"></span>
+                                    <h2 className="text-sm font-medium text-yellow-600">Approval Pending</h2>
+                                  </div>
+                                </td>
+                              </>
+                            )}
+
+                            {/* <td className="px-6 py-4 whitespace-no-wrap">
                       <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded-md mr-1">
                         Details
                       </button>
@@ -483,57 +484,58 @@ function JobList() {
                         Edit
                       </button>
                     </td> */}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {/* Pagination */}
-                {JobList.length > 10 && (
-                  <div className="mt-4 flex justify-center">
-                    <ul className="flex">
-                      {Array.from({ length: Math.ceil(JobList.length / itemsPerPage) }, (_, index) => (
-                        <li key={index}>
-                          <button
-                            onClick={() => paginate(index + 1)}
-                            className={`${currentPage === index + 1
-                              ? 'bg-sky-500 hover:bg-sky-600 text-white'
-                              : 'bg-white hover:bg-gray-100 text-gray-800'
-                              }  font-semibold py-1 px-2 rounded-md mr-1`}
-                          >
-                            {index + 1}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {/* Pagination */}
+                    {JobList.length > 10 && (
+                      <div className="mt-4 flex justify-center">
+                        <ul className="flex">
+                          {Array.from({ length: Math.ceil(JobList.length / itemsPerPage) }, (_, index) => (
+                            <li key={index}>
+                              <button
+                                onClick={() => paginate(index + 1)}
+                                className={`${currentPage === index + 1
+                                  ? 'bg-sky-500 hover:bg-sky-600 text-white'
+                                  : 'bg-white hover:bg-gray-100 text-gray-800'
+                                  }  font-semibold py-1 px-2 rounded-md mr-1`}
+                              >
+                                {index + 1}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="flex flex-col items-center justify-center min-h-screen">
-                {/* Centered UI */}
-                <div className="dark:bg-slate-100 p-4 rounded shadow-md shadow-gray-500 text-center">
-                  <h1 className="lg:text-3xl xl:text-3xl text-xl font-semibold font-serif text-blue-700 mb-4">
-                    Explore Our Subscription Plans
-                  </h1>
-                  <p className="text-gray-700 font-semibold xl:text-xl text-md lg:text-xl font-serif mb-4">
-                    Enhance your job posting and unlock powerful features with our subscription plans.
-                  </p>
-                </div>
-                <Link to={'/company/home'}>
-                  <button
-                    className="mt-4 font-serif bg-blue-500 text-white shadow-lg shadow-gray-500 rounded px-4 py-2 hover:bg-blue-600">
-                    Get Started
-                  </button>
-                </Link>
-              </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex flex-col items-center justify-center min-h-screen">
+                    {/* Centered UI */}
+                    <div className="dark:bg-slate-100 p-4 rounded shadow-md shadow-gray-500 text-center">
+                      <h1 className="lg:text-3xl xl:text-3xl text-xl font-semibold font-serif text-blue-700 mb-4">
+                        Explore Our Subscription Plans
+                      </h1>
+                      <p className="text-gray-700 font-semibold xl:text-xl text-md lg:text-xl font-serif mb-4">
+                        Enhance your job posting and unlock powerful features with our subscription plans.
+                      </p>
+                    </div>
+                    <Link to={'/company/home'}>
+                      <button
+                        className="mt-4 font-serif bg-blue-500 text-white shadow-lg shadow-gray-500 rounded px-4 py-2 hover:bg-blue-600">
+                        Get Started
+                      </button>
+                    </Link>
+                  </div>
 
-            </>
-          )}
-        </div>
-      </div>
-
+                </>
+              )}
+            </div>
+          </div>
+        </>
+      )}
 
       {/*  */}
       {openModal && (
@@ -1130,6 +1132,7 @@ function JobList() {
       </div>
       </div> */}
       {/*  */}
+
     </>
   )
 }

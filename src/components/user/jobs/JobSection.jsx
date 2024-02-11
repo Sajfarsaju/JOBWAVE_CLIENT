@@ -5,13 +5,17 @@ import { FunnelIcon, MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
 import Axios_Instance from '../../../api/userAxios';
 import { Link, useNavigate } from 'react-router-dom'
 import PlanModal from '../subscriptionPlan/PlanModal'
-import Skelton from './Skelton'
+// import Skelton from './Skelton'
 import { useSelector } from 'react-redux'
 import { MdKeyboardArrowDown } from "react-icons/md";
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux'
 import { userLogout } from '../../../store/slice/userSlice'
 import NoResultGif from '../../../assets/097297f8e21d501ba45d7ce437ed77bd.gif'
+import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp } from "react-icons/io";
+import Spinner from '../../Spinner';
+
 
 
 function JobSection({ searchQuery }) {
@@ -48,7 +52,7 @@ function JobSection({ searchQuery }) {
     }, [Jobs, searchQuery]);
     // End
 
-    
+
     const [selectedWorkTypes, setSelectedWorkTypes] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [filteredJobs, setFilteredJobs] = useState(SearchJobs);
@@ -90,8 +94,7 @@ function JobSection({ searchQuery }) {
     };
 
 
-    // 
-    //? FETCH JOBS
+
 
 
     const fetchUserSubscription = async () => {
@@ -104,7 +107,8 @@ function JobSection({ searchQuery }) {
         } catch (error) {
             console.log(error);
 
-            if (error.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
+            //? If blocked user 
+            if (error?.response?.data?.isBlocked) {
                 dispatch(userLogout());
                 toast.error(error?.response?.data?.errMsg);
             }
@@ -115,12 +119,12 @@ function JobSection({ searchQuery }) {
         fetchUserSubscription()
     }, [])
 
-    //? FETCH JOBS
     const [uniqueCategories, setUniqueCategories] = useState([])
     const [uniqueWorkTypes, setUniqueWorkTypes] = useState([])
     const [limit, setLimit] = useState(6);
     const [jobTotalLength, setJobTotalLength] = useState();
     async function fetchJobs() {
+        //? FETCH JOBS START
         try {
             const res = await Axios_Instance.get(`/jobs`, {
                 params: {
@@ -140,9 +144,10 @@ function JobSection({ searchQuery }) {
         } catch (error) {
             console.log(error);
 
-            if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+            //? If blocked user 
+            if (error?.response?.data?.isBlocked) {
                 dispatch(userLogout());
-                toast.error(error?.res?.data?.errMsg);
+                toast.error(error?.response?.data?.errMsg);
             }
 
         }
@@ -151,7 +156,7 @@ function JobSection({ searchQuery }) {
         fetchJobs()
     }, [token, searchQuery, limit, selectedFilters, selectedWorkTypes])
 
-    //? FETCH JOBS
+    //? FETCH JOBS END
 
 
     const getTimeDifference = (postedDate) => {
@@ -185,24 +190,42 @@ function JobSection({ searchQuery }) {
     //? Create chat user
 
     const createChat = async (companyId) => {
-        if (userData.subscriptionPlan) {
 
-            navigate(`/chats/${companyId}`)
+        try {
 
-            await Axios_Instance.post(`/chats`, { compId: companyId, senderRole: "users" });
+            if (userData.subscriptionPlan) {
+
+                navigate(`/chats/${companyId}`)
+
+                const res = await Axios_Instance.post(`/chats`, { compId: companyId, senderRole: "users" });
 
 
-        } else {
-            //? Open subscription plan if user haven't plan
-            setOpenPlanModal(true)
+            } else {
+                //? Open subscription plan if user haven't plan
+                setOpenPlanModal(true)
+            }
+        } catch (error) {
+            console.log(error)
+            //? If blocked user 
+            if (error?.response?.data?.isBlocked) {
+                toast.error(error?.response?.data?.errMsg);
+            }
         }
     }
     //?End Create chat user
 
+
+
+    const formatDate = (dateString) => {
+        const options = { day: 'numeric', month: 'short', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('en-GB', options);
+    };
+
     return (
         <>
             <PlanModal setOpenPlanModal={setOpenPlanModal} openPlanModal={openPlanModal} />
-            <div className='bg-white'>
+
+            <div className='bg-white font-dm-sans font-normal'>
                 {/* Mobile filter dialog */}
                 <Transition.Root show={mobileFiltersOpen} as={Fragment}>
                     <Dialog as="div" className="relative z-40 lg:hidden" onClose={setMobileFiltersOpen}>
@@ -253,9 +276,11 @@ function JobSection({ searchQuery }) {
                                                             <span className="font-medium text-gray-900">Job Category</span>
                                                             <span className="ml-6 flex items-center">
                                                                 {open ? (
-                                                                    <MinusIcon className="h-5 w-5 text-gray-700" aria-hidden="true" />
+                                                                    // <MinusIcon className="h-5 w-5 text-gray-700" aria-hidden="true" />
+                                                                    <IoIosArrowUp className="h-5 w-5" aria-hidden="true" />
                                                                 ) : (
-                                                                    <PlusIcon className="h-5 w-5 text-gray-700" aria-hidden="true" />
+                                                                    // <PlusIcon className="h-5 w-5 text-gray-700" aria-hidden="true" />
+                                                                    <IoIosArrowDown className="h-5 w-5 text-gray-700" aria-hidden="true" />
                                                                 )}
                                                             </span>
                                                         </Disclosure.Button>
@@ -338,7 +363,7 @@ function JobSection({ searchQuery }) {
 
                 <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-20">
-                        <h1 className="font-serif text-2xl font-bold tracking-tight text-gray-900 md:text-2xl lg:text-2xl xl:text-2xl">
+                        <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-2xl lg:text-2xl xl:text-2xl">
                             Find Jobs
                         </h1>
 
@@ -366,28 +391,30 @@ function JobSection({ searchQuery }) {
                             Filter Your dream
                         </h2> */}
 
-                        <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
+                        <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-2 md:grid-cols-1 ">
                             {/* Filters */}
-                            <form className="hidden lg:block">
+                            <form className=" hidden lg:block w-8/12">
                                 <h3 className="sr-only">Categories</h3>
 
                                 {/* FILTER START POINT */}
-                                <Disclosure as="div" className="border-b border-gray-200 py-6">
+                                <Disclosure as="div" className="border-b border-gray-200 py-4 flex-col items-end">
                                     {({ open }) => (
                                         <>
-                                            <h3 className="-my-3 flow-root">
-                                                <Disclosure.Button className="flex w-full items-center justify-between bg-lg:col-span-3-100 py-3 text-sm text-gray-400 hover:text-gray-500">
-                                                    <span className="font-serif font-semibold text-md text-gray-900">Job Category</span>
+                                            <h3 className=" flow-root">
+                                                <Disclosure.Button className="flex ml-[33%] w-2/4 justify-between bg-lg:col-span-3-100  text-sm text-gray-400 hover:text-gray-500">
+                                                    <span className=" font-semibold text-md text-gray-900 ">Job Category</span>
                                                     <span className="ml-6 flex items-center">
                                                         {open ? (
-                                                            <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                                                            // <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                                                            <IoIosArrowUp className="h-5 w-5" aria-hidden="true" />
                                                         ) : (
-                                                            <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                                                            // <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                                                            <IoIosArrowDown className="h-5 w-5 text-gray-700" aria-hidden="true" />
                                                         )}
                                                     </span>
                                                 </Disclosure.Button>
                                             </h3>
-                                            <Disclosure.Panel className="pt-6">
+                                            <Disclosure.Panel className="pt-6 ml-[33%] w-2/4">
                                                 <div className="space-y-4">
                                                     {uniqueCategories.map((category, optionIdx) => (
                                                         <div key={optionIdx} className="flex items-center">
@@ -402,7 +429,7 @@ function JobSection({ searchQuery }) {
                                                             />
                                                             <label
                                                                 htmlFor={`filter-category-${optionIdx}`}
-                                                                className="font-serif ml-3 text-sm text-gray-800"
+                                                                className=" ml-3 text-sm text-gray-800"
                                                             >
                                                                 {category}
                                                             </label>
@@ -414,22 +441,24 @@ function JobSection({ searchQuery }) {
                                     )}
                                 </Disclosure>
                                 {/*  */}
-                                <Disclosure as="div" className="border-b border-gray-200 py-6">
+                                <Disclosure as="div" className="border-b border-gray-200 py-2">
                                     {({ open }) => (
                                         <>
-                                            <h3 className="-my-3 flow-root">
-                                                <Disclosure.Button className="flex w-full items-center justify-between bg-lg:col-span-3-100 py-3 text-sm text-gray-400 hover:text-gray-500">
-                                                    <span className="font-serif font-semibold text-md text-gray-900">Job Types</span>
+                                            <h3 className="flow-root">
+                                                <Disclosure.Button className="flex ml-[33%] w-2/4 justify-between bg-lg:col-span-3-100 py-3 text-sm text-gray-400 hover:text-gray-500">
+                                                    <span className=" font-semibold text-md text-gray-900">Job Types</span>
                                                     <span className="ml-6 flex items-center">
                                                         {open ? (
-                                                            <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                                                            // <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                                                            <IoIosArrowUp className="h-5 w-5" aria-hidden="true" />
                                                         ) : (
-                                                            <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                                                            // <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                                                            <IoIosArrowDown className="h-5 w-5 text-gray-700" aria-hidden="true" />
                                                         )}
                                                     </span>
                                                 </Disclosure.Button>
                                             </h3>
-                                            <Disclosure.Panel className="pt-6">
+                                            <Disclosure.Panel className="pt-6 ml-[33%] w-2/4">
                                                 <div className="space-y-4">
                                                     {uniqueWorkTypes.map((workType, optionIdx) => (
                                                         <div key={optionIdx} className="flex items-center">
@@ -444,7 +473,7 @@ function JobSection({ searchQuery }) {
                                                             />
                                                             <label
                                                                 htmlFor={`filter-job-type-${optionIdx}`}
-                                                                className="font-serif ml-3 text-sm text-gray-800"
+                                                                className=" ml-3 text-sm text-gray-800"
                                                             >
                                                                 {workType}
                                                             </label>
@@ -457,25 +486,18 @@ function JobSection({ searchQuery }) {
                                 </Disclosure>
 
                                 {/* END FILTER POINT */}
-
-
-
                             </form>
                             {/* Jobs grid */}
                             {skelton ? (
                                 <>
-                                    <div className="lg:col-span-3">
-                                        <div className="flex flex-wrap">
-                                            {Array.from({ length: 6 }).map((_, index) => (
-                                                <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 p-4">
-                                                    <Skelton />
-                                                </div>
-                                            ))}
-                                        </div>
+                                    <div className='lg:mr-[30%] lg:-m-[30%] xl:mr-[30%] xl:-m-[30%]'>
+
+                                        <Spinner />
                                     </div>
+
                                 </>
                             ) : (
-                                <div className="lg:col-span-3">
+                                <div className="lg:col-span-0 lg:ml-[-40%] xl:ml-[-40%]">
                                     {/* 1 */}
                                     {/*  */}
                                     {showSearchResultsCount && (
@@ -484,7 +506,7 @@ function JobSection({ searchQuery }) {
                                         </div>
                                     )}
                                     {/*  */}
-                                    <div className={`flex flex-wrap`}>
+                                    <div className={`flex flex-col `}>
                                         {Jobs.length === 0 ? (
                                             <div className="mx-auto w-auto text-center">
                                                 <p className="text-lg font-semibold text-gray-600">No results found.</p>
@@ -499,58 +521,172 @@ function JobSection({ searchQuery }) {
                                         ) : (
                                             Jobs.map((job, index) => (
                                                 // group-hover:bg-gradient-to-r from-[#AEC3AE] to-[#CEDEBD]
-                                                <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 p-4 hover:scale-105 duration-300 group">
-                                                    <div className="bg-slate-100 rounded-xl shadow-sm shadow-slate-400 p-6 relative group-hover:bg-gradient-to-r from-[#EEF5FF] to-[#FAF1E4] hover:shadow-lg hover:shadow-slate-400 flex h-full">
-                                                        <img className="w-10 h-10 rounded-full mr-4" src={job.logo} /> {/* Added margin-right (mr-4) */}
-                                                        <div className="flex flex-col flex-grow">
-                                                            <div className="w-full h-auto">
+                                                <div key={index} className="lg:w-10/12 xl:w-10/12 p-4 hover:scale-105 duration-300 group">
+                                                    <div className=" sm:w-8/12 sm:mx-auto lg:w-11/12 rounded-xl shadow-sm shadow-slate-400 p-4 relative  hover:shadow-md hover:shadow-slate-400 flex items-center">
+                                                        <div className="flex-shrink-0">
+                                                            <img className="hidden sm:block w-14 h-full rounded-full" src={job.logo} alt={`Logo for ${job.company}`} />
+
+                                                        </div>
+                                                        <div className="flex flex-col flex-grow ml-4 ">
+
+                                                            {/* ONLY MOBILE SCREENS */}
+                                                            <div className="sm:hidden">
+                                                                <div className='flex flex-col items-start'>
+                                                                    <div className='flex items-center space-x-4'>
+                                                                        <img className="w-14 h-full rounded-full" src={job?.companyId?.profile} alt={`Logo for ${job.company}`} />
+                                                                        <Link
+                                                                            to={job.appliedStatus ? "#" : `/jobs/jobview/${job._id}`}
+                                                                            className={`break-all text-lg font-normal sm:text-xl md:text-xl max-w-full mt-2 ${job.appliedStatus ? 'cursor-not-allowed' : ''}`}
+                                                                            style={{ color: 'rgba(0, 4, 74, 1)' }}
+                                                                        >
+                                                                            {job.jobTitle}
+                                                                        </Link>
+                                                                    </div>
+
+                                                                    <div className='w-full mt-4 flex justify-between '>
+                                                                        <p className="font-medium break-all mb-2" style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.companyId?.companyName}</p>
+                                                                        <p className="mb-2" style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.workType}</p>
+                                                                    </div>
+
+                                                                    <p className="mb-2" style={{ color: 'rgba(109, 110, 141, 1)' }}>Dead line: {formatDate(job?.deadline)}</p>
+
+                                                                    <div className="flex items-center space-x-8 mt-4 ">
+                                                                        {job.appliedStatus ? (
+                                                                            <span
+                                                                                // className="bg-gradient-to-r from-lime-400 to-lime-500(OLD APPLIED BUTTON)"
+                                                                                className=" text-lime-600 bg-lime-200 px-3 py-1 font-medium rounded-full text-base">
+                                                                                Applied</span>
+                                                                        ) : (
+                                                                            // <Link to={job.appliedStatus ? "#" : `/jobs/jobview/${job._id}`}
+                                                                            //     className=" text-white px-3 py-2 rounded-md" style={{ backgroundColor: 'rgba(0, 211, 99, 1)' }}
+                                                                            // >
+                                                                            //     Apply now
+                                                                            // </Link>
+                                                                            // Show more button
+                                                                            <Link
+                                                                                to={job.appliedStatus ? '#' : `/jobs/jobview/${job._id}`}
+                                                                                className={`font-serif inline text-md font-medium mt-0 mr-1 mb-0 ml-1  
+                                                                            ${job.appliedStatus ? 'text-lg font-bold' : ''}`}
+                                                                                style={{ color: 'rgba(109, 110, 130, 1)' }} >
+                                                                                {job.appliedStatus ? null : 'Show More...'}
+                                                                            </Link>
+                                                                        )}
+                                                                        <button onClick={() => createChat(job?.companyId?._id)} className="z-20 text-white flex flex-col rounded-lg">
+                                                                            <div className="p-2 rounded-full bg-green-600">
+                                                                                <svg
+                                                                                    className="w-4 h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5"
+                                                                                    fill="currentColor"
+                                                                                    viewBox="0 0 20 20"
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                >
+                                                                                    <path
+                                                                                        fillRule="evenodd"
+                                                                                        d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                                                                                        clipRule="evenodd"
+                                                                                    ></path>
+                                                                                </svg>
+                                                                            </div>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            {/* END MOBILE SCREENS ONLY*/}
+
+                                                            {/* Card start */}
+                                                            <div className="w-full lg:h-auto xl:h-auto hidden sm:block">
                                                                 <div className="flex justify-between items-center">
+                                                                    <div className="hidden md:hidden lg:hidden xl:hidden">
+                                                                        <img className="w-14 h-full rounded-full" src={job?.companyId?.profile} alt={`Logo for ${job.company}`} />
+
+                                                                    </div>
+
                                                                     <Link
                                                                         to={job.appliedStatus ? "#" : `/jobs/jobview/${job._id}`}
-                                                                        className={`break-all font-serif text-lg font-bold sm:text-xl md:text-2xl max-w-full 
-                                                                            ${job.appliedStatus ? 'cursor-not-allowed ' : ''}`}
+                                                                        className={`break-all text-lg font-normal sm:text-xl md:text-xl max-w-full ${job.appliedStatus ? 'cursor-not-allowed' : ''}`}
+                                                                        style={{ color: 'rgba(0, 4, 74, 1)' }}
                                                                     >
                                                                         {job.jobTitle}
                                                                     </Link>
-                                                                    <div className="flex justify-end font-serif">
+                                                                    <div className="flex-row items-center space-x-2">
                                                                         {job.appliedStatus ? (
-                                                                            <span className="bg-gradient-to-r from-lime-500 to-lime-600 text-white px-3 py-1 rounded-full text-sm">Applied</span>
-                                                                        ) : null}
+                                                                            <span className=" text-lime-600 bg-lime-200 px-3 py-1 font-medium rounded-full text-base">
+                                                                                Applied</span>
+                                                                        ) : (
+                                                                            // Apply Now Button
+                                                                            <Link to={job.appliedStatus ? "#" : `/jobs/jobview/${job._id}`}
+                                                                                className="text-white px-3 py-2 rounded-md" style={{ backgroundColor: 'rgba(0, 211, 99, 1)' }}
+                                                                            >
+                                                                                Show more
+                                                                            </Link>
+                                                                            // Show more Button
+                                                                            //     <Link
+                                                                            //     to={job.appliedStatus ? '#' : `/jobs/jobview/${job._id}`}
+                                                                            //     className={`font-serif inline text-md font-medium mt-0 mr-1 mb-0 ml-1  
+                                                                            // ${job.appliedStatus ? 'text-lg font-bold' : ''}`}
+                                                                            //     style={{ color: 'rgba(109, 110, 130, 1)' }} >
+                                                                            //     {job.appliedStatus ? null : 'Show More...'}
+                                                                            // </Link>
+                                                                        )}
+                                                                        {/* <button onClick={() => createChat(job?.companyId?._id)} className="z-20 text-white flex flex-col rounded-lg mt-6">
+                                                                            <div className="p-2 rounded-full bg-green-600">
+                                                                                <svg
+                                                                                    className="w-4 h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5"
+                                                                                    fill="currentColor"
+                                                                                    viewBox="0 0 20 20"
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                >
+                                                                                    <path
+                                                                                        fillRule="evenodd"
+                                                                                        d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                                                                                        clipRule="evenodd"
+                                                                                    ></path>
+                                                                                </svg>
+                                                                            </div>
+                                                                        </button> */}
                                                                     </div>
-
                                                                 </div>
-                                                                <p className="font-serif font-semibold break-all">{job?.companyId?.companyName}</p>
-                                                                {job.status === 'Active' ? (
-                                                                    <div className="inline-flex mt-2 items-center  rounded-full gap-x-1 ">
+
+                                                                <div className="flex justify-between items-center mt-4 text-sm mb-2">
+                                                                    <p className="font-medium break-all" style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.companyId?.companyName}</p>
+                                                                    {/* {job.status === 'Active' ? (
+                                                                    <div className="inline-flex mt-2 items-center rounded-full gap-x-1">
                                                                         <span className="h-2 w-2 rounded-full bg-green-600"></span>
-                                                                        <h2 className="font-serif text-sm font-medium text-green-600">Actively recruiting</h2>
+                                                                        <h2 className="text-sm font-medium text-green-600">Actively recruiting</h2>
                                                                     </div>
                                                                 ) : (
-                                                                    <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 ">
+                                                                    <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2">
                                                                         <span className="h-2 w-3 rounded-full bg-yellow-600"></span>
-                                                                        <h2 className="font-serif text-sm font-medium text-yellow-600">Not Active</h2>
+                                                                        <h2 className="text-sm font-medium text-yellow-600">Not Active</h2>
                                                                     </div>
-                                                                )}
-                                                                <p className="font-serif text-right text-green-600 text-sm font-small">
+                                                                )} */}
+
+                                                                    <p style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.workType}</p>
+                                                                    <p style={{ color: 'rgba(109, 110, 141, 1)' }}>Dead line:{formatDate(job?.deadline)}</p>
+
+                                                                </div>
+                                                                {/* <div className="flex items-center mt-4 text-sm mb-2"> */}
+                                                                <button onClick={() => createChat(job?.companyId?._id)} className="text-blue-500 hover:underline">Start Chat</button>
+                                                                {/* <p className='text-center flex-grow mx-auto mr-[25%]'>Active</p>
+                                                                </div> */}
+                                                                <p className="text-right text-green-600 text-sm font-small">
                                                                     {getTimeDifference(job.createdAt)}
                                                                 </p>
-                                                                <p className="font-serif break-all xl:mt-2 text-gray-900 text-lg font-medium">
+
+                                                                {/* <p className="text-right text-green-600 text-sm font-small">
+                                                                    {getTimeDifference(job.createdAt)}
+                                                                </p> */}
+                                                                {/* <p className=" break-all xl:mt-2 text-gray-900 text-lg font-medium">
                                                                     We have <span className="text-blue-800"> {job.vacancy} </span>
                                                                     openings for the position of <span className="text-blue-800"> {job.jobCategory} </span>
                                                                     in <span className="text-blue-800"> {job.workplace} </span>
                                                                     . This <span className="text-blue-800"> {job.workType} </span>
                                                                     role offers great benefits and an opportunity to take on this job. Apply now to join our team!
-                                                                </p>
-                                                                {/* old message icon */}
-                                                                {/* <div className='absolute top-57 right-14'>
-                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="darkGreen" className="w-8 h-8 cursor-pointer">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-                                                                </svg>
-                                                                </div> */}
-                                                                <div className='absolute top-55 right-11'>
+                                                                </p> */}
 
-                                                                    <button onClick={() => createChat(job?.companyId?._id)} className="z-20 text-white flex flex-col rounded-lg ">
-                                                                        <div className="p-2 rounded-full bg-green-600">
+                                                                {/* <div className="absolute top-3/3 right-11"> */}
+                                                                {/* Chat button */}
+                                                                {/* <button onClick={() => createChat(job?.companyId?._id)} className="z-20 text-white flex flex-col rounded-lg">
+                                                                        <div className="p-2 rounded-full bg-green-600  ">
                                                                             <svg
                                                                                 className="w-4 h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5"
                                                                                 fill="currentColor"
@@ -564,20 +700,11 @@ function JobSection({ searchQuery }) {
                                                                                 ></path>
                                                                             </svg>
                                                                         </div>
-                                                                    </button>
-                                                                </div>
-                                                                <div className="pt-2 pr-0 pb-0 pl-0">
-                                                                    <Link
-                                                                        to={job.appliedStatus ? '#' : `/jobs/jobview/${job._id}`}
-                                                                        className={`font-serif text-green-600 inline text-md font-medium mt-0 mr-1 mb-0 ml-1  
-                                                                            ${job.appliedStatus ? 'text-lg font-bold' : ''}`}
-                                                                    >
-                                                                        {job.appliedStatus ? '' : 'Show More...'}
-                                                                    </Link>
-                                                                </div>
+                                                                    </button> */}
+                                                                {/* </div> */}
                                                             </div>
+                                                            {/* card end */}
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             ))

@@ -15,6 +15,7 @@ function SingleJob() {
   const dispatch = useDispatch()
   const userId = useSelector((state) => state.user.id)
   const [singleJob, setSingleJob] = useState({})
+  console.log('singleJob;', singleJob)
   const [CoverLetter, setCoverLetter] = useState('')
   const [CvFile, setCvFile] = useState('');
   const [proccessing, setProccessing] = useState(false);
@@ -45,8 +46,6 @@ function SingleJob() {
     }
     return errors;
   };
-
-
 
   const closeModal = () => {
     setModalOpen(false)
@@ -115,7 +114,8 @@ function SingleJob() {
       } catch (error) {
         setProccessing(false)
 
-        if (error?.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
+        //? If blocked user 
+        if (error?.response?.data?.isBlocked) {
           dispatch(userLogout());
           toast.error(error?.response?.data?.errMsg);
         }
@@ -142,9 +142,10 @@ function SingleJob() {
       const response = await Axios_Instance.get(`/jobview/${jobId}`);
       setSingleJob(response.data.singleJob);
     } catch (error) {
-      if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+       //? If blocked user 
+       if (error?.response?.data?.isBlocked) {
         dispatch(userLogout());
-        toast.error(error?.res?.data?.errMsg);
+        toast.error(error?.response?.data?.errMsg);
       }
       console.log(error.response.data.errMsg);
     }
@@ -156,62 +157,77 @@ function SingleJob() {
   }, [])
 
   return (
-    <div className="mt-1 h-auto">
+    <div className="mt-1 h-auto font-dm-sans font-normal">
       <div className="h-auto relative px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 mx-auto">
         <div className="h-auto flex pt-6 flex-col md:flex-row">
-          <div className="md:w-1/2">
+          {/* 1st half */}
+          <div className="md:w-3/4 md:pl-40">
             <div className="flex justify-center items-center h-full">
-              <div className="p-4">
+              <div className="m-10 md:m-0">
                 <div className="mb-6 flex">
                   <img className="w-16 h-16" src={singleJob.logo} alt="" />
                   <div className="ml-4">
-                    <h2 className="text-3xl font-semibold">{singleJob.jobTitle}</h2>
-                    <div className="flex space-x-2">
-                      <p>{singleJob.workplace}</p>
-                      <p>,</p>
-                      <p>{singleJob.workType} Role</p>
+                    <h2 className="text-2xl font-semibold">{singleJob.jobTitle}</h2>
+                    <p className="text-lg font-medium">{singleJob?.companyId?.companyName}</p>
+                    <div className="md:flex md:space-x-2 md:justify-between">
+                      <p className='text-gray-700'>{singleJob.workplace} </p>
+
+                      <p className='text-gray-700'>{singleJob.workType} Role</p>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h2 className="leading text-xl font-semibold">Job Category:</h2>
-                  <p>
+                  <h2 className="leading mt-6 text-lg font-semibold">Job Category:</h2>
+                  <p className='text-sm mt-5'>
                     <span className="text-indigo-600">{singleJob.jobCategory}:</span> This category defines the specific area of expertise or industry focus for this job. It helps job seekers understand the nature of the role.
                   </p>
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold">Job Description:</h2>
-                  <p>
+                  <h2 className="text-lg mt-6 font-semibold">Job Description:</h2>
+                  <p className='text-sm mt-5'>
                     <span className="text-indigo-600">{singleJob.jobDescription}:</span> The job description provides a comprehensive overview of the position, including its responsibilities, tasks, and qualifications. It helps candidates assess if they are a good fit for the role.
                   </p>
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold">Qualifications:</h2>
-                  <p>
+                  <h2 className="text-lg mt-6 font-semibold">Qualifications:</h2>
+                  <p className='text-sm mt-5'>
                     <span className="text-indigo-600">{singleJob.qualifications}:</span> These qualifications represent the skills, education, and experience required for the job. Candidates should review these qualifications to ensure they meet the criteria.
                   </p>
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold">Your Responsibilities:</h2>
-                  <p>
+                  <h2 className="text-lg mt-6 font-semibold">Your Responsibilities:</h2>
+                  <p className='text-sm mt-5'>
                     <span className="text-indigo-600">{singleJob.jobResponsibilities}:</span> This section outlines the specific duties and tasks that the selected candidate will be responsible for in this role. It helps candidates understand their day-to-day responsibilities.
                   </p>
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold">About Company:</h2>
-                  <p>
+                  <h2 className="text-lg mt-6 font-semibold">About Company:</h2>
+                  <p className='text-sm mt-5'>
                     <span className="text-indigo-600">{singleJob.companyDescription}:</span> The company description provides insights into the hiring organization, including its mission, values, and company culture. It helps candidates assess if they align with the company's values.
                   </p>
+                </div>
+
+                {/* Apply Now Button */}
+                <div className="mt-16 mb-28 flex w-full">
+                  <button
+                    className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 w-full rounded-xl"
+                    onClick={() => setModalOpen(true)}
+                  >
+                    Apply Now
+                  </button>
                 </div>
               </div>
             </div>
           </div>
+
+
+          {/* 2nd half */}
           <div className="md:w-1/2 md:mt-12 lg:mt-12 xl:mt-12">
-            <div className="flex justify-center h-full">
-              <div className="p-4">
-                <h2 className="text-xl font-semibold">Job Summary</h2>
-                <p>
+            <div className="flex justify-start h-full">
+              <div className="m-12">
+                <h2 className="text-lg mt-6 font-semibold">Job Summary</h2>
+                <p className='text-sm mt-5'>
                   We currently have <span className="text-indigo-600">{singleJob.vacancy}</span> job openings for the position of{' '}
                   <span className="text-indigo-600">{singleJob.jobTitle}</span> in <span className="text-indigo-600">{singleJob.workplace}</span>. This <span className="text-indigo-600">{singleJob.workType}</span> role offers excellent benefits and growth opportunities. If you're looking for a fulfilling career opportunity, we encourage you to apply and become a part of our talented team.
                 </p>
@@ -221,15 +237,7 @@ function SingleJob() {
         </div>
 
 
-        {/*  */}
-        <div className="flex w-full">
-          <button
-            className="mx-auto  bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-24 rounded-full"
-            onClick={() => setModalOpen(true)}
-          >
-            Apply Now
-          </button>
-        </div>
+
 
 
         {isModalOpen && (
@@ -304,7 +312,7 @@ function SingleJob() {
                   </div>
                   <div className="text-center">
                     <button
-                      className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-full"
+                      className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-12 rounded-md"
                       type="submit"
                       disabled={proccessing}
                     >

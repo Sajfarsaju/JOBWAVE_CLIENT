@@ -60,11 +60,11 @@ export default function Chatbox({ senderRole, reciverRole }) {
         }
       } catch (error) {
         console.log(error);
-
-        if (error?.response?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
+        //? If blocked user 
+        if (error?.response?.data?.isBlocked) {
           dispatch(userLogout());
           toast.error(error?.response?.data?.errMsg);
-      }
+        }
       }
     })();
   }, [senderRole]);
@@ -101,7 +101,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
   }, [selectedChat]);
 
   const joinRoomCompany = (selectedUser) => {
-    
+
     if (senderRole === 'company') {
 
       setSelectedChat(selectedUser)
@@ -157,12 +157,12 @@ export default function Chatbox({ senderRole, reciverRole }) {
     setSelectedChat(selectedChat);
     setIsChatOpen(true);
 
-    try{
+    try {
 
       if (senderRole === 'users') {
         navigate(`/chats/${companyId}`)
         Axios_Instance.get(`/openChat?chatId=${chatId}`).then((res) => {
-  
+
           if (res.status === 200) {
             setSpinner(false)
             setAllMessages(res.data.allMessages);
@@ -171,7 +171,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
       } else {
         // navigate(`/chats/${userId}`)
         Axios_Instance.get(`/company/openChat?chatId=${chatId}`).then((res) => {
-  
+
           if (res.status === 200) {
             setSpinner(false)
             setAllMessages(res.data.allMessages);
@@ -179,13 +179,14 @@ export default function Chatbox({ senderRole, reciverRole }) {
         })
       }
 
-    }catch(error){
+    } catch (error) {
       console.log(error);
 
-      if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+      //? If blocked user 
+      if (error?.response?.data?.isBlocked) {
         dispatch(userLogout());
-        toast.error(error?.res?.data?.errMsg);
-    }
+        toast.error(error?.response?.data?.errMsg);
+      }
     }
 
   }

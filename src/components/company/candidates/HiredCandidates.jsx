@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react"
 import Axios_Instance from "../../../api/userAxios"
-import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from "react-router-dom"
 import Navbar from "../../company/home/Navbar"
 import Footer from "../home/Footer"
-import axios from "axios"
 import { useSelector } from "react-redux"
 import Spinner from "../../Spinner"
 

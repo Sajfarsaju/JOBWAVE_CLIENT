@@ -19,7 +19,7 @@ export default function PlanModal({ setOpenPlanModal, openPlanModal }) {
       
 
     } catch (error) {
-      if (error?.res?.status === 401 || error?.res?.data?.errMsg === 'Your account has been blocked') {
+      if (error?.res?.status === 401 && error?.res?.data?.errMsg === 'Your account has been blocked') {
         dispatch(userLogout());
         toast.error(error?.res?.data?.errMsg);
     }

@@ -1,0 +1,27 @@
+.bg-rgb-blue {
+    background-color: rgb(50, 61, 255);
+}
+
+.bg-rgb-sky {
+    background-color: rgb(50, 61, 255);
+}
+
+.bg-rgb-green {
+    background-color: rgb(39, 202, 141);
+}
+
+.bg-rgb-green-light {
+    background-color: rgb(39, 202, 141);
+}
+
+.text-rgb-text {
+    color: rgba(0, 4, 74, 1);
+}
+
+.text-light-rgb-text {
+    color: rgb(109, 110, 141);
+}
+
+.dot-light-rgb-bg {
+    background-color: rgb(140, 197, 200);
+}

@@ -5,6 +5,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { AiFillEyeInvisible } from 'react-icons/ai';
+import { FaLongArrowAltLeft } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Axios_Instance from '../api/userAxios'
 import { companyLogin } from '../store/slice/companySlice';
@@ -13,6 +14,7 @@ import { userLogin } from '../store/slice/userSlice';
 import toast from 'react-hot-toast';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../api/firebase';
+import '../assets/css/login.css'
 
 
 
@@ -123,39 +125,39 @@ function Login({ logerName, url }) {
     try {
 
       const data = await signInWithPopup(auth, provider);
-      
+
       const credentials = GoogleAuthProvider.credentialFromResult(data);
 
       const user = data.user
-      
+
       googleSigninData.email = user?.email;
 
       const response = await Axios_Instance.post('google_signin', googleSigninData);
 
       if (response.status === 200) {
-       
-      const name = response?.data?.name;
-      const role = response?.data?.role;
-      const token = response?.data?.token;
-      const id = response?.data?.id;
-      const isActive = response?.data?.isActive;
-      
-      if (role === 'user') {
 
-        if (isActive) {
-          dispatch(userLogin({ name, token, role, id }));
-          navigate('/');
+        const name = response?.data?.name;
+        const role = response?.data?.role;
+        const token = response?.data?.token;
+        const id = response?.data?.id;
+        const isActive = response?.data?.isActive;
+
+        if (role === 'user') {
+
+          if (isActive) {
+            dispatch(userLogin({ name, token, role, id }));
+            navigate('/');
+            toast.success(`Welcome ${name}`);
+          } else {
+            toast.error('Your account has been blocked')
+          }
+
+        } else if (role === 'company') {
+          dispatch(companyLogin({ name, token, id, role }));
           toast.success(`Welcome ${name}`);
-        } else {
-          toast.error('Your account has been blocked')
+          navigate('/company/home');
         }
-
-      } else if (role === 'company') {
-        dispatch(companyLogin({ name, token, id, role }));
-        toast.success(`Welcome ${name}`);
-        navigate('/company/home');
       }
-    }
 
     } catch (error) {
       if (error.response?.status === 401) {
@@ -166,290 +168,179 @@ function Login({ logerName, url }) {
     }
   }
 
+
   return (
+    <div className='flex '>
 
-    <div className="bg-gradient-to-tr from-[#f1f5f9] to-[#cbd5e1] opacity-100 min-h-screen flex flex-col justify-center px-6 py-12 lg:px-8">
-
-      {/* login nice modal */}
-      {/* <button className='btn mt-2 bg-blue-500 w-24' onClick={() => setOpenModal(true)}>Open</button>
-
-{openModal && ( */}
-
-      <div className="bg-gradient-to-tr from-[#94a3b8] to-[#e2e8f0] opacity-100 mx-auto sm:w-full max-w-md rounded-lg shadow-sm shadow-slate-400 overflow-hidden">
-        {/* modal close btn */}
-        {/* <div className="flex justify-end p-2">
-                  <button
-                    type="button"
-                    className="text-slate-400  hover:bg-gray-200 hover:text-gray-800 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-                    onClick={() => setOpenModal(false)}
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </div> */}
-        {/*  */}
-        {/* <div className="py-6">
-          <img
-            className="mx-auto h-12 w-14"
-            src="../public/JobWave2-fotor-bg-remover-20230817153930.png"
-            alt="JobWave"
-          />
-        </div> */}
-
-        <div className="px-11 py-8">
-          {pathname === '/login' ?
-            <h2 className='text-lg font-bold leading-9 text-gray-900 text-center'>Welcome Back, Find your dream Job</h2>
-            :
-            <h2 className='text-lg font-bold leading-9 text-gray-900 text-center'>Welcome Back, Find your dream Jobseeker</h2>
-          }
-          <h2 className="text-2xl font-bold leading-9 text-gray-900 text-center">
-            Sign in
-          </h2>
-
-          <form className="mt-14 space-y-4" onSubmit={handleSubmit}>
-            <Grid className='justify-center' container spacing={2}>
-              <Grid item xs={11}>
-                <TextField
-                  id="emailAddress"
-                  label="Email Address*"
-                  variant="standard"
-                  value={FormData.email}
-                  onChange={handleChange}
-                  type="email"
-                  name='email'
-                  fullWidth
-                  InputProps={{
-                    style: {
-                      padding: '4px 3px',
-                    },
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-              <Grid item xs={11}>
-                <TextField
-                  id="Password"
-                  label="Password*"
-                  variant="standard"
-                  value={FormData.password}
-                  onChange={handleChange}
-                  name='password'
-                  fullWidth
-                  type={showPassword ? 'text' : 'password'}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={inputPasswordVisibility}
-                          edge="end"
-                        >
-                          {showPassword ? <AiFillEyeInvisible /> : <VisibilityIcon />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                    style: {
-                      padding: '4px 3px',
-                    },
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-                {pathname === '/login' &&
-                  <Link to={'/forgot_password'} className='flex justify-end text-sm mt-2 text-gray-900'>Forgot password?</Link>
-                }
-              </Grid>
-            </Grid>
-            <div className="mx-4">
-              <button
-                type="submit"
-                className="mt-6 group relative w-full flex justify-center py-2 px-3 border border-transparent text-md font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-800 transition duration-150 ease-in-out"
-              >
-                {proccessing ? 'Signing...' : 'Sign in'}
-              </button>
-            </div>
-          </form>
-          <div className="w-11/12 ml-4 mt-6">
-            <div className='bg-gray-500 h-0.5' ></div>
-            <Link to={'/login_with_otp'}>
-              <button className='mt-6 group relative w-full flex justify-center py-2 px-3 border border-transparent text-md font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:border-emerald-700 focus:shadow-outline-indigo active:bg-emerald-800 transition duration-150 ease-in-out'>
-                Sign in with Otp
-              </button>
-            </Link>
-          </div>
-          <div className="w-11/12 ml-4 mt-1">
-            <p className='text-center'>or</p>
-            <Link>
-              <button
-                onClick={handleGoogleSignin}
-                className='mt-2 group relative w-full flex justify-center py-2 px-3 border border-transparent text-md font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:border-emerald-700 focus:shadow-outline-indigo active:bg-emerald-800 transition duration-150 ease-in-out'>
-                Sign in with Google
-              </button>
-            </Link>
-          </div>
-          
-
-          <p className="mt-8 text-center text-sm leading-5 text-gray-900">
-            Not a member?
-            <span onClick={navigateSignup} className="px-1 text-indigo-800 hover:text-indigo-600 cursor-pointer">Sign up</span>
-          </p>
-
-
+      {/*  */}
+      {/* <div className="flex flex-col mt-32 ml-20 h-96" style={{ backgroundImage: 'url("/src/assets/JOBWAVE.png")', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center center'}}> */}
+      <div className="hidden sm:flex md:flex flex-col h-max w-full mt-24 ml-20 font-dm-sans">
+        <div className='-mb-28 w-full flex items-center justify-center'>
+          <img className='w-40 h-40' src="/src/assets/JOBWAVELOGO.png" alt="Logo" />
+        </div>
+        <div className='mt-0 w-full flex items-start justify-center'>
+          <img className='w-full' src="/src/assets/work-working-transparent.gif" alt="GIF" />
         </div>
       </div>
-      {/* )}  */}
+
+      <div className="container max-w-full mx-auto py-10 px-3 md:py-5 md:px-6 ">
+        <div className="max-w-sm md:mx-auto lg:mr-20 xl:mr-20">
+          <div className="relative flex flex-wrap">
+
+            <div className="w-full relative">
+              <div className=" mt-2 shadow-xl shadow-slate-300 p-8 lg:max-w-[400px] md:max-w-[400px] xl:max-w-[400px] sm:max-w-[300px] mx-auto bg-white rounded-md">
+
+                <Link to="/" className="text-[#2557a7] flex items-center text-sm mb-2">
+                  <FaLongArrowAltLeft className='h-4 w-4' />
+                  Back to home
+                </Link>
+
+                {pathname === '/login' ? (
+                  <div className="mb-1 md:mb-3 pb-1 text-left font-base">
+                    <p className="mb-2 font-dm-sans text-base md:text-xl font-semibold text-gray-800">
+                      Ready to take the next step?
+                    </p>
+                    <p className='font-dm-sans text-gray-700 text-sm md:text-base'>
+                      Sign in and explore your account.
+                    </p>
+
+                  </div>
+                ) : (
+                  <div className="md:mb-5 pb-1 text-left text-base">
+                    <p className="mb-2 font-dm-sans text-xl font-semibold text-gray-800">
+                      Ready to take the next step?
+                    </p>
+                    <p className='font-dm-sans text-gray-700 text-md'>
+                      Log in to your employer account to manage your company's hiring process. Access tools to post jobs, review applications, and connect with candidates. Enhance your recruitment with our comprehensive suite of features.
+                    </p>
+
+
+                  </div>
+                )}
+
+                <form className="mt-2 md:mt-6" onSubmit={handleSubmit}>
+                  <div className="mx-auto max-w-lg">
+                    <div className="py-1 md:py-2">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">Email</span>
+                      <input
+                        value={FormData.email}
+                        onChange={handleChange}
+                        type="email"
+                        name='email'
+                        className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                      />
+                    </div>
+                    <div className="py-1 md:py-2">
+                      <span className="px-1 text-sm font-dm-sans text-gray-700">Password</span>
+                      <div className="relative">
+                        <input
+                          placeholder=""
+                          type={showPassword ? 'text' : 'password'}
+                          value={FormData.password}
+                          onChange={handleChange}
+                          name='password'
+                          className="text-md block px-3 py-1.5 rounded-md w-full bg-white border-2 border-gray-200 placeholder-gray-600 shadow-sm focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
+                        />
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm font-dm-sans leading-5 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
+                          {showPassword ? (
+
+                            <svg
+                              className="h-3.5 text-gray-700"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 640 512"
+                            >
+                              <path
+                                fill="currentColor"
+                                d="M320 400c-75.85 0-137.25-58.71-142.9-133.11L72.2 185.82c-13.79 17.3-26.48 35.59-36.72 55.59a32.35 32.35 0 0 0 0 29.19C89.71 376.41 197.07 448 320 448c26.91 0 52.87-4 77.89-10.46L346 397.39a144.13 144.13 0 0 1-26 2.61zm313.82 58.1l-110.55-85.44a331.25 331.25 0 0 0 81.25-102.07 32.35 32.35 0 0 0 0-29.19C550.29 135.59 442.93 64 320 64a308.15 308.15 0 0 0-147.32 37.7L45.46 3.37A16 16 0 0 0 23 6.18L3.37 31.45A16 16 0 0 0 6.18 53.9l588.36 454.73a16 16 0 0 0 22.46-2.81l19.64-25.27a16 16 0 0 0-2.82-22.45zm-183.72-142l-39.3-30.38A94.75 94.75 0 0 0 416 256a94.76 94.76 0 0 0-121.31-92.21A47.65 47.65 0 0 1 304 192a46.64 46.64 0 0 1-1.54 10l-73.61-56.89A142.31 142.31 0 0 1 320 112a143.92 143.92 0 0 1 144 144c0 21.63-5.29 41.79-13.9 60.11z"
+                              ></path>
+                            </svg>
+                          ) : (
+                            <svg
+                              className="h-3.5 text-gray-700"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 576 512"
+                            >
+                              <path
+                                fill="currentColor"
+                                d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"
+                              ></path>
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    {pathname === '/login' && (
+
+                      <div className="flex justify-end">
+                        <label className="block text-gray-700 font-normal font-dm-san text-xs md:text-sm my-1">
+                          <Link
+                            to={'/forgot_password'}
+                            className=" cursor-pointer tracking-tighter text-gray-700"
+                          >
+                            <span>Forgot Password?</span>
+                          </Link>
+                        </label>
+                      </div>
+                    )}
+                    <button
+                      type='submit'
+                      className="mt-3 md:mt-5 font-dm-sans text-lg font-semibold bg-[#2557a7] hover:bg-[#1a4a8e] w-full text-white rounded-sm px-6 h-10 block shadow-xl hover:text-white"
+                    >
+                      {proccessing ? 'Signing...' : 'Sign in'}
+                    </button>
+
+                    {logerName === 'user' && (
+                      <div className=" flex items-center mt-2 md:mt-4">
+                        <div className="border-t border-stone-300 w-full"></div>
+                        <div className="mx-4 text-slate-500 text-base font-dm-sans leading-loose">or</div>
+                        <div className="border-t border-stone-300 w-full"></div>
+                      </div>
+                    )}
+
+                  </div>
+                </form>
+                {/*  */}
+                {logerName === 'user' && (
+                  <button
+                    onClick={handleGoogleSignin}
+                    className="active:bg-slate-200 w-full h-10 border-2 border-gray-200 rounded-sm text-gray-700 uppercase font-dm-sans leading-none mt-4 flex items-center justify-center sm:justify-start px-4"
+                  >
+                    <svg className="h-7 w-7 md:h-7 md:w-7 lg:h-8 lg:w-10 mr-2 md:mr-4 lg:mr-6" viewBox="0 0 40 40">
+                      <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#FFC107" />
+                      <path d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z" fill="#FF3D00" />
+                      <path d="M20 36.6667C24.305 36.6667 28.2167 35.0192 31.1742 32.34L26.0159 27.975C24.3425 29.2425 22.2625 30 20 30C15.665 30 11.9842 27.2359 10.5975 23.3784L5.16254 27.5659C7.92087 32.9634 13.5225 36.6667 20 36.6667Z" fill="#4CAF50" />
+                      <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.7592 25.1975 27.56 26.805 26.0133 27.9758C26.0142 27.975 26.0150 27.975 26.0158 27.9742L31.1742 32.3392C30.8092 32.6708 36.6667 28.3333 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#1976D2" />
+                    </svg>
+                    <span className='text-xs md:text-sm lg:text-sm font-dm-sans self-center'>Continue with Google</span>
+                  </button>
+                )}
+
+                {logerName === 'user' && (
+                  <Link
+                    to={'/login_with_otp'}
+                    className="active:bg-slate-200 w-full h-10 border-2 border-gray-200 rounded-sm text-gray-700 uppercase font-dm-sans leading-none mt-4 flex items-center justify-center sm:justify-start px-4"
+                  >
+                    <img
+                      src="https://cdn.iconscout.com/icon/free/png-256/free-google-mail-new-4762011-3955524.png?f=webp"
+                      alt="Google Logo"
+                      className="h-7 w-7 md:h-8 md:w-8 lg:h-10 lg:w-10 mr-2 md:mr-4 lg:mr-6"
+                    />
+                    <span className='text-xs md:text-sm lg:text-sm font-dm-sans self-center'>Continue with Otp</span>
+                  </Link>
+                )}
+
+                <p className="text-gray-600 text-center font-dm-sans leading-loose mt-5">
+                  Not a member? <span onClick={navigateSignup} className="cursor-pointer text-[#2557a7]">Signup</span>
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
     </div>
-
-    //07.09.23
-    // {Login modal}
-    // <div className="max-w-2xl mx-auto">
-    //   <button
-    //     className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    //     type="button"
-    //     onClick={openModal}
-    //   >
-    //     Toggle login modal
-    //   </button>
-
-    //   {isModalOpen && (
-    //     <div
-    //     id="authentication-modal"
-    //     aria-hidden="true"
-    //     className="fixed inset-0 overflow-x-hidden overflow-y-auto h-modal md:h-full top-0 left-0 flex justify-center items-center z-50"
-    //     >
-    //       <div className="relative w-full max-w-md px-4 h-full md:h-auto">
-    //         <div className="bg-white rounded-lg shadow relative dark:bg-slate-300">
-    //           <div className="flex justify-end p-2">
-    //             <button
-    //               type="button"
-    //               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-    //               onClick={closeModal}
-    //             >
-    //               <svg
-    //                 className="w-5 h-5"
-    //                 fill="currentColor"
-    //                 viewBox="0 0 20 20"
-    //                 xmlns="http://www.w3.org/2000/svg"
-    //               >
-    //                 <path
-    //                   fillRule="evenodd"
-    //                   d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-    //                   clipRule="evenodd"
-    //                 />
-    //               </svg>
-    //             </button>
-    //           </div>
-    //           <form
-    //             className="space-y-6 px-6 lg:px-8 pb-4 sm:pb-6 xl:pb-8"
-    //             action="#"
-    //           >
-    //             <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-    //               Sign in to our platform
-    //             </h3>
-    //             <div>
-    //               <label
-    //                 htmlFor="email"
-    //                 className="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300"
-    //               >
-    //                 Your email
-    //               </label>
-    //               <input
-    //                 type="email"
-    //                 name="email"
-    //                 id="email"
-    //                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-    //                 placeholder="name@company.com"
-    //                 required=""
-    //               />
-    //             </div>
-    //             <div>
-    //               <label
-    //                 htmlFor="password"
-    //                 className="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300"
-    //               >
-    //                 Your password
-    //               </label>
-    //               <input
-    //                 type="password"
-    //                 name="password"
-    //                 id="password"
-    //                 placeholder="••••••••"
-    //                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-    //                 required=""
-    //               />
-    //             </div>
-    //             <div className="flex justify-between">
-    //               <div className="flex items-start">
-    //                 <div className="flex items-center h-5">
-    //                   <input
-    //                     id="remember"
-    //                     aria-describedby="remember"
-    //                     type="checkbox"
-    //                     className="bg-gray-50 border border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
-    //                     required=""
-    //                   />
-    //                 </div>
-    //                 <div className="text-sm ml-3">
-    //                   <label
-    //                     htmlFor="remember"
-    //                     className="font-medium text-gray-900 dark:text-gray-300"
-    //                   >
-    //                     Remember me
-    //                   </label>
-    //                 </div>
-    //               </div>
-    //               <a
-    //                 href="#"
-    //                 className="text-sm text-blue-700 hover:underline dark:text-blue-500"
-    //               >
-    //                 Lost Password?
-    //               </a>
-    //             </div>
-    //             <button
-    //               type="submit"
-    //               className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    //             >
-    //               Login to your account
-    //             </button>
-    //             <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
-    //               Not registered?{' '}
-    //               <a
-    //                 href="#"
-    //                 className="text-blue-700 hover:underline dark:text-blue-500"
-    //               >
-    //                 Create account
-    //               </a>
-    //             </div>
-    //           </form>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   )}
-    //   <p className="mt-5">
-    //     This modal element is part of a larger, open-source library of Tailwind
-    //     CSS components. Learn more by going to the official{' '}
-    //     <a
-    //       className="text-blue-600 hover:underline"
-    //       href="#"
-    //       target="_blank"
-    //     >
-    //       Flowbite Documentation
-    //     </a>
-    //     .
-    //   </p>
-    // </div>
   )
 }
 

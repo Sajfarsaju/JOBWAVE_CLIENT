@@ -45,10 +45,13 @@ export default function ForgotPassword() {
       }
 
     } catch (error) {
+      //? If blocked user 
+      setProccessing(false)
+      if (error?.response?.data?.isBlocked) {
+        toast.error(error?.response?.data?.errMsg);
+      }
       if (error.response?.status === 404) {
         toast.error("User not found!")
-      } else if (error.response?.status === 401) {
-        toast.error("Your account is blocked")
       } else {
         console.log(error)
       }
@@ -83,10 +86,10 @@ export default function ForgotPassword() {
 
     e.preventDefault()
     setProccessing(true)
-    if (userOtp === '' || userOtp === null || userOtp.trim().length === 0){
+    if (userOtp === '' || userOtp === null || userOtp.trim().length === 0) {
       setProccessing(false)
       return toast.error('Enter a valid OTP');
-    } 
+    }
 
     try {
       const response = await Axios_Instance.post('/forgot_password', { otpId, userOtp, email, action: "verifyOtp" });
@@ -102,8 +105,12 @@ export default function ForgotPassword() {
     } catch (error) {
       console.log(error);
       setProccessing(false)
-      if (error.response?.status === 401) {
+      if (error.response?.status === 400) {
         toast.error(error?.response?.data?.errMsg)
+      }
+      //? If blocked user 
+      if (error?.response?.data?.isBlocked) {
+        toast.error(error?.response?.data?.errMsg);
       }
     }
   }
@@ -136,7 +143,11 @@ export default function ForgotPassword() {
     } catch (error) {
       console.log(error)
       setProccessing(false)
-      if (error.response?.status === 401) {
+      if (error.response?.status === 404) {
+        toast.error(error?.response?.data?.errMsg)
+      }
+      //? If blocked user 
+      if (error?.response?.data?.isBlocked) {
         toast.error(error?.response?.data?.errMsg)
       }
     }
@@ -175,7 +186,7 @@ export default function ForgotPassword() {
                         type='button'
                         className='font-serif border border-red-600 text-red-600 px-2 py-1.5 rounded mr-2 active:bg-red-300'
                       >
-                        Go back
+                        Back to login
                       </button>
                     </Link>
                     <button
@@ -258,6 +269,14 @@ export default function ForgotPassword() {
                 </div>
 
                 <div className='flex justify-center pt-1'>
+                <Link to={'/login'}>
+                      <button
+                        type='button'
+                        className='font-serif border border-red-600 text-red-600 px-2 py-1.5 rounded mr-2 active:bg-red-300'
+                      >
+                        Back to login
+                      </button>
+                    </Link>
                   <button
                     type='submit'
                     className='font-serif border border-green-600 text-green-600 px-2 py-1.5 rounded active:bg-green-300'

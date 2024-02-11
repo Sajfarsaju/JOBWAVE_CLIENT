@@ -6,10 +6,9 @@ import Axios_Instance from '../../../api/userAxios'
 import Noimg from '../../../assets/empty-img2.png'
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import Logo from '../../../../public/JobWave2-fotor-bg-remover-20230817153930.png'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import Logo from '/src/assets/JOBWAVELOGO.png'
 import toast from 'react-hot-toast'
-import axios from 'axios';
 
 
 
@@ -17,13 +16,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
 
   const navigate = useNavigate()
   const { pathname } = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false)
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
 
   const { token } = useSelector((state) => state.user);
 
@@ -33,7 +26,6 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
     navigate('/');
     setIsAlertOpen(false)
   }
-
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -50,8 +42,8 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
 
     } catch (error) {
       console.log(error);
-      if (error.res?.status === 401 || error?.response?.data?.errMsg === 'Your account has been blocked') {
-        dispatch(userLogout());
+      //? If blocked user 
+      if (error?.response?.data?.isBlocked) {
         toast.error(error?.response?.data?.errMsg);
       }
     }
@@ -66,104 +58,15 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
 
     <>
 
-      {/* <nav className="bg-slate-200 shadow-xl dark:bg-w-800 ">
-      <div className="container px-40 py-4 mx-auto">
-        <div className=" lg:flex lg:items-center">
-          <div className="flex items-center justify-between">
-            <a href="#">
-              <img className="w-auto h-10 sm:h-10" src="../public/JobWave2-fotor-bg-remover-20230817153930.png" alt="" />
-            </a> */}
-
-      {/* Mobile menu button */}
-      {/* <div className="flex lg:hidden">
-              <button onClick={() => setIsOpen(!isOpen)} type="button" className="text-gray-500 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-500 focus:outline-none focus:text-gray-600 dark:focus:text-gray-500" aria-label="toggle menu">
-                {!isOpen ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 8h16M4 16h16" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </div> */}
-
-      {/* <div className={`${isOpen ? 'block' : 'hidden'} mx-16 lg:flex lg:items-center`}>
-            <div className="flex flex-col text-gray-600 capitalize dark:text-slate-950 lg:flex lg:px-16 lg:-mx-4 lg:flex-row lg:items-center">
-              <a href="#" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-4 hover:text-gray-900 dark:hover:text-cyan-700">User</a>
-              <a href="#" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-4 hover:text-gray-900 dark:hover:text-cyan-700">downloads</a>
-              <a href="#" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-4 hover:text-gray-900 dark:hover:text-cyan-700">docs</a>
-              <a href="#" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-4 hover:text-gray-900 dark:hover:text-cyan-700">support</a>
-              <a href="#" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-4 hover:text-gray-900 dark:hover:text-cyan-700">blog</a> */}
-      {/* Search */}
-      {/* <div className="relative mt-4 lg:mt-0 lg:mx-4">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <svg className="w-4 h-4 text-gray-600 dark:text-slate-950" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.134 17 3 13.866 3 10C3 6.134 6.134 3 10 3C13.866 3 17 6.134 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-
-                <input
-                  type="text"
-                  className="w-full py-1 pl-10 pr-4 text-gray-700 placeholder-gray-600 bg-slate-100 border-b border-slate-950 dark:placeholder-slate-950 dark:focus:border-slate-950 lg:w-56 lg:border-transparent dark:bg-white-800 dark:text-slate-950 focus:outline-none focus:border-slate-950"
-                  placeholder="Search"
-                />
-              </div> */}
-      {/*  */}
-      {/* <div className="flex items-center mt-4 lg:mt-0">
-                    <button className="hidden mx-4 text-black transition-colors duration-300 transform lg:block dark:text-gray-700  dark:hover:text-gray-800 focus:text-black dark:focus:text-gray-800 focus:outline-none" aria-label="show notifications">
-                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M15 17H20L18.5951 15.5951C18.2141 15.2141 18 14.6973 18 14.1585V11C18 8.38757 16.3304 6.16509 14 5.34142V5C14 3.89543 13.1046 3 12 3C10.8954 3 10 3.89543 10 5V5.34142C7.66962 6.16509 6 8.38757 6 11V14.1585C6 14.6973 5.78595 15.2141 5.40493 15.5951L4 17H9M15 17V18C15 19.6569 13.6569 21 12 21C10.3431 21 9 19.6569 9 18V17M15 17H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </button>
-
-                    <button type="button" className="flex items-center focus:outline-none" aria-label="toggle profile dropdown">
-                        <div className="w-8 h-8 overflow-hidden border-2 border-gray-700 rounded-full">
-                            <img className="object-cover w-full h-full" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80" alt="avatar" />
-                        </div> */}
-
-      {/* <h3 className="mx-2 text-gray-700 dark:text-gray-200 lg:hidden">Khatab wedaa</h3> */}
-      {/* </button>
-                    <div>
-                    {token ?  <Link className='px-7' onClick={logout} to={'/login'}>Logout</Link> : <Link className='px-7' to={'/login'}>Login</Link>}
-                    </div>
-                </div>
-
-              
-            </div> */}
-
-      {/* <div className="flex justify-center mt-6 lg:flex lg:mt-0 lg:-mx-2">
-              <a href="#" className="mx-2 text-gray-600 transition-colors duration-300 transform dark:text-gray-300 hover:text-gray-500 dark:hover:text-gray-300" aria-label="Reddit">
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C21.9939 17.5203 17.5203 21.9939 12 22ZM6.807 10.543C6.20862 10.5433 5.67102 10.9088 5.45054 11.465C5.23006 12.0213 5.37133 12.6558 5.807 13.066C5.92217 13.1751 6.05463 13.2643 6.199 13.33C6.18644 13.4761 6.18644 13.6229 6.199 13.769C6.199 16.009 8.814 17.831 12.028 17.831C15.242 17.831 17.858 16.009 17.858 13.769C17.8696 13.6229 17.8696 13.4761 17.858 13.33C18.4649 13.0351 18.786 12.3585 18.6305 11.7019C18.475 11.0453 17.8847 10.5844 17.21 10.593H17.157C16.7988 10.6062 16.458 10.7512 16.2 11C15.0625 10.2265 13.7252 9.79927 12.35 9.77L13 6.65L15.138 7.1C15.1931 7.60706 15.621 7.99141 16.131 7.992C16.1674 7.99196 16.2038 7.98995 16.24 7.986C16.7702 7.93278 17.1655 7.47314 17.1389 6.94094C17.1122 6.40873 16.6729 5.991 16.14 5.991C16.1022 5.99191 16.0645 5.99491 16.027 6C15.71 6.03367 15.4281 6.21641 15.268 6.492L12.82 6C12.7983 5.99535 12.7762 5.993 12.754 5.993C12.6094 5.99472 12.4851 6.09583 12.454 6.237L11.706 9.71C10.3138 9.7297 8.95795 10.157 7.806 10.939C7.53601 10.6839 7.17843 10.5422 6.807 10.543ZM12.18 16.524C12.124 16.524 12.067 16.524 12.011 16.524C11.955 16.524 11.898 16.524 11.842 16.524C11.0121 16.5208 10.2054 16.2497 9.542 15.751C9.49626 15.6958 9.47445 15.6246 9.4814 15.5533C9.48834 15.482 9.52348 15.4163 9.579 15.371C9.62737 15.3318 9.68771 15.3102 9.75 15.31C9.81233 15.31 9.87275 15.3315 9.921 15.371C10.4816 15.7818 11.159 16.0022 11.854 16C11.9027 16 11.9513 16 12 16C12.059 16 12.119 16 12.178 16C12.864 16.0011 13.5329 15.7863 14.09 15.386C14.1427 15.3322 14.2147 15.302 14.29 15.302C14.3653 15.302 14.4373 15.3322 14.49 15.386C14.5985 15.4981 14.5962 15.6767 14.485 15.786V15.746C13.8213 16.2481 13.0123 16.5208 12.18 16.523V16.524ZM14.307 14.08H14.291L14.299 14.041C13.8591 14.011 13.4994 13.6789 13.4343 13.2429C13.3691 12.8068 13.6162 12.3842 14.028 12.2269C14.4399 12.0697 14.9058 12.2202 15.1478 12.5887C15.3899 12.9572 15.3429 13.4445 15.035 13.76C14.856 13.9554 14.6059 14.0707 14.341 14.08H14.306H14.307ZM9.67 14C9.11772 14 8.67 13.5523 8.67 13C8.67 12.4477 9.11772 12 9.67 12C10.2223 12 10.67 12.4477 10.67 13C10.67 13.5523 10.2223 14 9.67 14Z">
-                  </path>
-                </svg>
-              </a>
-              <a href="#" className="mx-2 text-gray-600 transition-colors duration-300 transform dark:text-gray-300 hover:text-gray-500 dark:hover:text-gray-300" aria-label="Github">
-                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M12.026 2C7.13295 1.99937 2.96183 5.54799 2.17842 10.3779C1.395 15.2079 4.23061 19.893 8.87302 21.439C9.37302 21.529 9.55202 21.222 9.55202 20.958C9.55202 20.721 9.54402 20.093 9.54102 19.258C6.76602 19.858 6.18002 17.92 6.18002 17.92C5.99733 17.317 5.60459 16.7993 5.07302 16.461C4.17302 15.842 5.14202 15.856 5.14202 15.856C5.78269 15.9438 6.34657 16.3235 6.66902 16.884C6.94195 17.3803 7.40177 17.747 7.94632 17.9026C8.49087 18.0583 9.07503 17.99 9.56902 17.713C9.61544 17.207 9.84055 16.7341 10.204 16.379C7.99002 16.128 5.66202 15.272 5.66202 11.449C5.64973 10.4602 6.01691 9.5043 6.68802 8.778C6.38437 7.91731 6.42013 6.97325 6.78802 6.138C6.78802 6.138 7.62502 5.869 9.53002 7.159C11.1639 6.71101 12.8882 6.71101 14.522 7.159C16.428 5.868 17.264 6.138 17.264 6.138C17.6336 6.97286 17.6694 7.91757 17.364 8.778C18.0376 9.50423 18.4045 10.4626 18.388 11.453C18.388 15.286 16.058 16.128 13.836 16.375C14.3153 16.8651 14.5612 17.5373 14.511 18.221C14.511 19.555 14.499 20.631 14.499 20.958C14.499 21.225 14.677 21.535 15.186 21.437C19.8265 19.8884 22.6591 15.203 21.874 10.3743C21.089 5.54565 16.9181 1.99888 12.026 2Z">
-                  </path>
-                </svg>
-              </a>
-              
-            </div> */}
-      {/**/}
-
-      {/*  */}
-      {/* </div>
-        </div>
-      </div>
-    </nav> */}
-
-      <Disclosure as="nav" className="bg-slate-100 shadow-md ">
+      <Disclosure as="nav" className="bg-slate-100">
         {({ open }) => (
           <>
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
               <div className="relative flex h-16 items-center justify-between">
+                <div className='sm:hidden mx-auto max-w-full flex justify-end items-end w-3/5 '>
+                  <img src={Logo} alt="" className="w-20 h-20" />
+                </div>
+
                 <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
 
                   <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
@@ -176,14 +79,14 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
                     )}
                   </Disclosure.Button>
                 </div>
+                <div className="hidden sm:block w-24 h-24 items-center">
+                  <img
+                    className=""
+                    src={Logo}
+                    alt="Your Company"
+                  />
+                </div>
                 <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                  <div className="flex flex-shrink-0 items-center">
-                    <img
-                      className="h-8 w-auto"
-                      src={Logo}
-                      alt="Your Company"
-                    />
-                  </div>
                   <div className="hidden sm:ml-6 sm:block">
                     <div className="flex space-x-4">
 
@@ -202,7 +105,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
                       >Browse Jobs
                       </Link>
                       <Link
-                        to={'#'}
+                        to={'/support'}
                         className={`rounded-md px-3 py-2 text-md font-serif font-medium hover:text-emerald-700 text-gray-900 "
                         ${pathname === '/support' ? 'dark:text-emerald-500 border-b-2 border-emerald-500 ' : 'text-gray-900 '
                           }`}
@@ -366,7 +269,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
               </div>
             </Disclosure.Panel> */}
 
-            {/* try */}
+            {/* MOBILE VIEW */}
             <Disclosure.Panel className="sm:hidden">
               <div className="space-y-1 px-2 pb-3 pt-2">
                 <Link
@@ -392,47 +295,49 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
                   Support
                 </Link>
                 {/* Search */}
-                {/* {showSearchield && ( */}
-                <div className="relative mt-2 mx-3">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg className="w-4 h-4  text-gray-600 dark:text-slate-950" viewBox="0 0 24 24" fill="none">
-                      <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.134 17 3 13.866 3 10C3 6.134 6.134 3 10 3C13.866 3 17 6.134 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                  <input
-                    type="text"
-                    className="w-full py-1 pl-10 pr-4 text-gray-700 placeholder-gray-600 bg-slate-100 border-b border-slate-950 dark:placeholder-slate-950 dark:focus:border-slate-950 md:w-56 md:border-transparent dark:bg-white-800 dark:text-slate-950 focus:outline-none focus:border-slate-950"
-                    placeholder="Search"
-                    value={searchValue}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <div className="absolute inset-y-0 right-0 flex items-center ">
-                    <button
-                      type="button"
-                      className="text-gray-500 hover:text-gray-600"
-                      onClick={() => setSearchQuery('')}
-                    >
-                      <span className="sr-only"></span>
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
+                {showSearchield && (
+                  <div className="relative mt-2 mx-3">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                      <svg className="w-4 h-4  text-gray-600 dark:text-slate-950" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.134 17 3 13.866 3 10C3 6.134 6.134 3 10 3C13.866 3 17 6.134 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
-                    </button>
+                    </span>
+                    <input
+                      type="text"
+                      className="w-full py-1 pl-10 pr-4 text-gray-700 placeholder-gray-600 bg-slate-100 border-b border-slate-950 dark:placeholder-slate-950 dark:focus:border-slate-950 md:w-56 md:border-transparent dark:bg-white-800 dark:text-slate-950 focus:outline-none focus:border-slate-950"
+                      placeholder="Search"
+                      value={searchValue}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center ">
+                      <button
+                        type="button"
+                        className="text-gray-500 hover:text-gray-600"
+                        onClick={() => setSearchQuery('')}
+                      >
+                        <span className="sr-only"></span>
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                </div>
-                {/* // )} */}
+                )}
                 {/*  */}
               </div>
+
             </Disclosure.Panel>
+            {/*END MOBILE VIEW */}
 
           </>
         )}
