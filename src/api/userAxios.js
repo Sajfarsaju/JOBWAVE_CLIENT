@@ -3,8 +3,8 @@ import {store} from '../store/store'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 const Axios_Instance  = axios.create({
-    // baseURL: BACKEND_URL,
-    baseURL: "http://localhost:4005",
+    baseURL: BACKEND_URL,
+    // baseURL: "http://localhost:4005",
     headers: {
         "Content-Type": "application/json",
     },
