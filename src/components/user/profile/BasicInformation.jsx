@@ -178,10 +178,10 @@ function BasicInformation({ clickedBasicEditButton, userData, UpdateBasicDataMod
                             <div className="mb-4 w-full md:flex md:space-x-2">
                                 <div className="w-full md:w-1/2 mb-2 md:mb-0">
                                     <TextField
-                                        required
+                                        
                                         id="outlined-required"
                                         name="currentCTC"
-                                        label="CTC(LPA)"
+                                        label="CTC(LPA)Optional"
                                         defaultValue={userData.currentCTC ? userData.currentCTC : ''}
                                         placeholder="eg:4"
                                         onChange={(e) => setCtc(e.target.value)}

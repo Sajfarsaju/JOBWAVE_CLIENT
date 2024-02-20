@@ -189,11 +189,13 @@ function Login({ logerName, url }) {
 
             <div className="w-full relative">
               <div className=" mt-2 shadow-xl shadow-slate-300 p-8 lg:max-w-[400px] md:max-w-[400px] xl:max-w-[400px] sm:max-w-[300px] mx-auto bg-white rounded-md">
+                {pathname === '/login' && (
 
-                <Link to="/" className="text-[#2557a7] flex items-center text-sm mb-2">
-                  <FaLongArrowAltLeft className='h-4 w-4' />
-                  Back to home
-                </Link>
+                  <Link to="/" className="text-[#2557a7] flex items-center text-sm mb-2">
+                    <FaLongArrowAltLeft className='h-4 w-4' />
+                    Back to home
+                  </Link>
+                )}
 
                 {pathname === '/login' ? (
                   <div className="mb-1 md:mb-3 pb-1 text-left font-base">

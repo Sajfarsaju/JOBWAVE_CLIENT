@@ -41,8 +41,6 @@ export default function Profile() {
 
   }, []);
 
-
-
   const closeModal = () => {
     setEditIsOpen(false)
     setImage(null)
@@ -146,8 +144,8 @@ export default function Profile() {
         <Spinner />
       ) : (
 
-        <div className="lg:h-auto md:h-auto xl:h-auto sm:min-h-screen bg-white flex flex-col items-center relative">
-          <div className="min-w-full mt-24  lg:h-60 xl:h-60 md:h-40 h-40 relative">
+        <div className="lg:h-auto md:h-auto xl:h-auto sm:min-h-screen bg-white flex flex-col items-center relative font-dm-sans font-normal">
+          <div className="min-w-full mt-20  lg:h-60 xl:h-60 md:h-40 h-40 relative">
             <img
               src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dGVjaHxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
               alt=""
@@ -191,16 +189,16 @@ export default function Profile() {
 
               <div className="text-center mt-4">
                 {/* Card Text Content */}
-                <h2 className="text-2xl lg:text-3xl xl:text-3xl font-semibold font-serif">{companyData.companyName}</h2>
-                <p className='mt-2 font-serif text-lg lg:text-xl xl:text-xl'>{companyData?.email}</p>
+                <h2 className="text-2xl lg:text-3xl xl:text-3xl font-semibold">{companyData.companyName}</h2>
+                <p className='mt-2 text-lg lg:text-xl xl:text-xl'>{companyData?.email}</p>
                 <div className="flex items-center justify-center ">
                   <IoLocationSharp className='w-5 h-5 mt-2' />
 
-                  <p className='mt-2 text-lg lg:text-xl xl:text-xl font-serif'>
+                  <p className='mt-2 text-lg lg:text-xl xl:text-xl'>
                     {companyData?.companyAddress?.district}, {companyData?.companyAddress?.state}
                   </p>
                 </div>
-                <p className='mt-2 text-lg lg:text-xl xl:text-xl font-serif'>Bio: <span className='font-normal lg:text-xl xl:text-xl'>{companyData?.bio}</span></p>
+                <p className='mt-2 text-lg lg:text-xl xl:text-xl'>Bio: <span className='font-normal lg:text-xl xl:text-xl'>{companyData?.bio}</span></p>
                 {/* <p className="text-lg lg:text-lg xl:text-lg">Phone: {companyData.phone}</p> */}
               </div>
 
@@ -232,7 +230,7 @@ export default function Profile() {
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                   <div className="modal-content py-4 text-left px-6">
-                    <h2 className="text-xl font-serif font-semibold mb-4">Profile Image</h2>
+                    <h2 className="text-xl font-semibold mb-4">Profile Image</h2>
                     <div className="mb-6">
                       <div className="w-24 h-24 border lg:w-36 lg:h-36 xl:w-36 xl:h-36 rounded-full mx-auto mb-2 overflow-hidden">
                         <img
@@ -251,7 +249,7 @@ export default function Profile() {
                       />
                     </div>
                     <div className="mb-4">
-                      <label className="block font-semibold font-serif text-gray-800 text-xl mb-1" htmlFor="bio">
+                      <label className="block font-semibold text-gray-800 text-xl mb-1" htmlFor="bio">
                         Bio
                       </label>
                       <textarea

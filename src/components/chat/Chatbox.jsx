@@ -193,10 +193,11 @@ export default function Chatbox({ senderRole, reciverRole }) {
 
 
   return (
-    <div className={`"container mx-auto " ${senderRole === 'company' ? 'mt-24' : 'mt-3'}`}>
+    <div className={`"container mx-auto " ${senderRole === 'company' ? 'mt-24' : 'mt-6'}`}>
       <div className="min-w-full border rounded lg:grid lg:grid-cols-3">
         <div className="border-r border-gray-300 lg:col-span-1">
-          <div className="mx-3 my-3 ">
+          {/* Search input */}
+          {/* <div className="mx-3 my-3 ">
             <div className="relative  text-gray-600 ">
               <span className="absolute inset-y-0 left-0 flex items-center pl-2">
                 <svg
@@ -219,7 +220,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
                 required
               />
             </div>
-          </div>
+          </div> */}
 
           <ul className={`${isChatOpen ? 'hidden lg:overflow-auto lg:h-[32rem] lg:block ' : 'overflow-auto lg:h-[32rem]'}`}>
             <h2 className="my-2 mb-2 ml-2 text-lg font-serif text-gray-600">Chats</h2>
@@ -336,7 +337,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
             </div>
           </div>
         ) : (
-          <div className="lg:col-span-2 flex items-center justify-center lg:block bg-slate-100 p-6">
+          <div className="min-h-screen lg:col-span-2 flex items-start sm:items-center justify-center lg:block bg-slate-100 p-6">
 
             <p className="text-center text-gray-700 text-lg">Select a chat to start the conversation.</p>
 

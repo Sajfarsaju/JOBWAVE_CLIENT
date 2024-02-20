@@ -137,7 +137,7 @@ function Categories() {
         <Spinner />
       ) : (
 
-        <div className='min-h-screen'>
+        <div className='min-h-screen font-dm-sans font-normal'>
           <button onClick={() => setIsOpen(true)} className='btn btn-md bg-indigo-500 rounded-lg text-white ml-48 w-36 mt-3'>
             Add
           </button>

@@ -9,6 +9,7 @@ import SectioFour from './SectioFour';
 import { userLogout } from '../../../store/slice/userSlice';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
+import landingImg from '/src/assets/landingImage-removebg-preview.png'
 
 function Section() {
 
@@ -102,7 +103,7 @@ function Section() {
             {/* <!-- right half --> */}
             <div className="md:w-1/2 md:mt-0 flex items-center justify-center">
               <img
-                src="/src/assets/landingImage-removebg-preview.png"
+                src={landingImg}
                 alt="Job Image"
                 className="h-auto w-auto py-14 object-cover"
               />

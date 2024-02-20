@@ -13,7 +13,6 @@ import MyJobs from './pages/company/MyJobs'
 import JobsPage from './pages/user/JobsPage'
 import ProfilePage from './pages/user/ProfilePage'
 import JobSinglePage from './pages/user/JobSinglePage'
-import Userpro from './components/user/profile/userpro'
 import NotFoundPage from './pages/404Page'
 import UsersPage from './pages/admin/usersPage'
 import PhoneLogin from './components/PhoneLogin'
@@ -31,6 +30,7 @@ import CandidatesPage from './pages/company/CandidatesPage'
 import InterViewTime from './components/company/candidates/InterViewTime'
 import HiredCandidates from './components/company/candidates/HiredCandidates'
 import SignupOtp from './components/user/SIgnupOtp'
+import AboutCompanyPage from './pages/user/AboutCompanyPage'
 
 
 
@@ -67,8 +67,9 @@ function App() {
         <Route path='/profile' element={userAuth ? <ProfilePage/> : <Navigate to='/login'/>}></Route>
         <Route path='/profile/applied_jobs' element={userAuth ? <AppliedJobsPage/> : <Navigate to='/login'/>}></Route>
         <Route path='/login_with_otp' element={userAuth ? <Navigate to='/'/> : <PhoneLogin/>}></Route>
-        <Route path='/support' element={<Userpro/>}></Route>
+        {/* <Route path='/chats' element={userAuth ? <Chatpage/> : <Navigate to='/login'/>}></Route> */}
         <Route path='/chats/:companyId' element={userAuth ? <Chatpage/> : <Navigate to='/login'/>}></Route>
+        <Route path='/about_company/:companyId' element={userAuth ? <AboutCompanyPage/> : <Navigate to='/login'/>}></Route>
         {/* Payment Status Company */}
         <Route path='/payment_successfully' element={<PaymentsuccessUser/>} />
         <Route path='/payment_failed' element={<PaymentFailedUser/>} />

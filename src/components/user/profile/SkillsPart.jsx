@@ -238,19 +238,19 @@ function SkillsPart({ setSkillAddModal, userData, handleRemoveSkill, skillAddMod
               {/*content*/}
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full dark:bg-white outline-none focus:outline-none">
                 {/*header*/}
-                <div className="mx-2 flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
+                <div className="mx-2 flex items-start justify-between p-5 border-b border-solid border-gray-200 rounded-t">
                   <h3 className="text-md md:text-2xl font-semibold">
                     Delete Skill
                   </h3>
                 </div>
                 {/*body*/}
                 <div className="relative p-3 flex-auto mx-3">
-                  <p className="text-blueGray-500 text-lg leading-relaxed">
+                  <p className="text-gray-500 text-lg leading-relaxed">
                     Are you sure you want to delete the "{skillToRemove}" skill? ⚠️
                   </p>
                 </div>
                 {/*footer*/}
-                <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+                <div className="flex items-center justify-end p-6 border-t border-solid border-gray-200 rounded-b">
                   <button
                     className=" text-emerald-500  font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"

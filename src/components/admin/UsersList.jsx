@@ -82,7 +82,7 @@ function UsersList() {
       {spinner ? (
         <Spinner />
       ) : (
-        <div className='min-h-auto'>
+        <div className='min-h-auto font-dm-sans font-normal'>
           <section className="relative py-8 sm:py-16 px-4 sm:px-10 lg:px-20 xl:px-32">
             <div className="w-full mb-6">
               <div className="relative min-w-0 w-full mb-6 shadow-md shadow-gray-400 rounded bg-slate-100 text-gray-900 overflow-x-auto">

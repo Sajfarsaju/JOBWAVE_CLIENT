@@ -1,5 +1,5 @@
-import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import mobileLogo from "/src/assets/mobileLogo.png"
 
 
 function SectionThree() {
@@ -15,7 +15,7 @@ function SectionThree() {
         <div className="bg-slate-100 font-dm-sans flex flex-col sm:flex-row h-auto">
             {/* Left Half with Image */}
             <div className="sm:flex-1 flex items-center justify-center p-16">
-                <img src="/src/assets/mobileLogo.png" alt="Sample Image" className="max-w-full max-h-full" />
+                <img src={mobileLogo} alt="Sample Image" className="max-w-full max-h-full" />
             </div>
 
             {/* Right Half with Text Content */}

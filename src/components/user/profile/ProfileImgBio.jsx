@@ -39,12 +39,12 @@ function ProfileImgBio({ setBio, handleProfileSave, proccessing, profileEditModa
                                     name="profileImage"
                                     id="profileImage"
                                     onChange={handleImageChange}
-                                    className="block w-full px-3 py-2 mt-2 text-sm text-gray-800 bg-white border
+                                    className="block w-full px-3 py-2 mt-2 text-sm text-gray-800 dark:bg-green-50 border
                                         border-gray-200 file:bg-gray-200 file:text-gray-900 file:text-sm file:px-4 
                                         file:py-1 file:border-none file:rounded-full dark:file:bg-gray-200 dark:file:text-gray-900
                                         dark:text-gray-900 placeholder-gray-400/70 dark:placeholder-gray-700 focus:border-blue-400 
                                         focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-300 
-                                        dark:bg-white dark:focus:border-blue-300" />
+                                        dark:focus:border-blue-300" />
                             </div>
 
 

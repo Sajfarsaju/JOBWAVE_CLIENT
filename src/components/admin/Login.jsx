@@ -96,7 +96,7 @@ function Login() {
 
   return (
 
-    <div className="bg-gradient-to-tr from-[#f1f5f9] to-[#cbd5e1] opacity-100 min-h-screen flex flex-col justify-center px-6 py-12 lg:px-8">
+    <div className="font-dm-sans font-normal bg-gradient-to-tr from-[#f1f5f9] to-[#cbd5e1] opacity-100 min-h-screen flex flex-col justify-center px-6 py-12 lg:px-8">
       <div className="mx-auto sm:w-full max-w-md bg-slate-300 rounded-lg shadow-2xl shadow-stone-500 overflow-hidden">
         <div className="py-4">
           <img

@@ -7,7 +7,8 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { FaUserLarge, FaBookOpenReader } from 'react-icons/fa6'
 import { AiFillHome } from 'react-icons/ai'
 import { FaUserFriends } from 'react-icons/fa'
-// import Axios_Instance from '../../../api/userAxios'
+import { IoChatboxEllipses } from "react-icons/io5";
+import jobWaveLogo from '/src/assets/JOBWAVELOGO.png'
 
 function Navbar() {
 
@@ -32,13 +33,13 @@ function Navbar() {
 
     <>
       <header className="absolute inset-x-0 top-0 z-10 ">
-        <nav className="flex items-center bg-slate-100 shadow-sm justify-between p-6 lg:px-8" aria-label="Global">
+        <nav className="flex items-center bg-slate-100 shadow-sm justify-between p-4 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
-            <a href="#" className="-m-1.5 p-1.5">
+            <a href="#" className="">
               <span className="sr-only">Your Company</span>
               <img
-                className="h-10 w-11"
-                src="../public/JobWave2-fotor-bg-remover-20230817153930.png"
+                className="h-10 w-12"
+                src={jobWaveLogo}
                 alt=""
               />
             </a>
@@ -65,7 +66,7 @@ function Navbar() {
             <Link to="/company/candidates"
               className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 hover:text-emerald-800
               ${pathname === '/company/candidates' ? 'dark:text-emerald-500 ' : 'text-gray-900 '
-         }`}
+                }`}
             >Browse Candidates
             </Link>
             <Link
@@ -75,12 +76,19 @@ function Navbar() {
                 }`}
             >My Jobs
             </Link>
+            <Link
+              to="/company/chats"
+              className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 hover:text-emerald-800
+                     ${pathname === '/company/chats' ? 'dark:text-emerald-500 ' : 'text-gray-900 '
+                }`}
+            >Chats
+            </Link>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <div className="flex items-center">
-              <Link to={'/company/chats'}>
+              {/* <Link to={'/company/chats'}>
                 <button
-                  className="mr-3 text-white flex flex-col rounded-lg ">
+                  className="mr-3 text-white flex flex-col rounded-lg">
                   <div className="p-1.5  rounded-full bg-green-600">
                     <svg
                       className="w-4 h-4 lg:w-4 lg:h-4 xl:w-4 xl:h-4"
@@ -96,7 +104,7 @@ function Navbar() {
                     </svg>
                   </div>
                 </button>
-              </Link>
+              </Link> */}
               <Link
                 className={`${pathname === '/company/profile' ? 'dark:text-emerald-500 ' : 'text-gray-900 '}`}
                 to={'/company/profile'}>
@@ -117,12 +125,12 @@ function Navbar() {
           </div>
 
         </nav>
-        
+
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
           <div className="fixed inset-0 z-50" />
           <Dialog.Panel className="fixed inset-y-0 left-0 z-50 w-full overflow-y-auto bg-slate-100 shadow-xl px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
-              
+
               <a href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">Your Company</span>
                 <img
@@ -149,7 +157,7 @@ function Navbar() {
                     ${pathname === '/company/home' ? 'dark:text-emerald-500 ' : 'text-gray-900 '}`}
                   >
                     <div className="flex items-center">
-                      <AiFillHome className="mr-2" />
+                      <AiFillHome className="mr-2 w-4 h-4" />
                       Home
                     </div>
                   </Link>
@@ -158,7 +166,7 @@ function Navbar() {
                     to={'/company/candidates'}
                   >
                     <div className="flex items-center">
-                      <FaUserFriends className="mr-2" />
+                      <FaUserFriends className="mr-2 w-4 h-4" />
                       Browse Recruiters
                     </div>
                   </Link>
@@ -168,45 +176,31 @@ function Navbar() {
                       ${pathname === '/company/joblist' ? 'dark:text-emerald-500 ' : 'text-gray-900 '}`}
                   >
                     <div className="flex items-center">
-                      <FaBookOpenReader className="mr-2" />
+                      <FaBookOpenReader className="mr-2 w-4 h-4" />
                       My Jobs
                     </div>
                   </Link>
+
                   <Link
                     to={'/company/profile'}
                     className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 hover:bg-gray-50
                       ${pathname === '/company/profile' ? 'dark:text-emerald-500 ' : 'text-gray-900 '}`}
                   >
                     <div className="flex items-center">
-                      <FaUserLarge className="mr-2" />
+                      <FaUserLarge className="mr-2 w-4 h-4" />
                       Profile
                     </div>
                   </Link>
-                  <Link to={'/company/chats'} className={` flex -ml-1.5 text-base font-semibold leading-7 hover:bg-gray-50
+                  <Link to={'/company/chats'} className={`flex items-center text-base font-semibold leading-7 hover:bg-gray-50
                   ${pathname === '/company/chats' ? 'dark:text-emerald-500 ' : 'text-gray-900 '}`}
                   >
-                <button
-                  className="mr-3 text-white flex flex-col rounded-lg ">
-                  <div className="p-1.5  rounded-full bg-green-600">
-                    <svg
-                      className="w-4 h-4 lg:w-4 lg:h-4 xl:w-4 xl:h-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  </div>
-                </button>Your chats
-              </Link>
+                    <IoChatboxEllipses className="mr-2 w-4 h-4" />
+                    Your chats
+                  </Link>
                   {token ? (
                     <Link
                       onClick={logout}
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      className="-mx-4 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                     >
                       <div className="flex items-center">
                         <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

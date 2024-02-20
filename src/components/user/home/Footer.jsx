@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+import jobWaveLogo from "/src/assets/JOBWAVELOGO.png"
 
 function Footer() {
 
@@ -12,7 +13,7 @@ function Footer() {
         <footer className="font-dm-sans font-normal bg-slate-100 text-white py-8">
             <div className="container mx-auto px-4 sm:px-4 md:px-4 lg:px-8 xl:px-8 flex flex-col sm:flex-row justify-center">
                 <div className="w-full sm:w-1/3 flex flex-col items-start p-4">
-                    <img className='w-28 h-28' src="/src/assets/JOBWAVELOGO.png" alt="" />
+                    <img className='w-28 h-28' src={jobWaveLogo} alt="" />
                     <p className='' style={{ color: 'rgba(109, 110, 141, 1)' }}>The automated process starts as soon as your clothes go into the machine. The outcome is gleaming clothes.</p>
                 </div>
 

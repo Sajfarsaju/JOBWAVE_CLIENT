@@ -1,12 +1,14 @@
 import React from 'react'
 import Navbar from '../../components/admin/Navbar'
-// import Slidebar from '../../components/admin/Slidebar'
+import DashboardSection from '../../components/admin/DashboardSection'
+
 
 function DashboardPage() {
   return (
     <>
         <Navbar/>
-        {/* <Slidebar/> */}
+        <DashboardSection/>
+        
     </>
   )
 }

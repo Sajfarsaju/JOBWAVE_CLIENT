@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom"
+import semiColonImg from "/src/assets/SemiColonStyle.png"
+import halfRoundedImg from "/src/assets/roundedStyle.png"
 
 
 function SectioFour() {
@@ -75,10 +77,10 @@ function SectioFour() {
                 <div className='sm:p-10 p-8 md:p-24 lg:p-40 z-10 mb-28'>
                     <div className='flex items-start justify-between'>
                         <div className='w-12 h-12 sm:w-12 sm:h-14 md:w-16 md:h-16 lg:w-16 lg:h-16 flex items-start'>
-                            <img src="/src/assets/SemiColonStyle.png" alt="" className='w-full h-full object-contain' />
+                            <img src={semiColonImg} alt="" className='w-full h-full object-contain' />
                         </div>
                         <div className='w-12 h-12 sm:w-12 sm:h-14 md:w-16 md:h-16 lg:w-16 lg:h-16 flex items-start'>
-                            <img src="/src/assets/SemiColonStyle.png" alt="" className='w-full h-full object-contain' />
+                            <img src={semiColonImg} alt="" className='w-full h-full object-contain' />
                         </div>
                     </div>
                     <p className="text-white text-center text-sm md:text-2xl lg:text-2xl mt-3">
@@ -87,7 +89,7 @@ function SectioFour() {
                 </div>
                 <div className="absolute bottom-0 right-0 mb-0 w-32 h-20 sm:w-40 sm:h-28 md:w-48 md:h-32 lg:w-56 lg:h-40 xl:w-72 xl:h-48">
                     {/* Your image component goes here */}
-                    <img src="/src/assets/roundedStyle.png" alt="" className="w-full h-full object-cover" />
+                    <img src={halfRoundedImg} alt="" className="w-full h-full object-cover" />
                 </div>
 
             </div>

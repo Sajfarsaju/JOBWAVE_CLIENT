@@ -15,7 +15,7 @@ import NoResultGif from '../../../assets/097297f8e21d501ba45d7ce437ed77bd.gif'
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import Spinner from '../../Spinner';
-
+import '../../../assets/css/tooltip.css'
 
 
 function JobSection({ searchQuery }) {
@@ -123,8 +123,9 @@ function JobSection({ searchQuery }) {
     const [uniqueWorkTypes, setUniqueWorkTypes] = useState([])
     const [limit, setLimit] = useState(6);
     const [jobTotalLength, setJobTotalLength] = useState();
+
+    //? FETCH JOBS START
     async function fetchJobs() {
-        //? FETCH JOBS START
         try {
             const res = await Axios_Instance.get(`/jobs`, {
                 params: {
@@ -225,7 +226,7 @@ function JobSection({ searchQuery }) {
         <>
             <PlanModal setOpenPlanModal={setOpenPlanModal} openPlanModal={openPlanModal} />
 
-            <div className='bg-white font-dm-sans font-normal'>
+            <div className='mn-h-screen bg-white font-dm-sans font-normal'>
                 {/* Mobile filter dialog */}
                 <Transition.Root show={mobileFiltersOpen} as={Fragment}>
                     <Dialog as="div" className="relative z-40 lg:hidden" onClose={setMobileFiltersOpen}>
@@ -321,9 +322,11 @@ function JobSection({ searchQuery }) {
                                                             <span className="font-medium text-gray-900">Job Types</span>
                                                             <span className="ml-6 flex items-center">
                                                                 {open ? (
-                                                                    <MinusIcon className="h-5 w-5 text-gray-700" aria-hidden="true" />
+                                                                    // <MinusIcon className="h-5 w-5 text-gray-700" aria-hidden="true" />
+                                                                    <IoIosArrowUp className="h-5 w-5" aria-hidden="true" />
                                                                 ) : (
-                                                                    <PlusIcon className="h-5 w-5 text-gray-700" aria-hidden="true" />
+                                                                    // <PlusIcon className="h-5 w-5 text-gray-700" aria-hidden="true" />
+                                                                    <IoIosArrowDown className="h-5 w-5 text-gray-700" aria-hidden="true" />
                                                                 )}
                                                             </span>
                                                         </Disclosure.Button>
@@ -331,6 +334,7 @@ function JobSection({ searchQuery }) {
                                                     <Disclosure.Panel className="pt-6">
                                                         <div className="space-y-6">
                                                             {uniqueWorkTypes.map((workType, optionIdx) => (
+
                                                                 <div key={optionIdx} className="flex items-center">
                                                                     <input
                                                                         id={`filter-job-type-${optionIdx}`}
@@ -387,10 +391,6 @@ function JobSection({ searchQuery }) {
                     </div>
 
                     <section aria-labelledby="products-heading" className="pb-24 pt-6">
-                        {/* <h2 id="products-heading" className="text-black text-lg font-semibold">
-                            Filter Your dream
-                        </h2> */}
-
                         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-2 md:grid-cols-1 ">
                             {/* Filters */}
                             <form className=" hidden lg:block w-8/12">
@@ -490,10 +490,7 @@ function JobSection({ searchQuery }) {
                             {/* Jobs grid */}
                             {skelton ? (
                                 <>
-                                    <div className='lg:mr-[30%] lg:-m-[30%] xl:mr-[30%] xl:-m-[30%]'>
-
-                                        <Spinner />
-                                    </div>
+                                    <Spinner JobSection={true} />
 
                                 </>
                             ) : (
@@ -514,7 +511,7 @@ function JobSection({ searchQuery }) {
                                                     <img
                                                         src={NoResultGif}
                                                         alt="No Result"
-                                                        className="mx-auto w-full h-full "
+                                                        className="mx-auto w-full h-full"
                                                     />
                                                 </div>
                                             </div>
@@ -522,10 +519,18 @@ function JobSection({ searchQuery }) {
                                             Jobs.map((job, index) => (
                                                 // group-hover:bg-gradient-to-r from-[#AEC3AE] to-[#CEDEBD]
                                                 <div key={index} className="lg:w-10/12 xl:w-10/12 p-4 hover:scale-105 duration-300 group">
-                                                    <div className=" sm:w-8/12 sm:mx-auto lg:w-11/12 rounded-xl shadow-sm shadow-slate-400 p-4 relative  hover:shadow-md hover:shadow-slate-400 flex items-center">
+                                                    <div className=" sm:w-8/12 sm:mx-auto lg:w-11/12 rounded-xl shadow-sm shadow-slate-400 p-4 relative hover:shadow-md hover:shadow-slate-400 flex items-center">
                                                         <div className="flex-shrink-0">
-                                                            <img className="hidden sm:block w-14 h-full rounded-full" src={job.logo} alt={`Logo for ${job.company}`} />
+                                                            {/* Tooltip for company detail */}
+                                                            <div className='has-tooltip'>
+                                                                <span className='tooltip rounded-md shadow-lg p-1 text-gray-800 -mt-11 sm:-mt-12 md:-mt-12'>
+                                                                    about company</span>
+                                                                <Link to={`/about_company/${job?.companyId?._id}`}>
+                                                                    <img className="hidden sm:block w-14 h-full rounded-full" src={job?.companyId?.profile} alt={`Logo for ${job.company}`} />
+                                                                </Link>
 
+                                                            </div>
+                                                            {/* End Tooltip for company detail */}
                                                         </div>
                                                         <div className="flex flex-col flex-grow ml-4 ">
 
@@ -533,14 +538,28 @@ function JobSection({ searchQuery }) {
                                                             <div className="sm:hidden">
                                                                 <div className='flex flex-col items-start'>
                                                                     <div className='flex items-center space-x-4'>
-                                                                        <img className="w-14 h-full rounded-full" src={job?.companyId?.profile} alt={`Logo for ${job.company}`} />
-                                                                        <Link
-                                                                            to={job.appliedStatus ? "#" : `/jobs/jobview/${job._id}`}
-                                                                            className={`break-all text-lg font-normal sm:text-xl md:text-xl max-w-full mt-2 ${job.appliedStatus ? 'cursor-not-allowed' : ''}`}
-                                                                            style={{ color: 'rgba(0, 4, 74, 1)' }}
-                                                                        >
-                                                                            {job.jobTitle}
-                                                                        </Link>
+                                                                        {/* Tooltip for company detail */}
+                                                                        <div className='has-tooltip'>
+                                                                            <span className='tooltip rounded-md shadow-lg p-1 text-gray-800 -mt-11 sm:-mt-12 md:-mt-12'>
+                                                                                about company</span>
+                                                                            <Link to={`/about_company/${job?.companyId?._id}`}>
+                                                                                <img className="w-14 h-full rounded-full" src={job?.companyId?.profile} alt={`Logo for ${job.company}`} />
+                                                                            </Link>
+                                                                        </div>
+                                                                        {/* End Tooltip for company detail */}
+                                                                        {/* Tooltip with Job title */}
+                                                                        <div className='has-tooltip'>
+                                                                            <span className='tooltip rounded-md shadow-lg p-1 text-gray-800 -mt-11 sm:-mt-12 md:-mt-12'>
+                                                                                {job.appliedStatus ? null : 'View details'}</span>
+                                                                            <Link
+                                                                                to={job.appliedStatus ? "#" : `/jobs/jobview/${job._id}`}
+                                                                                className={`break-all text-lg font-normal sm:text-xl md:text-xl max-w-full mt-2 ${job.appliedStatus ? 'cursor-not-allowed' : ''}`}
+                                                                                style={{ color: 'rgba(0, 4, 74, 1)' }}
+                                                                            >
+                                                                                {job.jobTitle}
+                                                                            </Link>
+                                                                        </div>
+                                                                        {/* Tooltip with Job title */}
                                                                     </div>
 
                                                                     <div className='w-full mt-4 flex justify-between '>
@@ -566,7 +585,7 @@ function JobSection({ searchQuery }) {
                                                                             <Link
                                                                                 to={job.appliedStatus ? '#' : `/jobs/jobview/${job._id}`}
                                                                                 className={`font-serif inline text-md font-medium mt-0 mr-1 mb-0 ml-1  
-                                                                            ${job.appliedStatus ? 'text-lg font-bold' : ''}`}
+                                                                                    ${job.appliedStatus ? 'text-lg font-bold' : ''}`}
                                                                                 style={{ color: 'rgba(109, 110, 130, 1)' }} >
                                                                                 {job.appliedStatus ? null : 'Show More...'}
                                                                             </Link>
@@ -595,18 +614,22 @@ function JobSection({ searchQuery }) {
                                                             {/* Card start */}
                                                             <div className="w-full lg:h-auto xl:h-auto hidden sm:block">
                                                                 <div className="flex justify-between items-center">
-                                                                    <div className="hidden md:hidden lg:hidden xl:hidden">
+                                                                    {/* <div className="hidden md:hidden lg:hidden xl:hidden">
                                                                         <img className="w-14 h-full rounded-full" src={job?.companyId?.profile} alt={`Logo for ${job.company}`} />
-
+                                                                    </div> */}
+                                                                    {/* Tooltip with Job title */}
+                                                                    <div className='has-tooltip'>
+                                                                        <span className='tooltip rounded-md shadow-lg p-1 text-gray-800 -mt-11 sm:-mt-12 md:-mt-12'>
+                                                                            {job.appliedStatus ? null : 'View details'}</span>
+                                                                        <Link
+                                                                            to={job.appliedStatus ? "#" : `/jobs/jobview/${job._id}`}
+                                                                            className={`break-all text-lg font-normal sm:text-xl md:text-xl max-w-full ${job.appliedStatus ? 'cursor-not-allowed' : ''}`}
+                                                                            style={{ color: 'rgba(0, 4, 74, 1)' }}
+                                                                        >
+                                                                            {job.jobTitle}
+                                                                        </Link>
                                                                     </div>
-
-                                                                    <Link
-                                                                        to={job.appliedStatus ? "#" : `/jobs/jobview/${job._id}`}
-                                                                        className={`break-all text-lg font-normal sm:text-xl md:text-xl max-w-full ${job.appliedStatus ? 'cursor-not-allowed' : ''}`}
-                                                                        style={{ color: 'rgba(0, 4, 74, 1)' }}
-                                                                    >
-                                                                        {job.jobTitle}
-                                                                    </Link>
+                                                                    {/* Tooltip with Job title */}
                                                                     <div className="flex-row items-center space-x-2">
                                                                         {job.appliedStatus ? (
                                                                             <span className=" text-lime-600 bg-lime-200 px-3 py-1 font-medium rounded-full text-base">

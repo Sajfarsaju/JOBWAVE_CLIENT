@@ -7,26 +7,28 @@ import { toast } from 'react-hot-toast';
 import { useSelector } from "react-redux"
 import { Button, Checkbox, IconButton, Tooltip } from "@mui/material"
 import Spinner from "../../Spinner"
+import CandidateNavbar from './candidatesNavbar'
 
 
 export default function InterViewTime() {
 
   const companyId = useSelector((state) => state.company.id);
 
-  const { pathname } = useLocation();
   const [spinnner, setspinnner] = useState(true);
   const [shortlistDetail, setShortlistDetail] = useState([])
   const [reload, setReload] = useState(false)
-  const [showHireButtonArray, setShowHireButtonArray] = useState([]);
   const [proccessing, setProccessing] = useState(false);
 
   useEffect(() => {
     (async function fetchShortlistDetails() {
       try {
         await Axios_Instance.get(`/company/shortlist?companyId=${companyId}`).then((res) => {
-          setspinnner(false)
-          setShortlistDetail(res.data.shortlistedDetail)
-          setShowHireButtonArray(res.data.shortlistedDetail.map(() => false));
+          if (res) {
+            setspinnner(false)
+            setShortlistDetail(res.data.shortlistedDetail)
+          } else {
+            setspinnner(false)
+          }
         })
 
 
@@ -58,13 +60,10 @@ export default function InterViewTime() {
     return `${formattedDate}`;
   };
 
-  const toggleHireButton = (index) => {
-    setShowHireButtonArray(prevArray => {
-      const updatedArray = [...prevArray];
-      updatedArray[index] = !updatedArray[index];
-      return updatedArray;
-    });
-  };
+  //? START HIRE CANDIDATE
+  const [showHireModal, setShowHireModal] = useState(false)
+  const [shortlistedId, setShortlistedId] = useState('')
+  const [applicationId, setApplicationId] = useState('')
 
   const hireCandidate = async (shortlistedId, applicationId) => {
 
@@ -73,158 +72,184 @@ export default function InterViewTime() {
       await Axios_Instance.post(`/company/hired`, { shortlistedId, applicationId, newStatus: 'Hired' }).then((res) => {
 
         if (res.status === 200) {
+          setShowHireModal(false)
           toast.success('Hired successfully')
           setProccessing(false)
           setReload(!reload)
         }
       })
 
-
     } catch (error) {
       console.log(error)
       setProccessing(false)
     }
   }
+  //? END HIRE CANDIDATE
 
   return (
     <>
       <Navbar />
       <>
-        {spinnner ? (
-          <Spinner />
-        ) : (
-          <div className="h-auto flex flex-col items-center justify-center mt-32">
 
-            {/*Start options */}
-            <div className="flex flex-wrap mb-3 bg-green-100 shadow-md shadow-slate-400 rounded-md lg:w-10/12 xl:w-10/12 w-11/12 p-3 border-t-4 border-emerald-600">
-              {/* For screens greater than 540x720, display options in a single line */}
-              <div className="hidden sm:flex sm:w-1/4 w-full">
-                <div className="text-lg sm:text-lg font-bold pb-2 rounded-md mx-4 mb-auto">
-                  <Link to={'/company/candidates'}>Pending</Link>
-                </div>
-              </div>
-              <div className="hidden sm:flex sm:w-1/4 w-full">
-                <div className={`text-lg sm:text-lg font-bold pb-2 rounded-md mx-4 mb-auto 
-                        ${pathname === '/company/candidates/interviewTimes' ? 'border-b-4 border-emerald-500' : ''}`}>
-                  <Link to={'/company/candidates/interviewTimes'}>Interview time</Link>
-                </div>
-              </div>
-              <div className="hidden sm:flex sm:w-1/4 w-full">
-                <div className="text-lg sm:text-lg font-bold mx-4">
-                  <Link to={'/company/candidates/hired_candidates'}>Hired Candidates</Link>
-                </div>
-              </div>
-              {/* <div className="hidden sm:flex sm:w-1/4 w-full">
-                  <div className="text-lg sm:text-lg font-bold mx-4">
-                    <Link>Rejected</Link>
+        <div className="h-auto flex flex-col items-center justify-center font-dm-sans font-normal mt-[17%] sm:mt-[0%]">
+
+          <div className="h-auto w-full hidden sm:block sm:pt-[15%] md:pt-[15%] lg:pt-[13%] xl:pt-[11%] mb-5">
+            <p className="text-2xl lg:text-3xl ml-[15%]">Shortlisted Candidates</p>
+
+          </div>
+
+          <div className="flex flex-col sm:flex-row w-full mb-[10%]">
+
+            <CandidateNavbar />
+
+            <div className="sm:w-3/4 mt-4">
+
+              {/*Start No Shortlisted candidates available */}
+              {shortlistDetail.length < 1 && !spinnner && (
+                <div className="flex flex-col items-center justify-center mx-auto">
+                  {/* Centered UI */}
+                  <div className="dark:bg-slate-100 p-4 rounded mt-6 text-center">
+                    <h1 className="lg:text-3xl xl:text-3xl text-xl font-semibold font-serif text-blue-700 mb-4">
+                      Sorry, No candidates available in the shortlist.
+                    </h1>
+                    <p className="text-gray-700 font-semibold xl:text-xl text-md lg:text-xl font-serif mb-4">
+                      Go back and select your candidate.
+                    </p>
                   </div>
-                </div> */}
 
-              {/* Only mobile screens */}
-              <div className="sm:hidden w-full  flex items-center">
-                <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2 mb-auto">
-                  <Link to={'/company/candidates'}>Pending</Link>
+                  <Link to={'/company/candidates'}>
+                    <button className="mt-4 font-serif bg-blue-500 text-white shadow-lg shadow-gray-500 rounded px-4 py-2 hover:bg-blue-600">
+                      Go back
+                    </button>
+                  </Link>
                 </div>
-                <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2 border-b-2 border-emerald-500">
-                  <Link to={'/company/candidates/interviewTimes'}>Interview time</Link>
-                </div>
-                <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2">
-                  <Link to={'/company/candidates/hired_candidates'}>Hired</Link>
-                </div>
-                {/* <div className="text-xs sm:text-sm lg:text-base font-bold mx-2 pb-2">
-                    <Link>Rejected </Link>
-                  </div> */}
-              </div>
+              )}
+              {/*End No Shortlisted candidates available */}
+
+              {/* Spinner*/}
+              {spinnner ? (
+                <Spinner candidatesPages={true} />
+              ) : (
+                <>
+                  {/* Card started */}
+                  {shortlistDetail && shortlistDetail.map((ShortListCandidate, index) => (
+
+                    <div key={index} className="lg:w-10/12 xl:w-9/12 p-4 sm:mx-[5%] ">
+                      <div className="border bg-sky-50 border-gray-100 w-full sm:mx-auto lg:w-11/12 rounded-xl shadow-sm shadow-slate-200 p-4 relative flex items-center">
+                        <div className="flex-shrink-0">
+                          <img
+                            src={ShortListCandidate?.candidate?.profile}
+                            alt="Profile Image"
+                            className="hidden sm:block w-16 h-16 rounded-full"
+                          />
+                        </div>
+                        <div className="flex flex-col flex-grow ml-4 ">
+                          {/* ONLY MOBILE SCREENS */}
+                          <div className="sm:hidden">
+                            <div className='flex flex-col items-start'>
+                              <div className='flex items-center space-x-4'>
+                                <img className="w-12 h-12 rounded-full" src={ShortListCandidate?.candidate?.profile} alt='' />
+                                <p
+                                  className={`break-all text-xl font-normal max-w-full mt-2`}
+                                  style={{ color: 'rgba(0, 4, 74, 1)' }}
+                                >
+                                  {ShortListCandidate?.candidate?.firstName} {ShortListCandidate?.candidate?.lastName}
+                                </p>
+                              </div>
+                            </div>
+                            <p className="mt-4 font-normal break-all text-base" style={{ color: 'rgba(0, 4, 74, 1)' }}>{ShortListCandidate?.jobId?.jobTitle}</p>
+
+                            <p className="font-normal break-all" style={{ color: 'rgba(109, 110, 141, 1)' }}>Interview: <span>{formattedDateTime(ShortListCandidate?.interViewTime)}</span></p>
+                            <p className="font-normal text-yellow-600">Status: {ShortListCandidate?.status}</p>
+                            <button
+                              className="px-10 mt-2 p-1 rounded-sm text-white bg-green-500 active:bg-green-600"
+                              onClick={() => setShowHireModal(true)}>
+                              Hire
+                            </button>
+                          </div>
+                          {/* END MOBILE SCREENS ONLY*/}
+                          {/* Card start */}
+                          <div className="w-full lg:h-auto xl:h-auto hidden sm:block">
+                            <div className="flex justify-between items-center mb-1">
+                              <p
+                                className={`break-all sm:text-xl font-medium max-w-full`}
+                                style={{ color: 'rgba(0, 4, 74, 1)' }}>
+                                {ShortListCandidate?.candidate?.firstName} {ShortListCandidate?.candidate?.lastName}
+                              </p>
+                            </div>
+
+                            <div className="flex justify-between items-center text-sm">
+                              <p className="font-normal break-all text-base " style={{ color: 'rgba(0, 4, 74, 1)' }}>{ShortListCandidate?.jobId?.jobTitle}</p>
+
+                              <p className="text-yellow-600">{ShortListCandidate?.status}</p>
+                            </div>
+                            <div className="flex justify-between items-center text-sm mt-1">
+                              <p className="font-bold break-all">Interview Time: <span>{formattedDateTime(ShortListCandidate?.interViewTime)}</span></p>
+
+                              <button
+                                className="p-2 px-8 rounded-sm text-white bg-green-500 active:bg-green-600"
+                                onClick={() => {
+                                  setShortlistedId(ShortListCandidate._id)
+                                  setApplicationId(ShortListCandidate.applicationId)
+                                  setShowHireModal(true)
+                                }}>
+                                Hire
+                              </button>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
+          </div>
+        </div>
 
-            {/*End options */}
-
-            <div className="flex flex-wrap w-11/12 ">
-              {/* Card 1 */}
-
-              {shortlistDetail && shortlistDetail.map((ShortListCandidate, index) => (
-
-
-                <div key={ShortListCandidate._id} className="w-full sm:w-1/2 p-5">
-                  <div className="bg-teal-50 p-6 rounded-lg shadow-md shadow-slate-400">
-                    <h2 className="lg:text-xl xl:text-xl text-md font-bold text-green-600">Shortlist Candidate: {index + 1}</h2>
-                    <div className="flex items-center flex-col sm:flex-row space-x-4 mt-2">
-                      <img
-                        src={ShortListCandidate?.candidate?.profile}
-                        alt="Profile Image"
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div className="flex flex-col">
-                        <p className="font-bold">Applicant Name: <span>{ShortListCandidate?.candidate?.firstName} {ShortListCandidate?.candidate?.lastName}</span></p>
-                        <p className="font-bold">Applied for: <span>{ShortListCandidate?.jobId?.jobTitle}</span></p>
-                      </div>
-                    </div>
-                    <div className="flex items-center flex-col sm:flex-row mt-4">
-                      {/* <p className="font-bold">Applied at: <span>{ShortListCandidate?.createdAt ? new Date(ShortListCandidate.createdAt).toLocaleDateString() : ''}</span></p> */}
-                      {/* <button
-                        onClick={() => viewCandidateCV(ShortListCandidate.cvUrl)}
-                        className="font-serif border border-green-600 text-green-600 active:bg-green-300 px-4 py-2 rounded-md mt-2 mx-auto md:ml-auto sm:mx-0">
-                        View CV
-                      </button> */}
-                    </div>
-                    <div className="flex items-center flex-col sm:flex-row mt-2">
-                      <div className="">
-                        <p className="font-bold">Status: <span>{ShortListCandidate?.status}</span></p>
-                      </div>
-                    </div>
-                    <div className="mt-4">
-                      <p className="font-bold break-all">Interview Time: <span>{formattedDateTime(ShortListCandidate?.interViewTime)}</span></p>
-                    </div>
-                    <div className="mt-4 flex items-center">
-                      <Tooltip title="Mark as interview completed">
-                        <p className="text-md xl:text-lg lg:text-lg text-green-600">Interview is over?</p>
-                      </Tooltip>
-                      <Tooltip title="Mark as interview completed">
-                        <IconButton onClick={() => toggleHireButton(index)}>
-                          <Checkbox />
-                        </IconButton>
-                      </Tooltip>
-                      {showHireButtonArray[index] && (
-                        <Button
-                          style={{ backgroundColor: '#00ff00' }}
-                          variant="contained"
-                          onClick={() => hireCandidate(ShortListCandidate._id, ShortListCandidate.applicationId, index)}
-                        >
-                          {proccessing ? 'Hiring...' : 'Hire'}
-                        </Button>
-                      )}
-                    </div>
+        {/*  */}
+        {showHireModal && (
+          <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-10 backdrop-blur-sm">
+            <div className="relative mx-3 w-auto my-6 md:mx-auto max-w-sm">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full dark:bg-white outline-none focus:outline-none">
+                {/*header*/}
+                <div className="mx-2 flex items-start justify-between p-5 border-b border-solid border-gray-200 rounded-t">
+                  <h3 className="text-md md:text-2xl font-semibold">
+                    Hire candidate
+                  </h3>
+                </div>
+                {/*body*/}
+                <div className="relative p-3 flex-auto mx-3">
+                  <p className="text-gray-500 text-lg leading-relaxed">
+                    You can proceed to hire if the interview is over.
+                  </p>
+                  <div className="flex items-center justify-between mt-4">
                   </div>
                 </div>
-              ))}
+                {/*footer*/}
+                <div className="flex items-center justify-end p-6 border-t border-solid border-gray-200 rounded-b">
+
+                  <button
+                    className="text-red-500 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={() => setShowHireModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="text-white bg-emerald-500 active:bg-emerald-600 rounded background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={() => hireCandidate(shortlistedId, applicationId)}
+                  >
+                    {proccessing ? 'Hiring...' : 'Hire'}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
-
-
-        {shortlistDetail.length < 1 && !spinnner && (
-
-          <div className="flex flex-col items-center justify-center mx-auto">
-            {/* Centered UI */}
-            <div className="dark:bg-slate-100 p-4 rounded mt-6 text-center">
-              <h1 className="lg:text-3xl xl:text-3xl text-xl font-semibold font-serif text-blue-700 mb-4">
-                Sorry, No candidates available in the shortlist.
-              </h1>
-              <p className="text-gray-700 font-semibold xl:text-xl text-md lg:text-xl font-serif mb-4">
-                Go back and select your candidate.
-              </p>
-            </div>
-
-            <Link to={'/company/candidates'}>
-              <button className="mt-4 font-serif bg-blue-500 text-white shadow-lg shadow-gray-500 rounded px-4 py-2 hover:bg-blue-600">
-                Go back
-              </button>
-            </Link>
-          </div>
-
-        )}
-
-
       </>
       <Footer />
     </>

@@ -7,7 +7,7 @@ import Noimg from '../../../assets/empty-img2.png'
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import Logo from '/src/assets/JOBWAVELOGO.png'
+import jobWaveLogo from '/src/assets/JOBWAVELOGO.png'
 import toast from 'react-hot-toast'
 
 
@@ -64,7 +64,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
               <div className="relative flex h-16 items-center justify-between">
                 <div className='sm:hidden mx-auto max-w-full flex justify-end items-end w-3/5 '>
-                  <img src={Logo} alt="" className="w-20 h-20" />
+                  <img src={jobWaveLogo} alt="" className="w-20 h-20" />
                 </div>
 
                 <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -82,7 +82,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
                 <div className="hidden sm:block w-24 h-24 items-center">
                   <img
                     className=""
-                    src={Logo}
+                    src={jobWaveLogo}
                     alt="Your Company"
                   />
                 </div>
@@ -105,9 +105,9 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
                       >Browse Jobs
                       </Link>
                       <Link
-                        to={'/support'}
+                        to={'#'}
                         className={`rounded-md px-3 py-2 text-md font-serif font-medium hover:text-emerald-700 text-gray-900 "
-                        ${pathname === '/support' ? 'dark:text-emerald-500 border-b-2 border-emerald-500 ' : 'text-gray-900 '
+                        ${pathname === '/chats' ? 'dark:text-emerald-500 border-b-2 border-emerald-500 ' : 'text-gray-900 '
                           }`}
                       >Support
                       </Link>
@@ -139,7 +139,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
                       </span>
                       <input
                         type="text"
-                        className="w-full py-1 pl-10 pr-4 font-serif text-gray-700 placeholder-gray-600 bg-slate-100 border-b border-slate-950 dark:placeholder-slate-950 dark:focus:border-slate-950 md:w-56 md:border-transparent dark:bg-white-800 dark:text-slate-950 focus:outline-none focus:border-slate-950"
+                        className="w-full py-2 pl-10 pr-4 font-serif text-gray-700 placeholder-gray-600 bg-slate-100 border-b border-slate-950 dark:placeholder-slate-950 dark:focus:border-slate-950 md:w-56 md:border-transparent dark:bg-white-800 dark:text-slate-950 focus:outline-none focus:border-slate-950"
                         placeholder="Search"
                         value={searchValue}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -290,6 +290,7 @@ function Navbar({ searchValue, setSearchQuery, reRender, showSearchield }) {
                 </Link>
 
                 <Link
+                  to={'#'}
                   className={`hover:text-emerald-700 block rounded-md px-3 py-2 text-base font-medium`}
                 >
                   Support
