@@ -594,13 +594,13 @@ function Profile() {
             />
 
             {/* View applied & Favourite jobs */}
-            <div className='flex space-x-5 mt-8'>
-              <div className="w-1/2 dark:bg-green-50 hover:bg-green-100 p-1 pl-2 md:p-4 rounded-xl shadow-lg shadow-slate-300">
+            <div className='flex justify-center space-x-5 mt-8'>
+              {/* <div className="w-1/2 dark:bg-green-50 hover:bg-green-100 p-1 pl-2 md:p-4 rounded-xl shadow-lg shadow-slate-300">
                 <Link className='flex items-center justify-between' to={'/profile/applied_jobs'}>
                   <h2 className="ml-3 text-sm md:text-lg font-semibold">Favourite Jobs</h2>
                   <IoIosArrowDropright className="ml-4 h-5 w-5 md:w-6 md:h-6 text-green-600" />
                 </Link>
-              </div>
+              </div> */}
               {/*  */}
               {/*  */}
               <div className="w-1/2 dark:bg-green-50 hover:bg-green-100 p-1 pl-2 md:p-4 rounded-xl shadow-lg shadow-slate-300">

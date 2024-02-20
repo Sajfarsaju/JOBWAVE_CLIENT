@@ -14,6 +14,8 @@ import { userLogin } from '../store/slice/userSlice';
 import toast from 'react-hot-toast';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../api/firebase';
+import gif from '/src/assets/work-working-transparent.gif'
+import jobwaveLogo from '/src/assets/JOBWAVELOGO.png'
 import '../assets/css/login.css'
 
 
@@ -176,10 +178,10 @@ function Login({ logerName, url }) {
       {/* <div className="flex flex-col mt-32 ml-20 h-96" style={{ backgroundImage: 'url("/src/assets/JOBWAVE.png")', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center center'}}> */}
       <div className="hidden sm:flex md:flex flex-col h-max w-full mt-24 ml-20 font-dm-sans">
         <div className='-mb-28 w-full flex items-center justify-center'>
-          <img className='w-40 h-40' src="/src/assets/JOBWAVELOGO.png" alt="Logo" />
+          <img className='w-40 h-40' src={jobwaveLogo} alt="Logo" />
         </div>
         <div className='mt-0 w-full flex items-start justify-center'>
-          <img className='w-full' src="/src/assets/work-working-transparent.gif" alt="GIF" />
+          <img className='w-full' src={gif} alt="GIF" />
         </div>
       </div>
 

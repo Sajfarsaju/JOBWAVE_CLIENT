@@ -13,6 +13,8 @@ import { auth, provider } from '../../api/firebase';
 import defaultProfile from "../../assets/defaultProfile.jpeg";
 import { userLogin } from '../../store/slice/userSlice';
 import { useDispatch } from 'react-redux';
+import jobwaveLogo from '/src/assets/JOBWAVELOGO.png'
+import gif from "/src/assets/work-working-transparent.gif"
 
 
 
@@ -204,10 +206,10 @@ const Register = () => {
 
       <div className="hidden sm:flex md:flex flex-col h-max w-full mt-24 ml-20">
         <div className='-mb-28 w-full flex items-center justify-center'>
-          <img className='w-40 h-40' src="/src/assets/JOBWAVELOGO.png" alt="Logo" />
+          <img className='w-40 h-40' src={jobwaveLogo} alt="Logo" />
         </div>
         <div className='mt-0 w-full flex items-start justify-center'>
-          <img className='w-full' src="/src/assets/work-working-transparent.gif" alt="GIF" />
+          <img className='w-full' src={gif} alt="GIF" />
         </div>
       </div>
 
