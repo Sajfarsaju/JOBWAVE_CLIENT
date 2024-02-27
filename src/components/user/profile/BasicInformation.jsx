@@ -68,7 +68,7 @@ function BasicInformation({ clickedBasicEditButton, userData, UpdateBasicDataMod
                     </div>
                     <div className='mt-4' >
                         <p className="text-sm md:text-base font-normal text-black mb-1">Phone</p>
-                        <p className="text-black text-sm md:text-base md:font-semibold break-all">{userData.phone}</p>
+                        <p className={`text-black break-all ${userData?.phone ? 'text-sm md:text-base md:font-semibold' : 'text-sm md:text-base font-normal'}`}>{userData.phone ? userData.phone : 'Not provided'}</p>
                     </div>
 
                     {/* Location, CTC, Age */}
@@ -137,6 +137,7 @@ function BasicInformation({ clickedBasicEditButton, userData, UpdateBasicDataMod
                                         defaultValue={userData.email ? userData.email : ''}
                                         placeholder="Enter your email"
                                         onChange={(e) => setEmail(e.target.value)}
+                                        disabled={userData?.isEmailVerified}
                                     />
                                 </div>
                                 <div className="w-full md:w-2/2">
@@ -181,7 +182,7 @@ function BasicInformation({ clickedBasicEditButton, userData, UpdateBasicDataMod
                                         
                                         id="outlined-required"
                                         name="currentCTC"
-                                        label="CTC(LPA)Optional"
+                                        label="Current CTC(LPA)optional"
                                         defaultValue={userData.currentCTC ? userData.currentCTC : ''}
                                         placeholder="eg:4"
                                         onChange={(e) => setCtc(e.target.value)}
@@ -203,7 +204,8 @@ function BasicInformation({ clickedBasicEditButton, userData, UpdateBasicDataMod
                             <div className="text-center">
                                 <button
                                     type="button"
-                                    className="text-white px-5 py-2 rounded-md" style={{ backgroundColor: 'rgba(0, 211, 99, 1)' }}
+                                    className="text-white px-5 py-2 rounded-md hover:bg-green-600 bg-green-500" 
+                                    // style={{ backgroundColor: 'rgba(0, 211, 99, 1)' }}
                                     onClick={handlePersonalData}
                                 >
                                     {proccessing ? 'Saving...' : 'Save'}

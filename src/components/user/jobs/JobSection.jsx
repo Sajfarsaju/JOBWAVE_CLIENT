@@ -94,9 +94,6 @@ function JobSection({ searchQuery }) {
     };
 
 
-
-
-
     const fetchUserSubscription = async () => {
         try {
             const response = await Axios_Instance.get(`/plan?userId=${userId}`);
@@ -112,10 +109,13 @@ function JobSection({ searchQuery }) {
                 dispatch(userLogout());
                 toast.error(error?.response?.data?.errMsg);
             }
+            // if (error?.response?.data?.accessDenied) {
+            //     console.log('brooo')
+            //     dispatch(userLogout());
+            // }
         }
     }
     useEffect(() => {
-
         fetchUserSubscription()
     }, [])
 
@@ -150,6 +150,9 @@ function JobSection({ searchQuery }) {
                 dispatch(userLogout());
                 toast.error(error?.response?.data?.errMsg);
             }
+            // if (error?.response?.data?.accessDenied) {
+            //     dispatch(userLogout());
+            // }
 
         }
     }
@@ -211,6 +214,9 @@ function JobSection({ searchQuery }) {
             if (error?.response?.data?.isBlocked) {
                 toast.error(error?.response?.data?.errMsg);
             }
+            // if (error?.response?.data?.accessDenied) {
+            //     dispatch(userLogout());
+            // }
         }
     }
     //?End Create chat user
@@ -221,6 +227,14 @@ function JobSection({ searchQuery }) {
         const options = { day: 'numeric', month: 'short', year: 'numeric' };
         return new Date(dateString).toLocaleDateString('en-GB', options);
     };
+
+    const MAX_DESCRIPTION_LENGTH = 30;
+    function truncateText(text, maxLength) {
+        if (text.length > maxLength) {
+            return text.substring(0, maxLength - 3) + '...';
+        }
+        return text;
+    }
 
     return (
         <>
@@ -518,7 +532,7 @@ function JobSection({ searchQuery }) {
                                         ) : (
                                             Jobs.map((job, index) => (
                                                 // group-hover:bg-gradient-to-r from-[#AEC3AE] to-[#CEDEBD]
-                                                <div key={index} className="lg:w-10/12 xl:w-10/12 p-4 hover:scale-105 duration-300 group">
+                                                <div key={index} className=" lg:w-10/12 xl:w-10/12 p-4 hover:scale-105 duration-300 group">
                                                     <div className=" sm:w-8/12 sm:mx-auto lg:w-11/12 rounded-xl shadow-sm shadow-slate-400 p-4 relative hover:shadow-md hover:shadow-slate-400 flex items-center">
                                                         <div className="flex-shrink-0">
                                                             {/* Tooltip for company detail */}
@@ -528,7 +542,6 @@ function JobSection({ searchQuery }) {
                                                                 <Link to={`/about_company/${job?.companyId?._id}`}>
                                                                     <img className="hidden sm:block w-14 h-full rounded-full" src={job?.companyId?.profile} alt={`Logo for ${job.company}`} />
                                                                 </Link>
-
                                                             </div>
                                                             {/* End Tooltip for company detail */}
                                                         </div>
@@ -556,16 +569,16 @@ function JobSection({ searchQuery }) {
                                                                                 className={`break-all text-lg font-normal sm:text-xl md:text-xl max-w-full mt-2 ${job.appliedStatus ? 'cursor-not-allowed' : ''}`}
                                                                                 style={{ color: 'rgba(0, 4, 74, 1)' }}
                                                                             >
-                                                                                {job.jobTitle}
+                                                                                {truncateText(job.jobTitle, MAX_DESCRIPTION_LENGTH)}
                                                                             </Link>
                                                                         </div>
                                                                         {/* Tooltip with Job title */}
                                                                     </div>
 
-                                                                    <div className='w-full mt-4 flex justify-between '>
-                                                                        <p className="font-medium break-all mb-2" style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.companyId?.companyName}</p>
-                                                                        <p className="mb-2" style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.workType}</p>
-                                                                    </div>
+                                                                    {/* <div className='w-full  flex space-x-1 '>
+                                                                    </div> */}
+                                                                        <p className="font-medium break-all mb-2 mt-4" style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.companyId?.companyName.toUpperCase()},</p>
+                                                                        <p className="mb-2 font-medium break-all" style={{ color: 'rgba(109, 110, 141, 1)' }}>Work type: {job?.workType}</p>
 
                                                                     <p className="mb-2" style={{ color: 'rgba(109, 110, 141, 1)' }}>Dead line: {formatDate(job?.deadline)}</p>
 
@@ -626,7 +639,7 @@ function JobSection({ searchQuery }) {
                                                                             className={`break-all text-lg font-normal sm:text-xl md:text-xl max-w-full ${job.appliedStatus ? 'cursor-not-allowed' : ''}`}
                                                                             style={{ color: 'rgba(0, 4, 74, 1)' }}
                                                                         >
-                                                                            {job.jobTitle}
+                                                                            {truncateText(job.jobTitle, MAX_DESCRIPTION_LENGTH)}
                                                                         </Link>
                                                                     </div>
                                                                     {/* Tooltip with Job title */}
@@ -670,7 +683,7 @@ function JobSection({ searchQuery }) {
                                                                 </div>
 
                                                                 <div className="flex justify-between items-center mt-4 text-sm mb-2">
-                                                                    <p className="font-medium break-all" style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.companyId?.companyName}</p>
+                                                                    <p className="font-medium break-all" style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.companyId?.companyName.toUpperCase()}</p>
                                                                     {/* {job.status === 'Active' ? (
                                                                     <div className="inline-flex mt-2 items-center rounded-full gap-x-1">
                                                                         <span className="h-2 w-2 rounded-full bg-green-600"></span>
@@ -695,36 +708,6 @@ function JobSection({ searchQuery }) {
                                                                     {getTimeDifference(job.createdAt)}
                                                                 </p>
 
-                                                                {/* <p className="text-right text-green-600 text-sm font-small">
-                                                                    {getTimeDifference(job.createdAt)}
-                                                                </p> */}
-                                                                {/* <p className=" break-all xl:mt-2 text-gray-900 text-lg font-medium">
-                                                                    We have <span className="text-blue-800"> {job.vacancy} </span>
-                                                                    openings for the position of <span className="text-blue-800"> {job.jobCategory} </span>
-                                                                    in <span className="text-blue-800"> {job.workplace} </span>
-                                                                    . This <span className="text-blue-800"> {job.workType} </span>
-                                                                    role offers great benefits and an opportunity to take on this job. Apply now to join our team!
-                                                                </p> */}
-
-                                                                {/* <div className="absolute top-3/3 right-11"> */}
-                                                                {/* Chat button */}
-                                                                {/* <button onClick={() => createChat(job?.companyId?._id)} className="z-20 text-white flex flex-col rounded-lg">
-                                                                        <div className="p-2 rounded-full bg-green-600  ">
-                                                                            <svg
-                                                                                className="w-4 h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5"
-                                                                                fill="currentColor"
-                                                                                viewBox="0 0 20 20"
-                                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                            >
-                                                                                <path
-                                                                                    fillRule="evenodd"
-                                                                                    d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                                                                                    clipRule="evenodd"
-                                                                                ></path>
-                                                                            </svg>
-                                                                        </div>
-                                                                    </button> */}
-                                                                {/* </div> */}
                                                             </div>
                                                             {/* card end */}
                                                         </div>

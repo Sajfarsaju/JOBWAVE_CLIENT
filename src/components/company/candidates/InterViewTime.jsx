@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Axios_Instance from "../../../api/userAxios"
-import { Link, useLocation } from "react-router-dom"
+import { Link } from "react-router-dom"
 import Navbar from "../../company/home/Navbar"
 import Footer from "../home/Footer"
 import { toast } from 'react-hot-toast';
 import { useSelector } from "react-redux"
-import { Button, Checkbox, IconButton, Tooltip } from "@mui/material"
 import Spinner from "../../Spinner"
 import CandidateNavbar from './candidatesNavbar'
+import { XMarkIcon } from "@heroicons/react/24/outline"
+import { FiZoomIn, FiZoomOut } from "react-icons/fi";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 
 export default function InterViewTime() {
@@ -16,6 +18,7 @@ export default function InterViewTime() {
 
   const [spinnner, setspinnner] = useState(true);
   const [shortlistDetail, setShortlistDetail] = useState([])
+
   const [reload, setReload] = useState(false)
   const [proccessing, setProccessing] = useState(false);
 
@@ -50,12 +53,11 @@ export default function InterViewTime() {
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true, // Use 12-hour format
+      hour12: true,
     };
 
     const dateTime = new Date(dateTimeString);
     const formattedDate = dateTime.toLocaleDateString('en-US', options);
-    // const formattedTime = dateTime.toLocaleTimeString('en-US', options);
 
     return `${formattedDate}`;
   };
@@ -85,6 +87,25 @@ export default function InterViewTime() {
     }
   }
   //? END HIRE CANDIDATE
+
+  //? START VIEW CV AND ZOOM
+  const [viewCv, setViewCv] = useState(false);
+  const [CV, setCV] = useState('');
+  const viewCandidateCV = (CV) => {
+
+    setCV(CV);
+    setViewCv(true);
+  }
+  const transformWrapper = useRef(null);
+
+  const zoomIn = () => {
+    transformWrapper.current.zoomIn();
+  };
+
+  const zoomOut = () => {
+    transformWrapper.current.zoomOut();
+  };
+  //? END VIEW CV AND ZOOM
 
   return (
     <>
@@ -137,18 +158,34 @@ export default function InterViewTime() {
                     <div key={index} className="lg:w-10/12 xl:w-9/12 p-4 sm:mx-[5%] ">
                       <div className="border bg-sky-50 border-gray-100 w-full sm:mx-auto lg:w-11/12 rounded-xl shadow-sm shadow-slate-200 p-4 relative flex items-center">
                         <div className="flex-shrink-0">
-                          <img
-                            src={ShortListCandidate?.candidate?.profile}
-                            alt="Profile Image"
-                            className="hidden sm:block w-16 h-16 rounded-full"
-                          />
+                          {/* Tooltip for user propfile view */}
+                          <div className='has-tooltip'>
+                            <span className='tooltip rounded-md shadow-lg p-1 text-gray-800 -mt-11 sm:-mt-9 md:-mt-9'>
+                              View profile</span>
+                              <Link to={`/company/candidates/profile_view/${ShortListCandidate?.candidate?.firstName}-${ShortListCandidate?.candidate?.lastName}/${ShortListCandidate?.candidate?._id}`}>
+                              <img
+                                src={ShortListCandidate?.candidate?.profile}
+                                alt="Profile Image"
+                                className="hidden sm:block w-16 h-16 rounded-full"
+                              />
+                            </Link>
+                          </div>
+                          {/* Tooltip for user propfile view*/}
                         </div>
                         <div className="flex flex-col flex-grow ml-4 ">
                           {/* ONLY MOBILE SCREENS */}
                           <div className="sm:hidden">
                             <div className='flex flex-col items-start'>
                               <div className='flex items-center space-x-4'>
-                                <img className="w-12 h-12 rounded-full" src={ShortListCandidate?.candidate?.profile} alt='' />
+                                {/* Tooltip for user propfile view */}
+                                <div className='has-tooltip'>
+                                  <span className='tooltip rounded-md shadow-lg p-1 text-gray-800 -mt-11 sm:-mt-9 md:-mt-9'>
+                                    View profile</span>
+                                  <Link to={`/company/candidates/profile_view/${ShortListCandidate?.candidate?.firstName}-${ShortListCandidate?.candidate?.lastName}/${ShortListCandidate?.candidate?._id}`}>
+                                    <img className="w-12 h-12 rounded-full" src={ShortListCandidate?.candidate?.profile} alt='' />
+                                  </Link>
+                                </div>
+                                {/* Tooltip for user propfile view*/}
                                 <p
                                   className={`break-all text-xl font-normal max-w-full mt-2`}
                                   style={{ color: 'rgba(0, 4, 74, 1)' }}
@@ -160,7 +197,14 @@ export default function InterViewTime() {
                             <p className="mt-4 font-normal break-all text-base" style={{ color: 'rgba(0, 4, 74, 1)' }}>{ShortListCandidate?.jobId?.jobTitle}</p>
 
                             <p className="font-normal break-all" style={{ color: 'rgba(109, 110, 141, 1)' }}>Interview: <span>{formattedDateTime(ShortListCandidate?.interViewTime)}</span></p>
-                            <p className="font-normal text-yellow-600">Status: {ShortListCandidate?.status}</p>
+                            <div className="flex justify-between mt-4 ">
+                              <p className="font-normal text-yellow-600">Status: {ShortListCandidate?.status}</p>
+                              {/* // View Cv Button */}
+                              <button onClick={() => viewCandidateCV(ShortListCandidate?.applicationId?.cvUrl)}
+                                className="text-gray-800 "
+                              >View cv
+                              </button>
+                            </div>
                             <button
                               className="px-10 mt-2 p-1 rounded-sm text-white bg-green-500 active:bg-green-600"
                               onClick={() => setShowHireModal(true)}>
@@ -176,7 +220,16 @@ export default function InterViewTime() {
                                 style={{ color: 'rgba(0, 4, 74, 1)' }}>
                                 {ShortListCandidate?.candidate?.firstName} {ShortListCandidate?.candidate?.lastName}
                               </p>
+                              <div className="flex-row items-center space-x-2">
+
+                                {/* // View Cv Button */}
+                                <button onClick={() => viewCandidateCV(ShortListCandidate?.applicationId?.cvUrl)}
+                                  className="text-gray-800 "
+                                >View cv
+                                </button>
+                              </div>
                             </div>
+
 
                             <div className="flex justify-between items-center text-sm">
                               <p className="font-normal break-all text-base " style={{ color: 'rgba(0, 4, 74, 1)' }}>{ShortListCandidate?.jobId?.jobTitle}</p>
@@ -207,6 +260,55 @@ export default function InterViewTime() {
             </div>
           </div>
         </div>
+
+        {viewCv && (
+          <>
+            <div
+              className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-10 backdrop-blur-sm"
+              onClick={() => setViewCv(false)}
+            >
+              <div
+                className="relative w-auto my-6 md:mx-auto max-w-sm sm:max-w-md"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full dark:bg-white outline-none focus:outline-none">
+                  <div className="mx-2 flex items-start justify-between p-5 border-b border-solid border-gray-200 rounded-t">
+                    <h3 className="text-md md:text-2xl font-semibold">
+                      Candidate Cv
+                    </h3>
+                    <button
+                      type="button"
+                      className="text-gray-700 hover:text-gray-800"
+                      onClick={() => setViewCv(false)}
+                    >
+                      <span className="sr-only">Close</span>
+                      <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                    </button>
+                  </div>
+                  <div className="relative p-3 flex-auto mx-1">
+                    <TransformWrapper ref={transformWrapper}>
+                      <TransformComponent>
+                        <img
+                          src={CV}
+                          alt="Candidate CV"
+                          className="w-full"
+                        />
+                      </TransformComponent>
+                    </TransformWrapper>
+                  </div>
+                  <div className="absolute bottom-0 right-0 flex flex-col items-center justify-center h-full">
+                    <button onClick={zoomIn} className="mb-2">
+                      <FiZoomIn size={24} />
+                    </button>
+                    <button onClick={zoomOut}>
+                      <FiZoomOut size={24} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
 
         {/*  */}
         {showHireModal && (

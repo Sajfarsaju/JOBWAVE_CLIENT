@@ -31,7 +31,7 @@ import InterViewTime from './components/company/candidates/InterViewTime'
 import HiredCandidates from './components/company/candidates/HiredCandidates'
 import SignupOtp from './components/user/SIgnupOtp'
 import AboutCompanyPage from './pages/user/AboutCompanyPage'
-
+import AboutCandidatePage from './pages/company/AboutCandidatePage'
 
 
 
@@ -85,6 +85,7 @@ function App() {
         <Route path='/company/profile' element={companyAuth ? <Profile/> : <Navigate to='/company/login'/> }></Route>
         <Route path='/company/chats' element={companyAuth ? <ChatpageCompany/> : <Navigate to='/company/login'/>}></Route>
         <Route path='/company/candidates' element={companyAuth ? <CandidatesPage/> : <Navigate to='/company/login'/>}></Route>
+        <Route path='/company/candidates/profile_view/:userName/:userId' element={companyAuth ? <AboutCandidatePage/> : <Navigate to='/company/login'/>}></Route>
         <Route path='/company/candidates/interviewTimes' element={companyAuth ? <InterViewTime/> : <Navigate to='/company/login'/>}></Route>
         <Route path='/company/candidates/hired_candidates' element={companyAuth ? <HiredCandidates/> : <Navigate to='/company/login'/>}></Route>
         {/* Payment Status Company */}

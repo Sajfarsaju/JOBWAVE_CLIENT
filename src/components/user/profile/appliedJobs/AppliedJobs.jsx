@@ -92,7 +92,7 @@ export default function AppliedJobs() {
                               Job Title
                             </th>
                             <th className="px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-xs sm:text-sm uppercase whitespace-nowrap font-bold text-center bg-slate-200 text-gray-900 border-slate-300">
-                              They interested
+                              Your status
                             </th>
                             {/* <th className="px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-xs sm:text-sm uppercase whitespace-nowrap font-bold text-center bg-slate-200 text-gray-900 border-slate-300">
                         Action
@@ -109,7 +109,7 @@ export default function AppliedJobs() {
                               <td className="px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-sm sm:text-center whitespace-nowrap p-2 sm:p-3 text-center">
                                 <div className="flex items-center justify-center">
                                   <img
-                                    src={appliedJob?.jobId?.companyId?.logo || appliedJob?.jobId?.companyId?.profile}
+                                    src={appliedJob?.jobId?.companyId?.profile}
                                     className="h-10 sm:h-12 lg:h-12 w-10 sm:w-12 lg:w-12 rounded-full border"
                                     alt="Company Logo"
                                   />

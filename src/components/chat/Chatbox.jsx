@@ -65,6 +65,9 @@ export default function Chatbox({ senderRole, reciverRole }) {
           dispatch(userLogout());
           toast.error(error?.response?.data?.errMsg);
         }
+        if(error?.response?.data?.accessDenied){
+          dispatch(userLogout());
+        }
       }
     })();
   }, [senderRole]);
@@ -227,6 +230,10 @@ export default function Chatbox({ senderRole, reciverRole }) {
 
             {/* ChatList */}
             <li className=''>
+              <p className='mt-5 ml-2'>
+
+              {inboxChatList.length < 1 && senderRole === 'company' && 'No messages reached'}
+              </p>
               {inboxChatList.map((chat) => (
 
                 <div
@@ -251,7 +258,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
                       <span className="block ml-2 font-semibold text-gray-600">
                         {senderRole === 'users' ? chat?.companyId?.companyName : chat?.userId?.firstName} {senderRole === 'company' && chat?.userId?.lastName}
                       </span>
-                      <span className="block ml-2 text-sm text-gray-600">10 unread messages</span>
+                      {/* <span className="block ml-2 text-sm text-gray-600">10 unread messages</span> */}
                     </div>
                     <span className="block ml-2 text-sm text-gray-600">time</span>
                   </div>

@@ -85,7 +85,7 @@ function Experiences({
                     <button
                         onClick={() => setOpenAddExperienceModal(true)}
                         className="text-white py-2 px-2 md:py-2 md:px-4 font-normal text-xs md:text-sm rounded-xl flex items-center space-x-1 md:space-x-2" style={{ backgroundColor: 'rgba(0, 13, 255, 1)' }}>
-                        <span className='text-white md:font-semibold hidden sm:hidden sm:block lg:block xl:block'>Add Experience</span>
+                        <span className='text-white md:font-semibold hidden sm:block lg:block xl:block'>Add Experience</span>
                         <span className='md:hidden lg:hidden xl:hidden sm:block block'>Add New</span>
                         <IoMdAdd className="w-3 h-3 md:w-5 md:h-5" />
                     </button>
@@ -213,7 +213,7 @@ function Experiences({
                                         name="experienceTitle"
                                         placeholder="Enter Experience Job Title"
                                         onChange={(e) => setExperienceTitle(e.target.value)}
-                                        className="w-full border hover:border-black border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
+                                        className="w-full border  hover:border-black bg-green-50 border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
                                     />
                                 </div>
                                 <div className="w-full md:w-1/2">
@@ -225,7 +225,7 @@ function Experiences({
                                         name="expCompany"
                                         placeholder="Enter Company Name"
                                         onChange={(e) => setExpCompany(e.target.value)}
-                                        className="w-full  border hover:border-black border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
+                                        className="w-full  border hover:border-black bg-green-50 border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
                                     />
                                 </div>
                             </div>
@@ -240,7 +240,7 @@ function Experiences({
                                         name="expLocation"
                                         placeholder="Enter Company Location"
                                         onChange={(e) => setExpCompLocation(e.target.value)}
-                                        className="w-full  border hover:border-black border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
+                                        className="w-full  border hover:border-black bg-green-50 border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
                                     />
                                 </div>
                                 <div className="w-full md:w-1/2">
@@ -252,7 +252,7 @@ function Experiences({
                                         name="expStartDate"
                                         placeholder="Enter Experience Start Date"
                                         onChange={(e) => setExpStartDate(e.target.value)}
-                                        className="w-full  border hover:border-black border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
+                                        className="w-full  border hover:border-black bg-green-50 border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
                                     />
                                 </div>
                             </div>
@@ -267,7 +267,7 @@ function Experiences({
                                         name="expEndDate"
                                         placeholder="Enter Experience End Date"
                                         onChange={(e) => setExpEndDate(e.target.value)}
-                                        className="w-full  border hover:border-black border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
+                                        className="w-full  border hover:border-black bg-green-50 border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
                                     />
                                 </div>
                                 <div className="w-full md:w-1/2 flex items-center justify-center mt-[6%]">
@@ -369,7 +369,7 @@ function Experiences({
                                         placeholder="Enter Experience Job Title"
                                         defaultValue={experienceTitle ? experienceTitle : null}
                                         onChange={(e) => setExperienceTitle(e.target.value)}
-                                        className="w-full border hover:border-black border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
+                                        className="w-full border hover:border-black bg-green-50 border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
                                     />
                                 </div>
                                 <div className="w-full md:w-1/2">
@@ -382,7 +382,7 @@ function Experiences({
                                         defaultValue={expCompany ? expCompany : null}
                                         placeholder="Enter Company Name"
                                         onChange={(e) => setExpCompany(e.target.value)}
-                                        className="w-full  border hover:border-black border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
+                                        className="w-full  border hover:border-black bg-green-50 border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
                                     />
                                 </div>
                             </div>
@@ -398,7 +398,7 @@ function Experiences({
                                         defaultValue={expCompLocation ? expCompLocation : null}
                                         placeholder="Enter Company Location"
                                         onChange={(e) => setExpCompLocation(e.target.value)}
-                                        className="w-full  border hover:border-black border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
+                                        className="w-full  border hover:border-black bg-green-50 border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
                                     />
                                 </div>
                                 <div className="w-full md:w-1/2">
@@ -411,7 +411,7 @@ function Experiences({
                                         defaultValue={expStartDate ? expStartDate : null}
                                         placeholder="Enter Experience Start Date"
                                         onChange={(e) => setExpStartDate(e.target.value)}
-                                        className="w-full  border hover:border-black border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
+                                        className="w-full  border hover:border-black bg-green-50 border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
                                     />
                                 </div>
                             </div>
@@ -427,7 +427,7 @@ function Experiences({
                                         defaultValue={expEndDate ? expEndDate : null}
                                         placeholder="Enter Experience End Date"
                                         onChange={(e) => setExpEndDate(e.target.value)}
-                                        className="w-full  border hover:border-black border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
+                                        className="w-full  border hover:border-black bg-green-50 border-gray-300 rounded py-3 px-3 focus:outline-none focus:border-sky-600"
                                     />
                                 </div>
                                 <div className="w-full md:w-1/2 flex items-center justify-center mt-[6%]">

@@ -167,7 +167,7 @@ function Navbar() {
                   >
                     <div className="flex items-center">
                       <FaUserFriends className="mr-2 w-4 h-4" />
-                      Browse Recruiters
+                      Browse Candidates
                     </div>
                   </Link>
                   <Link

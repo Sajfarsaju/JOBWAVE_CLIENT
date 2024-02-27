@@ -120,23 +120,22 @@ function Profile() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState()
+  const [phone, setPhone] = useState('')
   const [location, setLocation] = useState('')
   const [ctc, setCtc] = useState('')
   const [age, setAge] = useState('')
 
 
-
   const clickedBasicEditButton = () => {
     // *Storing previous value into updating state as initial value
-    setFirstName(userData.firstName)
-    setLastName(userData.lastName)
-    setEmail(userData.email)
-    setPhone(userData.phone)
-    setLocation(userData.location)
-    setCtc(userData.currentCTC)
-    setAge(userData.age)
-    setUpdateBasicDataModal(true)
+    setFirstName(userData.firstName ? userData.firstName : '');
+setLastName(userData.lastName ? userData.lastName : '');
+setEmail(userData.email ? userData.email : '');
+setPhone(userData.phone ? userData.phone : '');
+setLocation(userData.location ? userData.location : '');
+setCtc(userData.currentCTC ? userData.currentCTC : '');
+setAge(userData.age ? userData.age : '');
+setUpdateBasicDataModal(true);
   }
 
 
@@ -149,17 +148,9 @@ function Profile() {
     const ageRegex = /^\d+$/;
     const maxAge = 99;
 
-    if (firstName.trim().length === 0 &&
-      lastName.trim().length < 1 &&
-      email.trim().length < 1 &&
-      String(phone).trim().length === 0 &&
-      location.trim().length === 0 &&
-      ctc.trim().length === 0 &&
-      String(age).trim().length === 0
-    ) {
+    if (!firstName  && !lastName &&  !email && !phone && !location && !ctc && !age ) {
       errors.common = "All fields must be required";
     }
-
 
     if (firstName.trim() === '' || firstName.length === 0) {
       errors.firstName = "Enter a valid First name";
@@ -180,30 +171,24 @@ function Profile() {
 
     if (!emailRegex.test(email)) errors.email = "Enter a valid email address";
 
-    if (!phoneRegex.test(String(phone).trim()) || String(phone).trim().length !== 10) {
+    if (!phone || !phoneRegex.test(String(phone).trim()) || String(phone).trim().length !== 10) {
       errors.phone = "Enter a valid 10-digit phone number";
     }
 
-    if (location.trim().length === 0 || location.trim().length < 4) {
+    if (!location || location.trim().length ===  0 || location.trim().length <  4) {
       errors.location = "Enter a valid location";
     }
 
-    // if (ctc.trim().length === 0) {
-    //   errors.ctc = "Enter a valid ctc";
-    // } else if (!ctcRegex.test(ctc.trim())) {
-    //   errors.ctc = "Enter a valid numeric value for ctc";
-    // }
-
-
-    if (String(age).trim().length === 0) {
+    if (!age) {
       errors.age = "Enter a valid age";
     } else if (!ageRegex.test(String(age).trim())) {
       errors.age = "Age must be a whole number";
     } else {
-      const numericAge = parseInt(String(age).trim(), 10);
-
-      if (numericAge > maxAge) {
-        errors.age = `Enter a valid age`;
+      const numericAge = parseInt(String(age).trim(),  10);
+    
+      // Check if the age is less than   15
+      if (numericAge <  15) {
+        errors.age = "Age must be at least 15 years";
       }
     }
 
@@ -568,10 +553,10 @@ function Profile() {
                 proccessing={proccessing}
               />
               {/* Skills End */}
-              {/* End Left Side - User Profile & Bio & Skills*/}
 
             </div>
           </div>
+              {/* End Left Side - User Profile & Bio & Skills*/}
 
 
           {/* Right Side - User Information */}

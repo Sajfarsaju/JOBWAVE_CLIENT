@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import Axios_Instance from '../../api/userAxios';
 
 const initialState = {
     role: null,
@@ -22,6 +23,7 @@ const userAuthSlice = createSlice({
             state.firstName = null;
             state.token = null;
             state.id = null;
+            
         },
 
     }

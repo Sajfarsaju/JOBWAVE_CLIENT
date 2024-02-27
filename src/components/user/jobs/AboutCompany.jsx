@@ -75,6 +75,14 @@ function AboutCompany() {
   };
   //?
 
+  const MAX_DESCRIPTION_LENGTH = 100;
+    function truncateText(text, maxLength) {
+        if (text.length > maxLength) {
+            return text.substring(0, maxLength - 3) + '...';
+        }
+        return text;
+    }
+
 
   return (
     <>
@@ -103,7 +111,7 @@ function AboutCompany() {
 
                 {/* Card Text Content */}
                 <div className='flex justify-center items-center space-x-10 mb-3'>
-                  <h2 className="text-xl lg:text-3xl xl:text-3xl font-semibold break-all text-gray-900">{companyData.companyName}</h2>
+                  <h2 className="text-xl lg:text-3xl xl:text-3xl font-semibold break-all" style={{ color: 'rgba(0, 4, 74, 1)' }}>{companyData.companyName}</h2>
                   
                 </div>
 
@@ -144,15 +152,15 @@ function AboutCompany() {
           <div className={`${recentJobs.length === 0 ? 'mt-0 bg-slate-100' : 'min-h-screen mt-8 '} w-full`}>
 
             <div className={`${recentJobs.length === 0 ? 'hidden' : 'block'}`}>
-              <h1 className='text-center text-xl sm:text-2xl text-gray-800 font-semibold'>Recent Jobs</h1>
+              <h1 className='text-center text-xl sm:text-2xl font-semibold' style={{ color: 'rgba(0, 4, 74, 1)' }}>Recent Jobs</h1>
             </div>
 
             <div className="sm:grid sm:grid-cols-2 gap-2 xl:gap-1 sm:mx-auto p-3">
               {recentJobs.map((job, index) => (
 
                 // group-hover:bg-gradient-to-r from-[#AEC3AE] to-[#CEDEBD]
-                <div key={index} className="xl:w-10/12 w-full sm:mx-auto p-3 ">
-                  <div className="rounded-xl shadow-sm shadow-slate-300 p-3 relative flex items-center">
+                <div key={index} className="xl:w-10/12 w-full sm:mx-auto p-4 ">
+                  <div className="rounded-xl shadow-sm shadow-slate-300 p-4 relative flex items-center">
                     <div className="flex flex-col flex-grow ml-4 ">
 
                       {/* ONLY MOBILE SCREENS */}
@@ -180,12 +188,12 @@ function AboutCompany() {
                           </div>
 
                           <div className='w-full mt-4 flex justify-between '>
-                            <p className="mb-2" style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.workType}</p>
+                            <p className="mb-2" style={{ color: 'rgba(0, 4, 74, 1)' }}>{job?.workType} role</p>
                           </div>
 
                           <div className=''>
 
-                            <p className="mb-2 break-all" style={{ color: 'rgba(109, 110, 141, 1)' }}>Description: {job?.jobDescription}</p>
+                            <p className="mb-2 break-all" style={{ color: 'rgba(109, 110, 141, 1)' }}>Description: {truncateText(job.jobDescription, MAX_DESCRIPTION_LENGTH)}</p>
                             <p className="text-end text-green-600 text-sm font-small">
                               {getTimeDifference(job.createdAt)}
                             </p>
@@ -202,11 +210,11 @@ function AboutCompany() {
 
                                   <Link
                                     to={`/jobs/jobview/${job._id}`}
-                                    className={`font-serif inline text-md font-medium mt-0 mr-1 mb-0 ml-1  
+                                    className={`text-gray-700 font-serif inline text-md font-medium mt-0 mr-1 mb-0 ml-1  
                                     ${job.appliedStatus ? 'text-lg font-bold' : ''}`}
-                                    style={{ color: 'rgba(109, 110, 130, 1)' }}
+                                    // style={{ color: 'rgba(109, 110, 130, 1)' }}
                                   >
-                                    Show More...
+                                    Show more...
                                   </Link>
                                 )}
                               </>
@@ -248,7 +256,7 @@ function AboutCompany() {
                                   <Link to={job.appliedStatus ? "#" : `/jobs/jobview/${job._id}`}
                                     className="text-gray-700 px-3 py-2 rounded-md"
                                   >
-                                    Show more
+                                    Show more...
                                   </Link>
                                 )}
                               </>
@@ -266,8 +274,8 @@ function AboutCompany() {
 
                         <div className="flex justify-between items-center mt-4 text-sm mb-2">
 
-                          <p className='break-all' style={{ color: 'rgba(109, 110, 141, 1)' }}>{job?.workType}</p>
-                          <p className='break-all' style={{ color: 'rgba(109, 110, 141, 1)' }}>Dead line:{formatDate(job?.deadline)}</p>
+                          <p className='break-all' style={{ color: 'rgba(0, 4, 74, 1)' }}>{job?.workType} role</p>
+                          <p className='break-all' style={{ color: 'rgba(0, 4, 74, 1)' }}>Dead line:{formatDate(job?.deadline)}</p>
 
                         </div>
 

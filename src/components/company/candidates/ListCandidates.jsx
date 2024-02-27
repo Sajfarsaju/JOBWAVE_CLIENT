@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Axios_Instance from "../../../api/userAxios"
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from "react-router-dom"
 import ShortListCandidate from "./ShortListCandidate"
 import Spinner from "../../Spinner"
 import CandidateNavbar from './candidatesNavbar'
+import { FiZoomIn, FiZoomOut } from "react-icons/fi";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import '../../../assets/css/tooltip.css'
 
 
 export default function ListCandidates() {
 
   const [spinnner, setspinnner] = useState(true);
-  const [viewCv, setViewCv] = useState(false);
-  const [CV, setCV] = useState('');
   const [userId, setUserId] = useState('')
   const [jobId, setJobId] = useState('')
   const [applicationId, setApplicationId] = useState('')
@@ -20,6 +21,7 @@ export default function ListCandidates() {
   const [relaod, setRelaod] = useState(false)
   const [candidates, setCandidates] = useState([]);
 
+  //? START FETCH SHORTLISTED CANDIDATE
   useEffect(() => {
     (async function fetchCandidates() {
       try {
@@ -32,12 +34,26 @@ export default function ListCandidates() {
       }
     })()
   }, [relaod]);
+  //? END FETCH SHORTLISTED CANDIDATE
 
+  //? START VIEW CV AND ZOOM
+  const [viewCv, setViewCv] = useState(false);
+  const [CV, setCV] = useState('');
   const viewCandidateCV = (CV) => {
 
     setCV(CV);
     setViewCv(true);
   }
+  const transformWrapper = useRef(null);
+
+  const zoomIn = () => {
+    transformWrapper.current.zoomIn();
+  };
+
+  const zoomOut = () => {
+    transformWrapper.current.zoomOut();
+  };
+  //? END VIEW CV AND ZOOM
 
   const openShortlistModal = (userId, applicationId, jobId, jobTitle) => {
     setUserId(userId)
@@ -73,7 +89,7 @@ export default function ListCandidates() {
         </div>
 
         <div className="flex flex-col sm:flex-row w-full mb-[10%]">
-          
+
           <CandidateNavbar />
 
           <div className="sm:w-3/4 mt-4">
@@ -109,14 +125,30 @@ export default function ListCandidates() {
                       <div key={index} className="lg:w-10/12 xl:w-9/12 p-4 sm:mx-[5%] ">
                         <div className="border border-gray-100 w-full sm:mx-auto bg-sky-50 lg:w-11/12 rounded-xl shadow-sm shadow-slate-200 p-4 relative flex items-center">
                           <div className="flex-shrink-0">
-                            <img className="hidden sm:block w-16 h-16 rounded-full" src={candidate?.applicant?.profile} alt='' />
+                            {/* Tooltip for user propfile view */}
+                            <div className='has-tooltip'>
+                              <span className='tooltip rounded-md shadow-lg p-1 text-gray-800 -mt-11 sm:-mt-9 md:-mt-9'>
+                                View profile</span>
+                              <Link to={`/company/candidates/profile_view/${candidate?.applicant?.firstName}-${candidate?.applicant?.lastName}/${candidate?.applicant?._id}`}>
+                                <img className="hidden sm:block w-16 h-16 rounded-full" src={candidate?.applicant?.profile} alt='' />
+                              </Link>
+                            </div>
+                            {/* Tooltip for user propfile view*/}
                           </div>
                           <div className="flex flex-col flex-grow ml-4 ">
                             {/* ONLY MOBILE SCREENS */}
                             <div className="sm:hidden">
                               <div className='flex flex-col items-start'>
                                 <div className='flex items-center space-x-4'>
-                                  <img className="w-12 h-12 rounded-full" src={candidate?.applicant?.profile} alt='' />
+                                  {/* Tooltip for user propfile view */}
+                                  <div className='has-tooltip'>
+                                    <span className='tooltip rounded-md shadow-lg p-1 text-gray-800 -mt-11 sm:-mt-9 md:-mt-9'>
+                                      View profile</span>
+                                      <Link to={`/company/candidates/profile_view/${candidate?.applicant?.firstName}-${candidate?.applicant?.lastName}/${candidate?.applicant?._id}`}>
+                                      <img className="w-12 h-12 rounded-full" src={candidate?.applicant?.profile} alt='' />
+                                    </Link>
+                                  </div>
+                                  {/* Tooltip for user propfile view*/}
                                   <p
                                     className={`break-all text-xl font-normal max-w-full mt-2`}
                                     style={{ color: 'rgba(0, 4, 74, 1)' }}
@@ -193,57 +225,46 @@ export default function ListCandidates() {
 
       {viewCv && (
         <>
-          {/* <div className={`${viewCv ? 'fixed backdrop-blur-sm inset-0 flex items-center justify-center z-10 transition-opacity duration-300' : 'hidden'}`}>
-            <div className="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-
-            <div className="modal-container bg-white w-96 h-120 md:max-w-md md:max-h-[80vh] mx-auto rounded shadow-lg overflow-hidden z-10 relative">
-              
-              <div className="relative">
-                <div className="modal-content py-16 text-left">
-                  <div className="mb-8">
-                    <div className="w-full h-full relative">
-                      <button
-                        type="button"
-                        className="absolute right-4 top-4 text-gray-700 hover:text-gray-800 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
-                        onClick={() => setViewCv(false)}
-                      >
-                        <span className="sr-only">Close</span>
-                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
-
-                      <img
-                        className="object-cover w-full h-auto"
-                        src={CV} alt=""
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> */}
-          <div className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-10 backdrop-blur-sm">
-            <div className="relative mx-3 w-auto my-6 md:mx-auto max-w-sm">
-              {/*content*/}
+          <div
+            className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-10 backdrop-blur-sm"
+            onClick={() => setViewCv(false)}
+          >
+            <div
+              className="relative w-auto my-6 md:mx-auto max-w-sm sm:max-w-md"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full dark:bg-white outline-none focus:outline-none">
-                {/*header*/}
                 <div className="mx-2 flex items-start justify-between p-5 border-b border-solid border-gray-200 rounded-t">
                   <h3 className="text-md md:text-2xl font-semibold">
                     Candidate Cv
                   </h3>
                   <button
-                        type="button"
-                        className="  text-gray-700 hover:text-gray-800"
-                        onClick={() => setViewCv(false)}
-                      >
-                        <span className="sr-only">Close</span>
-                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
+                    type="button"
+                    className="text-gray-700 hover:text-gray-800"
+                    onClick={() => setViewCv(false)}
+                  >
+                    <span className="sr-only">Close</span>
+                    <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                  </button>
                 </div>
-                {/*body*/}
-                <div className="relative p-3 flex-auto mx-3">
-                  <img src={CV} alt="" />
-                  <div className="flex items-center justify-between mt-4">
-                  </div>
+                <div className="relative p-3 flex-auto mx-1">
+                  <TransformWrapper ref={transformWrapper}>
+                    <TransformComponent>
+                      <img
+                        src={CV}
+                        alt="Candidate CV"
+                        className="w-full"
+                      />
+                    </TransformComponent>
+                  </TransformWrapper>
+                </div>
+                <div className="absolute bottom-0 right-0 flex flex-col items-center justify-center h-full">
+                  <button onClick={zoomIn} className="mb-2">
+                    <FiZoomIn className="text-gray-800" size={24} />
+                  </button>
+                  <button onClick={zoomOut}>
+                    <FiZoomOut className="text-gray-800" size={24} />
+                  </button>
                 </div>
               </div>
             </div>

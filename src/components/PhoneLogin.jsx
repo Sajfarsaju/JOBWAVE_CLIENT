@@ -112,13 +112,15 @@ function PhoneLogin() {
       }
     } catch (err) {
       setProccessing(false)
-       //? If blocked user 
-       if (err?.response?.data?.isBlocked) {
+      //? If blocked user 
+      if (err?.response?.data?.isBlocked) {
         toast.error(err?.response?.data?.errMsg);
 
       }
 
       if (err.response?.status === 404) {
+        toast.error(err?.response?.data?.errMsg);
+      }else if(err?.response?.status === 401){
         toast.error(err?.response?.data?.errMsg);
       } else {
         toast.error('Something went wrong, please try again')
@@ -140,8 +142,8 @@ function PhoneLogin() {
         toast.success(response.data.message)
       }
     } catch (error) {
-       //? If blocked user 
-       if (error?.response?.data?.isBlocked) {
+      //? If blocked user 
+      if (error?.response?.data?.isBlocked) {
         toast.error(error?.response?.data?.errMsg);
 
       } else {
@@ -153,7 +155,7 @@ function PhoneLogin() {
 
   }
   //*************************END RESEND OTP***************************************
- 
+
   const handleChangeOTP = (e) => {
     const newValue = e.target.value;
 
@@ -257,7 +259,10 @@ function PhoneLogin() {
                 <button
                   type='button'
                   className='font-serif border border-red-600 text-red-600 px-2 py-1.5 rounded mr-2 active:bg-red-300'
-                  onClick={() => setIsOpenForm(true)}
+                  onClick={() => {
+                    setIsOpenForm(true)
+                    setUserOtp('')
+                  }}
                 >
                   Go back
                 </button>

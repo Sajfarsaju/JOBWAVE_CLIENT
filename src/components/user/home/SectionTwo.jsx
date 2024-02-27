@@ -1,10 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom'
+import '../../../assets/css/tooltip.css'
 
 function SectionTwo({ JobData }) {
 
     const navigate = useNavigate()
 
-    const MAX_DESCRIPTION_LENGTH = 280;
+    const MAX_DESCRIPTION_LENGTH = 150;
     function truncateText(text, maxLength) {
         if (text.length > maxLength) {
             return text.substring(0, maxLength - 3) + '...';
@@ -64,14 +65,23 @@ function SectionTwo({ JobData }) {
                 <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-4 lg:gap-1 xl:gap-1 mt-0 sm:py-10 py-10 md:py-10 lg:py-20 xl:py-20">
                     {/* Job Card  */}
                     {JobData.length > 0 && JobData.map((job) => (
-                        <div key={job._id} className="dark:bg-white shadow-md shadow-gray-200 border-2 border-gray-50 lg:h-72 xl:h-72 h-64 md:h-full p-4 sm:p-2 md:p-3 lg:p-4 mx-5 md:mx-5 lg:mx-5">
+                        <div key={job._id} className="dark:bg-white shadow-sm shadow-gray-300 border-2 border-gray-50 lg:h-72 xl:h-72 h-64 md:h-full p-4 sm:p-2 md:p-3 lg:p-4 mx-5 md:mx-5 lg:mx-5">
                             <div className="flex justify-between items-center mb-2">
                                 {/* Job Logo (Left) */}
-                                <img onClick={navigateJobView} src={job.logo} alt="Job Logo" className="w-16 h-16 cursor-pointer" />
+                                {/* Tooltip for company detail */}
+                                <div className='has-tooltip'>
+                                    <span className='tooltip rounded-md shadow-lg p-1 text-gray-800 -mt-11 sm:-mt-12 md:-mt-12'>
+                                        about company</span>
+                                    <Link to={`/about_company/${job?.companyId?._id}`}>
+                                        <img src={job?.companyId?.profile} alt="Job Logo" className="w-16 h-16 cursor-pointer" />
+
+                                    </Link>
+                                </div>
+                                {/* End Tooltip for company detail */}
                                 {/* Job Type Button and Active Now Text (Right) */}
                                 <div className="flex flex-col items-end">
                                     {/* <button className="bg-sky-100 text-sky-600 px-2 py-1 rounded-md text-sm">{job.workType}</button> */}
-                                    <button className="bg-sky-100 text-sky-600 px-2 py-1 rounded-md text-sm">{job.workType}</button>
+                                    <button className="bg-sky-100 text-sky-600 px-2 py-1 rounded-md text-sm">{job.workType} role</button>
                                     <p className="text-green-500 text-xs mt-5">{job.status === 'Active' ? 'Actively Hiring' : ''}</p>
                                 </div>
                             </div>

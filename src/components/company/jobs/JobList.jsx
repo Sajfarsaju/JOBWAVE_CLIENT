@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
-
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField'
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import Autocomplete from '@mui/material/Autocomplete';
 import Axios_Instance from '../../../api/userAxios';
 import { useSelector } from 'react-redux'
 import SingleJobView from './SingleJobView';
 import { FaEye } from 'react-icons/fa'
 import Spinner from '../../Spinner';
+import Select from 'react-select';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import AddPostModal from './AddPostModal';
 
 function JobList() {
   const [isOpenView, setIsOpenView] = useState(false);
@@ -19,12 +20,12 @@ function JobList() {
 
   const [jobTitle, setJobTitle] = useState('');
   const [jobCategory, setJobCategory] = useState('');
-  const [workType, setWorkType] = useState("");
+  const [workType, setWorkType] = useState('');
   const [vacancy, setVacancy] = useState();
   const [workplace, setWorkplace] = useState('');
   const [salaryRange, setSalaryRange] = useState('');
+
   const [deadline, setDeadline] = useState(new Date());
-  const [logo, setLogo] = useState('');
   const [qualifications, setQualifications] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [companyDescription, setCompanyDescription] = useState('');
@@ -33,44 +34,46 @@ function JobList() {
 
   const [JobList, setJobList] = useState([])
   const [CategoryList, setCategoryList] = useState([]);
+
   const [subscriptionPlan, setSubscriptionPlan] = useState([])
   const [proccessing, setProccessing] = useState(false);
 
   const companyId = useSelector((state) => state.company.id)
 
+
   //? *********************LOGO SETUP **********************
   //* remove logo 
-  const removeLogo = () => {
-    const logoInput = document.getElementById('logo');
-    if (logoInput) {
-      logoInput.value = '';
-    }
-    setLogo('');
-  };
+  // const removeLogo = () => {
+  //   const logoInput = document.getElementById('logo');
+  //   if (logoInput) {
+  //     logoInput.value = '';
+  //   }
+  //   setLogo('');
+  // };
 
   //* validate logo
-  function isValidLogo(logo) {
-    const validExtensions = ['.jpg', '.jpeg', '.png'];
-    const logoName = logo.name.toLowerCase();
-    const extension = logoName.substr(logoName.lastIndexOf('.'));
-    return validExtensions.includes(extension);
-  }
+  // function isValidLogo(logo) {
+  //   const validExtensions = ['.jpg', '.jpeg', '.png'];
+  //   const logoName = logo.name.toLowerCase();
+  //   const extension = logoName.substr(logoName.lastIndexOf('.'));
+  //   return validExtensions.includes(extension);
+  // }
 
   //* Logo storing
-  const handleLogoChange = (e) => {
-    const logoFile = e.target.files[0];
+  // const handleLogoChange = (e) => {
+  //   const logoFile = e.target.files[0];
 
-    if (isValidLogo(logoFile)) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogo(reader.result);
-      };
-      reader.readAsDataURL(logoFile);
-    } else {
-      toast.error('Invalid file type. Please upload a JPEG, PNG, or WEBP image file.')
-      removeLogo()
-    }
-  };
+  //   if (isValidLogo(logoFile)) {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setLogo(reader.result);
+  //     };
+  //     reader.readAsDataURL(logoFile);
+  //   } else {
+  //     toast.error('Invalid file type. Please upload a JPEG, PNG, or WEBP image file.')
+  //     removeLogo()
+  //   }
+  // };
   //? *********************END LOGO SETUP **********************
 
   const resetForm = () => {
@@ -82,7 +85,6 @@ function JobList() {
     setWorkplace('');
     setSalaryRange('');
     setDeadline(new Date());
-    setLogo('');
     setQualifications('');
     setJobDescription('');
     setCompanyDescription('');
@@ -103,13 +105,67 @@ function JobList() {
       console.log(error)
     }
   }
+  //? Start Custom styles for select field
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      height: '51px',
+      minHeight: '51px',
+      borderRadius: '0.375rem',
+      borderColor: '#d1d5db',
+      boxShadow: 'none',
+      backgroundColor: 'rgba(240,  253,  244,  1)',
+      '&:hover': {
+        borderColor: '#000000',
+      },
+      '&:focus': {
+        borderColor: '#3182ce',
+        boxShadow: '0   0   0   1px #3182ce',
+      },
+    }),
+  };
+  //? End Custom styles for select field
+
+  const workTypeList = [
+    "Full-time",
+    "Part-time",
+    "Contract",
+    "Internship",
+    "Freelance",
+  ]
+  const salaryList = [
+    '10k-20k',
+    '20k-30k',
+    '30k-40k',
+    '40k-50k',
+  ];
+  const [workTypeOptions, setWorkTypeOptions] = useState(
+    workTypeList.map(type => ({
+      label: type,
+      value: type.toLowerCase().replace(/\s+/g, '-'),
+    }))
+  );
+
+  const [salaryOptions, setSalaryOptions] = useState(
+    salaryList.map(option => ({
+      label: option,
+      value: option.replace('-', ' to '),
+    }))
+  );
 
 
   const fetchCategories = async () => {
     try {
       const response = await Axios_Instance.get('/company/category')
       if (response.status === 200) {
-        setCategoryList(response.data.category);
+        // setCategoryList(response.data.category);
+        const transformedCategories = response.data.category.map(category => ({
+          label: category.categoryName,
+          value: category._id,
+        }));
+        // Update the state with the transformed categories
+        setCategoryList(transformedCategories);
+
       }
     } catch (error) {
       console.log('Error fetching categories:', error);
@@ -147,7 +203,6 @@ function JobList() {
       !vacancy &&
       !workplace &&
       !salaryRange &&
-      !logo.trim() &&
       !qualifications.trim() &&
       !jobDescription.trim() &&
       !companyDescription.trim() &&
@@ -186,17 +241,6 @@ function JobList() {
       errors.vacancy = 'Vacancy must be a positive number';
     }
 
-    if (!deadline) {
-      errors.deadline = 'Deadline is required';
-    }
-
-    const currentDate = new Date();
-    if (deadline < currentDate) {
-      errors.deadline = 'Deadline must be a future date';
-    }
-    if (!logo) {
-      errors.logo = 'Logo is required';
-    }
 
     if (!qualifications) {
       errors.qualifications = 'Qualifications are required';
@@ -204,20 +248,36 @@ function JobList() {
 
     if (!jobDescription) {
       errors.jobDescription = 'Job description is required';
+    } else if (jobDescription.length < 20) {
+      errors.jobDescription = 'Job description must be at least  20 characters long';
     }
 
     if (!companyDescription) {
       errors.companyDescription = 'Company description is required';
+    } else if (companyDescription.length < 20) {
+      errors.companyDescription = 'Company description must be at least  20 characters long';
     }
 
     if (!jobResponsibilities) {
       errors.jobResponsibilities = 'Job responsibilities are required';
+    } else if (jobResponsibilities.length < 20) {
+      errors.jobResponsibilities = 'Job responsibilities must be at least  20 characters long';
     }
 
     if (!benefits) {
       errors.benefits = 'Job benefits are required';
+    } else if (benefits.length < 20) {
+      errors.benefits = 'Job benefits must be at least  20 characters long';
     }
 
+
+    if (!deadline) {
+      errors.deadline = 'Deadline is required';
+    }
+    const currentDate = new Date();
+    if (deadline < currentDate) {
+      errors.deadline = 'Deadline must be a future date';
+    }
 
     return errors;
   };
@@ -240,7 +300,6 @@ function JobList() {
           workplace,
           salaryRange,
           deadline,
-          logo,
           qualifications,
           jobDescription,
           companyDescription,
@@ -269,9 +328,11 @@ function JobList() {
       } catch (error) {
         console.log(error);
         setProccessing(false)
-        if (error.response.status === 400 || error.response.status === 500) {
+        if (error.response.status === 400) {
           setProccessing(false)
           toast.error(error.response.data.errMsg);
+        } else if (error.response.status === 500) {
+          toast.error('Something went wrong, please try again')
         }
       }
 
@@ -289,10 +350,6 @@ function JobList() {
       toast.error(errors.workplace);
     } else if (errors.vacancy) {
       toast.error(errors.vacancy);
-    } else if (errors.deadline) {
-      toast.error(errors.deadline);
-    } else if (errors.logo) {
-      toast.error(errors.logo);
     } else if (errors.qualifications) {
       toast.error(errors.qualifications);
     } else if (errors.jobDescription) {
@@ -303,23 +360,13 @@ function JobList() {
       toast.error(errors.jobResponsibilities);
     } else if (errors.benefits) {
       toast.error(errors.benefits);
+    } else if (errors.deadline) {
+      toast.error(errors.deadline);
     }
   };
 
-  const workTypeList = [
-    "Full-time",
-    "Part-time",
-    "Contract",
-    "Internship",
-    "Freelance",
-  ]
-  const salaryOptions = [
-    '10k-20k',
-    '20k-30k',
-    '30k-40k',
-    '40k-50k',
-  ];
 
+  //? Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -340,6 +387,45 @@ function JobList() {
 
   const isDeadlineExpired = (deadline) => new Date(deadline) < new Date();
 
+  //? Start Handle desable job
+  const [openDisableModal, setOpenDisableModal] = useState(false)
+  console.log(openDisableModal)
+  const [openEnableModal, setOpenEnableModal] = useState(false)
+  const [jobPostId, setJobPostId] = useState('')
+
+  async function handleDisableJob(jobPostId) {
+    try {
+      setProccessing(true)
+      const res = await Axios_Instance.patch('/company/enable_disable_job', { jobPostId, action: 'disableJob' })
+
+      if (res.status === 200) {
+        setProccessing(false)
+        setJobList(res.data.updatedJobPost)
+        setOpenDisableModal(false)
+        toast.success('Post desabled')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  //? End Handle desable job
+
+  async function handleEnableJob(jobPostId) {
+    try {
+      setProccessing(true)
+      const res = await Axios_Instance.patch('/company/enable_disable_job', { jobPostId, action: 'enableJob' })
+
+      if (res.status === 200) {
+        setProccessing(false)
+        setJobList(res.data.updatedJobPost)
+        setOpenEnableModal(false)
+        toast.success('Post enabled')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <>
       {spinnner ? (
@@ -347,133 +433,166 @@ function JobList() {
       ) : (
 
         <>
+          <SingleJobView job={selectedJob} setSelectedJob={setSelectedJob} isOpenView={isOpenView} setIsOpenView={setIsOpenView} />
 
-          <SingleJobView job={selectedJob} isOpenView={isOpenView} setIsOpenView={setIsOpenView} />
-          <div className="min-h-screen mt-28 md:min-h-fit sm:min-h-fit">
-            <div className="pb-12 overflow-x-auto bg-white  m-10">
+          <div className="min-h-screen mt-28 md:min-h-fit sm:min-h-fit font-dm-sans font-normal">
+            <div className="pb-12 overflow-x-auto bg-white m-3 sm:m-10">
 
               {subscriptionPlan.subscriptionPlan ? (
                 <>
                   <div className="flex justify-end mb-2">
-                    <button
+                    <Link
                       onClick={() => setOpenModal(true)}
+
                       className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md"
                     >
                       Post Job
-                    </button>
+                    </Link>
                   </div>
 
                   <div className="w-full overflow-x-scroll">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead>
                         <tr>
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                             No
                           </th>
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                             Job Title
                           </th>
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                             Work Type
                           </th>
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                             Salary Range
                           </th>
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                             Vacancy
                           </th>
-                          {/* <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          {/* <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                     Posted On
                   </th> */}
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                             Deadline
                           </th>
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
-                            Logo
-                          </th>
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          {/* <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                             Qualifications
-                          </th>
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          </th> */}
+                          <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                             View
                           </th>
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                             Approval status
                           </th>
-                          <th className="px-6 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                          <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
                             Job status
+                          </th>
+                          <th className="px-9 py-3 bg-slate-100 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider">
+                            Disable/Enable
                           </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {jobsToShow.map((job, index) => (
                           <tr key={job._id}>
-                            <td className="px-6 py-4 whitespace-no-wrap">
+                            <td className="px-2 break-all py-4 text-center ">
                               {index + 1 + itemsPerPage * (currentPage - 1)}
                             </td>
-                            <td className="px-6 py-4 whitespace-no-wrap">{job.jobTitle}</td>
-                            <td className="px-6 py-4 whitespace-no-wrap">{job.workType}</td>
-                            <td className="px-6 py-4 whitespace-no-wrap">{job.salaryRange}</td>
-                            <td className="px-6 py-4 whitespace-no-wrap">{job.vacancy}</td>
-                            {/* <td className="px-6 py-4 whitespace-no-wrap">
+                            <td className="px-2 break-all py-4 text-center ">{job.jobTitle}</td>
+                            <td className="px-2 break-all py-4 text-center ">{job.workType}</td>
+                            <td className="px-2 break-all py-4 text-center ">{job.salaryRange}</td>
+                            <td className="px-2 break-all py-4 text-center ">{job.vacancy}</td>
+                            {/* <td className="px-2 break-all py-4 text-center ">
                       {new Date(job.createdAt).toLocaleDateString()}
                     </td> */}
-                            <td className="px-6 py-4 whitespace-no-wrap">
+                            <td className="px-2 break-all py-4 text-center ">
                               {new Date(job.deadline).toLocaleDateString()}
                             </td>
-                            <td className="px-6 py-4 whitespace-no-wrap">
-                              <img
-                                className='rounded-full'
-                                src={job.logo}
-                                alt="Job Logo"
-                                width="50"
-                                height="50"
-                              />
-                            </td>
-                            <td className="px-6 py-4 whitespace-no-wrap">{job.qualifications}</td>
+
+                            {/* <td className="px-2 break-all py-4 text-center ">{job.qualifications}</td> */}
                             <td className="text-green-600 px-2 sm:px-3 lg:px-4 xl:px-6 py-2 sm:py-3 text-sm sm:text-center whitespace-nowrap p-2 sm:p-3 text-center">
 
-                              <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:text-gray-700">
-                                <FaEye onClick={() => viewSingleJob(job._id)} className="w-6 h-6" />
+                              <div className="inline-flex items-center px-3 py-1 cursor-pointer rounded-full gap-x-2 bg-emerald-100/60 dark:text-gray-700">
+                                <FaEye onClick={() => viewSingleJob(job._id)} className=" w-6 h-6" />
                               </div>
                             </td>
 
                             {job.isPostAccepted && job.status === 'Active' ? (
                               <>
-                                <td className="px-6 py-4 whitespace-no-wrap">
-                                  <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-200">
-                                    <span className="h-1.5 w-1.5 bg-green-600"></span>
+                                <td className="px-2 break-all py-4 text-center ">
+                                  <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-green-100">
+                                    {/* <span className="h-2 w-2 rounded-full bg-green-600"></span> */}
                                     <h2 className="text-sm font-medium text-green-700">Approved</h2>
                                   </div>
                                 </td>
 
-                                <td className="px-6 py-4 whitespace-no-wrap">
-                                  <div className={`inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 ${isDeadlineExpired(job.deadline) ? 'bg-red-300 text-white' : 'bg-green-100 dark:bg-green-200 text-green-600'}`}>
-                                    <span className={`h-1.5 w-1.5 ${isDeadlineExpired(job.deadline) ? 'bg-red-600' : 'bg-green-600'}`}></span>
-                                    <h2 className={`text-sm font-medium ${isDeadlineExpired(job.deadline) ? 'text-red-600' : 'text-green-600'}`}>
-                                      {isDeadlineExpired(job.deadline) ? 'Expired' : 'Actively recruiting'}
-                                    </h2>
-                                  </div>
+                                <td className="px-2 break-all py-4 text-center ">
+                                  {job?.isJobDisabled ? (
+                                    <div className={`inline-flex cursor-pointer items-center px-2 py-1 rounded-full gap-x-2 bg-yellow-100/80 text-white`}>
+                                      {/* <span className={`h-2 w-2 rounded-full bg-red-600`}></span> */}
+                                      <h2 className={`text-sm font-medium text-red-600`}>
+                                        {isDeadlineExpired(job.deadline) ? 'Expired' : 'Disabled'}
+                                      </h2>
+                                    </div>
+
+                                  ) : (
+
+                                    <div className={`inline-flex cursor-pointer items-center px-2 py-1 rounded-full gap-x-2 ${isDeadlineExpired(job.deadline) ? 'bg-yellow-100/80 text-white' : 'bg-green-100 dark:bg-green-100 text-green-600'}`}>
+                                      {/* <span className={`h-2 w-2 rounded-full ${isDeadlineExpired(job.deadline) ? 'bg-yellow-100/80' : 'bg-green-600'}`}></span> */}
+                                      <h2 className={`text-sm font-medium ${isDeadlineExpired(job.deadline) ? 'text-red-600' : 'text-green-600'}`}>
+                                        {isDeadlineExpired(job.deadline) ? 'Expired' : 'Active'}
+                                      </h2>
+                                    </div>
+                                  )}
                                 </td>
                               </>
                             ) : (
                               <>
-                                <td className="px-6 py-4 whitespace-no-wrap text-center">
-                                  <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-yellow-200">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-yellow-600"></span>
-                                    <h2 className="text-sm font-medium text-yellow-600">Pending</h2>
+                                <td className="px-2 break-all py-4 text-center ">
+                                  <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/80">
+                                    {/* <span className="h-2 w-2 rounded-full bg-yellow-600"></span> */}
+                                    <h2 className="text-sm font-medium text-yellow-500">Pending</h2>
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-no-wrap text-center">
-                                  <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/70 ">
-                                    <span className="h-1.5 w-1.5 rounded-full"></span>
-                                    <h2 className="text-sm font-medium text-yellow-600">Approval Pending</h2>
+                                <td className="px-2 break-all py-4 text-center ">
+                                  <div className="inline-flex cursor-pointer items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/80">
+                                    {/* <span className="h-2 w-2 rounded-full bg-yellow-600"></span> */}
+                                    <h2 className={`text-sm font-medium ${job?.isJobDisabled ? 'text-red-500' : 'text-yellow-500'}`}>{job?.isJobDisabled ? 'Disabled' : (
+                                      <>
+                                        Approval <br /> Pending
+                                      </>
+                                    )}</h2>
                                   </div>
                                 </td>
                               </>
                             )}
+                            {job.isJobDisabled ? (
+                              <td className="px-2 break-all py-4 text-center">
+                                <button
+                                  onClick={() => {
+                                    setJobPostId(job._id);
+                                    setOpenEnableModal(true);
+                                  }}
+                                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-5 text-sm rounded"
+                                >
+                                  Enable?
+                                </button>
+                              </td>
+                            ) : (
+                              <td className="px-2 break-all py-4 text-center">
+                                <button
+                                  onClick={() => {
+                                    setJobPostId(job._id);
+                                    setOpenDisableModal(true);
+                                  }}
+                                  className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-2 text-sm rounded"
+                                >
+                                  Disable Job?
+                                </button>
+                              </td>
+                            )}
 
-                            {/* <td className="px-6 py-4 whitespace-no-wrap">
+                            {/* <td className="px-2 break-all py-4 whitespace-no-wrap">
                       <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded-md mr-1">
                         Details
                       </button>
@@ -488,6 +607,92 @@ function JobList() {
                         ))}
                       </tbody>
                     </table>
+
+                    {openDisableModal && (
+                      <div
+                        className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-10 backdrop-blur-sm"
+                      >
+                        <div className="relative mx-3 w-auto my-6 md:mx-auto max-w-sm">
+                          {/*content*/}
+                          <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full dark:bg-white outline-none focus:outline-none">
+                            {/*header*/}
+                            <div className="mx-2 flex items-start justify-between p-5 border-b border-solid border-gray-200 rounded-t">
+                              <h3 className="text-md md:text-2xl font-semibold">
+                                Disable Job
+                              </h3>
+                            </div>
+                            {/*body*/}
+                            <div className="relative p-3 flex-auto mx-3">
+                              <p className="text-gray-800 text-lg leading-relaxed">
+                                Are you sure you want to disable the job, making it hidden from job seekers? ⚠️
+                              </p>
+                            </div>
+                            {/*footer*/}
+                            <div className="flex items-center justify-end p-6 border-t border-solid border-gray-200 rounded-b">
+                              <button
+                                className=" text-emerald-500  font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                type="button"
+                                onClick={() => setOpenDisableModal(false)}
+                              >
+                                Close
+                              </button>
+                              <button
+                                className="text-white bg-red-500 active:bg-red-600 rounded background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                type="button"
+                                onClick={() => {
+                                  handleDisableJob(jobPostId)
+                                }}
+                              >
+                                {proccessing ? 'Loading...' : 'Ok'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {openEnableModal && (
+                      <div
+                        className="fixed inset-0 flex items-center justify-center z-10 bg-black bg-opacity-10 backdrop-blur-sm"
+                      >
+                        <div className="relative mx-3 w-auto my-6 md:mx-auto max-w-sm">
+                          {/*content*/}
+                          <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full dark:bg-white outline-none focus:outline-none">
+                            {/*header*/}
+                            <div className="mx-2 flex items-start justify-between p-5 border-b border-solid border-gray-200 rounded-t">
+                              <h3 className="text-md md:text-2xl font-semibold">
+                                Enable Job
+                              </h3>
+                            </div>
+                            {/*body*/}
+                            <div className="relative p-3 flex-auto mx-3">
+                              <p className="text-gray-800 text-lg leading-relaxed">
+                                Are you sure you want to enable the job?
+                              </p>
+                            </div>
+                            {/*footer*/}
+                            <div className="flex items-center justify-end p-6 border-t border-solid border-gray-200 rounded-b">
+                              <button
+                                className=" text-emerald-500  font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                type="button"
+                                onClick={() => setOpenEnableModal(false)}
+                              >
+                                Close
+                              </button>
+                              <button
+                                className="text-white bg-red-500 active:bg-red-600 rounded background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                type="button"
+                                onClick={() => {
+                                  handleEnableJob(jobPostId)
+                                }}
+                              >
+                                {proccessing ? 'Loading...' : 'Ok'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     {/* Pagination */}
                     {JobList.length > 10 && (
                       <div className="mt-4 flex justify-center">
@@ -514,7 +719,7 @@ function JobList() {
                 <>
                   <div className="flex flex-col items-center justify-center min-h-screen">
                     {/* Centered UI */}
-                    <div className="dark:bg-slate-100 p-4 rounded shadow-md shadow-gray-500 text-center">
+                    <div className="dark:bg-slate-100 p-4 rounded shadow-md shadow-gray-300 text-center">
                       <h1 className="lg:text-3xl xl:text-3xl text-xl font-semibold font-serif text-blue-700 mb-4">
                         Explore Our Subscription Plans
                       </h1>
@@ -524,7 +729,7 @@ function JobList() {
                     </div>
                     <Link to={'/company/home'}>
                       <button
-                        className="mt-4 font-serif bg-blue-500 text-white shadow-lg shadow-gray-500 rounded px-4 py-2 hover:bg-blue-600">
+                        className="mt-4 font-serif bg-blue-500 text-white shadow-lg shadow-gray-400 rounded px-4 py-2 hover:bg-blue-600">
                         Get Started
                       </button>
                     </Link>
@@ -535,602 +740,50 @@ function JobList() {
             </div>
           </div>
         </>
-      )}
+      )
+      }
 
       {/*  */}
-      {openModal && (
-        <div className="max-w-2xl mx-auto">
+      {
+        openModal && (
+          <AddPostModal
+            jobTitle={jobTitle}
+            setJobTitle={setJobTitle}
+            jobCategory={jobCategory}
+            setJobCategory={setJobCategory}
+            workType={workType}
+            setWorkType={setWorkType}
+            salaryRange={salaryRange}
+            setSalaryRange={setSalaryRange}
+            workplace={workplace}
+            setWorkplace={setWorkplace}
+            vacancy={vacancy}
+            setVacancy={setVacancy}
+            qualifications={qualifications}
+            setQualifications={setQualifications}
+            jobDescription={jobDescription}
+            setJobDescription={setJobDescription}
+            companyDescription={companyDescription}
+            setCompanyDescription={setCompanyDescription}
+            jobResponsibilities={jobResponsibilities}
+            setJobResponsibilities={setJobResponsibilities}
+            benefits={benefits}
+            setBenefits={setBenefits}
+            deadline={deadline}
+            setDeadline={setDeadline}
+            proccessing={proccessing}
+            handleSubmit={handleSubmit}
+            CategoryList={CategoryList}
+            workTypeOptions={workTypeOptions}
+            salaryOptions={salaryOptions}
+            customStyles={customStyles}
+            resetForm={resetForm}
+          />
 
-          <div
-            id="authentication-modal"
-            aria-hidden="true"
-            className="fixed inset-0 overflow-x-hidden overflow-y-auto h-modal md:h-full top-0 left-0 flex justify-center items-center z-50"
-          >
-            <div className="relative w-96 md:w-auto md:max-h-full ">
-              <div className="rounded-lg shadow relative bg-slate-300">
-                <div className="flex justify-end p-2">
-                  <button
-                    type="button"
-                    className="text-gray-600 bg-transparent hover:bg-gray-200 hover:text-gray-800 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-                    onClick={resetForm}
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </div>
-
-
-                {/* register form */}
-                <div className="mx-auto sm:w-full max-w-2xl rounded-lg px-6  lg:px-8 overflow-hidden">
-                  <div>
-                    <h2 className="text-2xl font-bold leading-9 text-blue-600 text-center">
-                      Job Details
-                    </h2>
-                  </div>
-
-                  <div className="px-1 py-8">
-
-                    <form className="mt-10 space-y-6" onSubmit={handleSubmit} encType="multipart/form-data">
-                      <Grid className='justify-center' container spacing={2}>
-                        <Grid item xs={5}>
-                          <TextField
-                            id="jobtitle"
-                            label="Job Title*"
-                            variant="filled"
-                            type="text"
-                            name='jobTitle'
-                            value={jobTitle}
-                            onChange={(e) => setJobTitle(e.target.value)}
-                            fullWidth
-                            // onChange={handleChange}
-                            // value={formData.concernName}
-                            InputProps={{
-                              style: {
-                                padding: '1px 3px',
-                                color: 'black',
-                              },
-                            }}
-                            InputLabelProps={{
-                              style: {
-                                color: 'black',
-                                fontSize: '18px',
-                              },
-                              shrink: true,
-                            }}
-                          />
-                        </Grid>
+        )
+      }
 
 
-
-                        <Grid item xs={5}>
-
-
-                          <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            sx={{ width: 241 }}
-                            options={CategoryList}
-                            // value={jobCategory}
-                            // value={jobCategory === undefined || 
-                            //        jobCategory === '' || jobCategory === null ? '' : jobCategory}
-                            onChange={(event, newValue) => {
-                              console.log(newValue.categoryName, ":categoryyy nameclient")
-                              // const newval = newValue.categoryName
-                              // console.log(newval,"????"
-                              setJobCategory(newValue);
-                            }}
-                            getOptionLabel={(option) => option.categoryName}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                type="text"
-                                name="jobCategory"
-                                label="Job Category"
-                                variant="filled"
-                                InputLabelProps={{
-                                  style: {
-                                    color: 'black',
-                                    fontSize: '18px',
-                                  },
-                                  shrink: true,
-                                }}
-
-                              />
-                            )}
-                          />
-                        </Grid>
-                        <Grid item xs={5}>
-                          <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={workTypeList}
-                            sx={{ width: 241 }}
-                            value={workType}
-                            onChange={(e, newValue) => setWorkType(newValue)}
-                            renderInput={(params) =>
-                              <TextField variant="filled" {...params}
-                                label="Work Type"
-                                type="text"
-                                name='workType'
-                                InputLabelProps={{
-                                  style: {
-                                    color: 'black',
-                                    fontSize: '18px',
-                                  },
-                                  shrink: true,
-                                }}
-
-                              />}
-                          />
-                        </Grid>
-
-                        <Grid item xs={5}>
-                          <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            sx={{ width: 241 }}
-                            options={salaryOptions}
-                            value={salaryRange}
-                            onChange={(event, newValue) => {
-                              setSalaryRange(newValue);
-                            }}
-                            renderInput={(params) =>
-                              <TextField {...params}
-                                label="Salary Range*"
-                                variant="filled"
-                                type="text"
-                                name='salaryRange'
-                                fullWidth
-                                // onChange={handleChange}
-                                // value={companyAddress.city}
-                                InputLabelProps={{
-                                  style: {
-                                    color: 'black',
-                                    fontSize: '18px',
-                                  },
-                                  shrink: true,
-                                }}
-                              />}
-
-                          />
-                        </Grid>
-                        <Grid item xs={5}>
-                          <TextField
-                            id="workplace"
-                            label="Work Place*"
-                            variant="filled"
-                            type="text"
-                            name='workplace'
-                            value={workplace}
-                            onChange={(e) => setWorkplace(e.target.value)}
-                            fullWidth
-                            // onChange={handleChange}
-                            // value={formData.phone}
-                            InputProps={{
-                              style: {
-                                padding: '1px 3px',
-                                color: 'black',
-                              },
-                            }}
-                            InputLabelProps={{
-                              style: {
-                                color: 'black',
-                                fontSize: '18px',
-                              },
-                              shrink: true,
-                            }}
-                          />
-                        </Grid>
-
-                        <Grid item xs={5}>
-                          <TextField
-                            id="vacancy"
-                            label="Vacancy*"
-                            variant="filled"
-                            type="text"
-                            name='vacancy'
-                            value={vacancy}
-                            onChange={(e) => setVacancy(e.target.value)}
-                            fullWidth
-                            // onChange={handleChange}
-                            // value={formData.companyName}
-                            InputProps={{
-                              style: {
-                                padding: '1px 3px',
-                                color: 'black',
-                              },
-                            }}
-                            InputLabelProps={{
-                              style: {
-                                color: 'black',
-                                fontSize: '18px',
-                              },
-                              shrink: true,
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={5}>
-                          <TextField
-                            id="applicationDeadline"
-                            label="Application Deadline*"
-                            variant="filled"
-                            type="date"
-                            name='deadline'
-                            value={deadline.toISOString().split('T')[0]}
-                            onChange={(e) => setDeadline(new Date(e.target.value))}
-                            fullWidth
-                            // onChange={handleChange}
-                            // value={companyAddress.zip}
-                            InputProps={{
-                              style: {
-                                padding: '1px 3px',
-                                color: 'black',
-                              },
-                            }}
-                            InputLabelProps={{
-                              style: {
-                                color: 'black',
-                                fontSize: '18px',
-                              },
-                              shrink: true,
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={5}>
-                          <TextField
-                            id="logo"
-                            label="Your Logo*"
-                            variant="filled"
-                            type="file"
-                            name='logo'
-                            accept="image/*"
-                            onChange={handleLogoChange}
-
-                            fullWidth
-                            // onChange={handleChange}
-                            // value={companyAddress.zip}
-                            InputProps={{
-                              style: {
-                                padding: '1px 3px',
-                                color: 'black',
-                              },
-                            }}
-                            InputLabelProps={{
-                              style: {
-                                color: 'black',
-                                fontSize: '18px',
-                              },
-                              shrink: true,
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={10}>
-                          <TextField
-                            id="Jobqualification"
-                            label="Job Qualification*"
-                            variant="filled"
-                            type="text"
-                            name='qualifications'
-                            value={qualifications}
-                            onChange={(e) => setQualifications(e.target.value)}
-                            fullWidth
-                            multiline
-                            maxRows={4}
-                            // onChange={handleChange}
-                            // value={formData.GSTNumber}
-                            InputProps={{
-                              classes: {
-                                root: 'py-6 px-6',
-                              },
-                              style: {
-                                color: "black"
-                              }
-                            }}
-                            InputLabelProps={{
-                              style: {
-                                color: 'black',
-                                fontSize: '18px',
-                              },
-                              shrink: true,
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={10}>
-                          <TextField
-                            id="Jobdescription"
-                            label="Job Description*"
-                            variant="filled"
-                            type="text"
-                            name='jobDescription'
-                            value={jobDescription}
-                            onChange={(e) => setJobDescription(e.target.value)}
-                            fullWidth
-                            multiline
-                            maxRows={4}
-                            // onChange={handleChange}
-                            // value={formData.GSTNumber}
-                            InputProps={{
-                              classes: {
-                                root: 'py-6 px-6',
-                              },
-                              style: {
-                                color: "black"
-                              }
-                            }}
-                            InputLabelProps={{
-                              style: {
-                                color: 'black',
-                                fontSize: '18px',
-                              },
-                              shrink: true,
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={10}>
-                          <TextField
-                            id="companydescription"
-                            label="Company Description*"
-                            variant="filled"
-                            type="text"
-                            name='companyDescription'
-                            value={companyDescription}
-                            onChange={(e) => setCompanyDescription(e.target.value)}
-                            fullWidth
-                            multiline
-                            maxRows={4}
-                            // onChange={handleChange}
-                            // value={formData.GSTNumber}
-                            InputProps={{
-                              classes: {
-                                root: 'py-6 px-6', // Apply background color, text color, and padding
-                              },
-                              style: {
-                                color: "black"
-                              }
-                            }}
-                            InputLabelProps={{
-                              style: {
-                                color: 'black',
-                                fontSize: '18px',
-                              },
-                              shrink: true,
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={10}>
-                          <TextField
-                            id="Jobresponsibilities"
-                            label="Job Responsibilities*"
-                            variant="filled"
-                            type="text"
-                            name='jobResponsibilities'
-                            value={jobResponsibilities}
-                            onChange={(e) => setJobResponsibilities(e.target.value)}
-                            fullWidth
-                            multiline
-                            maxRows={10}
-                            // onChange={handleChange}
-                            // value={formData.GSTNumber}
-                            InputProps={{
-                              classes: {
-                                root: 'py-6 px-6', // Apply background color, text color, and padding
-                              },
-                              style: {
-                                color: "black"
-                              }
-                            }}
-                            InputLabelProps={{
-                              style: {
-                                color: 'black',
-                                fontSize: '18px',
-                              },
-                              shrink: true,
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={10}>
-                          <TextField
-                            id="benefits"
-                            label="Benefits*"
-                            variant="filled"
-                            type="text"
-                            name='benefits'
-                            value={benefits}
-                            onChange={(e) => setBenefits(e.target.value)}
-                            fullWidth
-                            multiline
-                            maxRows={10}
-                            // onChange={handleChange}
-                            // value={formData.GSTNumber}
-                            InputProps={{
-                              classes: {
-                                root: 'py-6 px-6', // Apply background color, text color, and padding
-                              },
-                              style: {
-                                color: "black"
-                              }
-                            }}
-                            InputLabelProps={{
-                              style: {
-                                color: 'black',
-                                fontSize: '18px',
-                              },
-                              shrink: true,
-                            }}
-                          />
-                        </Grid>
-                      </Grid>
-
-                      <div className="mx-12">
-                        <button
-                          type="submit"
-                          disabled={proccessing}
-                          className="mt-6 group relative w-full flex justify-center py-2 px-4 border border-transparent text-md font-medium rounded-md text-white bg-blue-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-800 transition duration-150 ease-in-out"
-                        >
-                          {proccessing ? 'Posting...' : 'Post Job'}
-
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-
-
-      {/*First modal original table*/}
-      {/* <div className=' min-h-screen'>
-      <button className='btn btn-md px-6 hover:bg-sky-400 bg-blue-600'>
-        Add Job
-      </button>
-      
-      <div className="pb-12 overflow-x-auto bg-white shadow-2xl m-10  shadow-gray-500">
-
-        <table className="table w-full ">
-          
-          <thead>
-            <tr>
-              <th>
-                No
-              </th>
-              <th>Name</th>
-              <th>Job</th>
-              <th>Favorite Color</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            
-            <tr>
-              <th>
-                
-              </th>
-              <td>
-                <div className="flex items-center space-x-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle w-12 h-12">
-                      <img src="/tailwind-css-component-profile-2@56w.png" alt="Avatar Tailwind CSS Component" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold">Hart Hagerty</div>
-                    <div className="text-sm opacity-50">United States</div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                Zemlak, Daniel and Leannon
-                <br />
-                <span className="badge badge-ghost badge-sm">Desktop Support Technician</span>
-              </td>
-              <td>Purple</td>
-              <th>
-                <button className="btn btn-ghost btn-xs">details</button>
-              </th>
-            </tr>
-           
-            <tr>
-              <th>
-               
-              </th>
-              <td>
-                <div className="flex items-center space-x-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle w-12 h-12">
-                      <img src="/tailwind-css-component-profile-3@56w.png" alt="Avatar Tailwind CSS Component" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold">Brice Swyre</div>
-                    <div className="text-sm opacity-50">China</div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                Carroll Group
-                <br />
-                <span className="badge badge-ghost badge-sm">Tax Accountant</span>
-              </td>
-              <td>Red</td>
-              <th>
-                <button className="btn btn-ghost btn-xs">details</button>
-              </th>
-            </tr>
-            
-            <tr>
-              <th>
-               
-              </th>
-              <td>
-                <div className="flex items-center space-x-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle w-12 h-12">
-                      <img src="/tailwind-css-component-profile-4@56w.png" alt="Avatar Tailwind CSS Component" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold">Marjy Ferencz</div>
-                    <div className="text-sm opacity-50">Russia</div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                Rowe-Schoen
-                <br />
-                <span className="badge badge-ghost badge-sm">Office Assistant I</span>
-              </td>
-              <td>Crimson</td>
-              <th>
-                <button className="btn btn-ghost btn-xs">details</button>
-              </th>
-            </tr>
-            
-            <tr>
-              <th>
-               
-              </th>
-              <td>
-                <div className="flex items-center space-x-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle w-12 h-12">
-                      <img src="/tailwind-css-component-profile-5@56w.png" alt="Avatar Tailwind CSS Component" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold">Yancy Tear</div>
-                    <div className="text-sm opacity-50">Brazil</div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                Wyman-Ledner
-                <br />
-                <span className="badge badge-ghost badge-sm">Community Outreach Specialist</span>
-              </td>
-              <td>Indigo</td>
-              <th>
-                <button className="btn btn-ghost btn-xs">details</button>
-              </th>
-            </tr>
-          </tbody>
-
-        </table>
-      </div>
-      </div> */}
       {/*  */}
 
     </>
