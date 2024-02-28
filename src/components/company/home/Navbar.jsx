@@ -8,7 +8,7 @@ import { FaUserLarge, FaBookOpenReader } from 'react-icons/fa6'
 import { AiFillHome } from 'react-icons/ai'
 import { FaUserFriends } from 'react-icons/fa'
 import { IoChatboxEllipses } from "react-icons/io5";
-import jobWaveLogo from '/src/assets/JOBWAVELOGO.png'
+import jobWaveLogo from '/src/assets/JOBWAVELOGO2.png'
 
 function Navbar() {
 
@@ -135,7 +135,7 @@ function Navbar() {
                 <span className="sr-only">Your Company</span>
                 <img
                   className="h-8 w-auto"
-                  src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                  src={jobWaveLogo}
                   alt=""
                 />
               </a>

@@ -10,7 +10,7 @@ import { toast } from 'react-hot-toast';
 import Axios_Instance from '../../api/userAxios'
 import { adminLogin } from '../../store/slice/adminSlice';
 import { useDispatch } from 'react-redux'
-import axios from 'axios';
+import jobWaveLogo from '/src/assets/JOBWAVELOGO2.png'
 
 
 function Login() {
@@ -98,32 +98,19 @@ function Login() {
 
     <div className="font-dm-sans font-normal bg-gradient-to-tr from-[#f1f5f9] to-[#cbd5e1] opacity-100 min-h-screen flex flex-col justify-center px-6 py-12 lg:px-8">
       <div className="mx-auto sm:w-full max-w-md bg-slate-300 rounded-lg shadow-2xl shadow-stone-500 overflow-hidden">
-        <div className="py-4">
+        <div className="py-6">
           <img
-            className="mx-auto h-8 w-auto bg-indigo-600"
-            src="../public/JobWave2-fotor-bg-remover-20230817153930.png"
+            className="mx-auto h-10 w-12"
+            src={jobWaveLogo}
             alt="JobWave"
           />
         </div>
 
         <div className="px-10 py-12">
-          {/* <h2 className='text-lg font-bold leading-9 text-gray-900 text-center'>Welcome Back, Find your JobSeeker!!</h2> */}
+          
           <h2 className="text-2xl font-bold leading-9 text-gray-900 text-center">
             Admin
           </h2>
-          {/* <h2 className="text-xl font-bold leading-9 text-gray-900 text-center">
-          Sign in
-        </h2> */}
-          {/* <div className="mt-7 flex">
-            <div className=" pr-2">
-            <h1 className='text-center text-lg'><Link to={'/admin/login'}> Admin </Link></h1>
-
-            </div>
-            <div className=" pr-2">
-            <h1 className={`text-center text-lg ${color === 'Employer' ? 'text-blue-900' : null}`}><Link to={'/company/login'}> Employer </Link> </h1>
-  
-            </div>
-        </div> */}
           <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
             <Grid className='justify-center' container spacing={2}>
               <Grid item xs={11}>
@@ -188,9 +175,6 @@ function Login() {
             </div>
           </form>
 
-          {/* <p className="mt-6 text-center text-sm leading-5 text-gray-600">
-            Not a member? <Link to={"/company/signup"} className="font-medium text-indigo-600 hover:text-indigo-500">Sign up</Link>
-          </p> */}
         </div>
       </div>
     </div>
