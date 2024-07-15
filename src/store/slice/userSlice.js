@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import Axios_Instance from '../../api/userAxios';
 
 const initialState = {
     role: null,

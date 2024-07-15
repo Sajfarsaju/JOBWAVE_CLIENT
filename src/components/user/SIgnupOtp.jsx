@@ -33,7 +33,11 @@ export default function SignupOtp() {
         } catch (error) {
 
             setProccessing(false)
-            toast.error('Please try again later')
+            if (error?.response?.status === 401) {
+                toast.error(error.response.errMsg)
+            } else {
+                toast.error("Please try again later")
+            }
             console.log(error)
 
         }
@@ -46,10 +50,10 @@ export default function SignupOtp() {
         e.preventDefault();
 
         setProccessing(true)
-        if (userOtp === '' || userOtp === null || userOtp.trim().length === 0){
+        if (userOtp === '' || userOtp === null || userOtp.trim().length === 0) {
             setProccessing(false)
             return toast.error('Enter a valid OTP');
-          } 
+        }
 
         try {
             formDataState.action = 'verifyOTP&saveData'
@@ -114,7 +118,7 @@ export default function SignupOtp() {
                 <div className='flex justify-center items-center h-screen bg-slate-100'>
                     <div className='text-center px-4 py-16 w-96 p-6 dark:bg-white rounded-sm shadow-lg shadow-gray-400'>
                         <h2 className='mb-8 text-lg font-serif text-green-500'>Please enter your OTP and proceed to login.</h2>
-                        
+
                         <form className='' onSubmit={verifyOtp}>
                             <div className='mt-4 mb-3 space-x-3 flex justify-center items-center' aria-controls='formBasicPhoneNumber'>
                                 {[...Array(6).keys()].map((index) => (

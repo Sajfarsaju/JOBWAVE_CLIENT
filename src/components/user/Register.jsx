@@ -1,16 +1,10 @@
 import { useEffect, useState } from 'react'
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { AiFillEyeInvisible } from 'react-icons/ai';
 import Axios_Instance from '../../api/userAxios'
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../api/firebase';
-import defaultProfile from "../../assets/defaultProfile.jpeg";
+import defaultProfile from "../../assets/defaultProfile2.jpg";
 import { userLogin } from '../../store/slice/userSlice';
 import { useDispatch } from 'react-redux';
 import jobwaveLogo from '/src/assets/JOBWAVELOGO.png'
@@ -132,7 +126,7 @@ const Register = () => {
           setProccessing(false)
           toast.success(response.data.message)
           const showOtpForm = true
-          Navigate('/verifyPhone', { state: { formData, showOtpForm } });
+          Navigate('/verifyOtp', { state: { formData, showOtpForm } });
         }
 
       } catch (error) {

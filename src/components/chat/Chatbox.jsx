@@ -14,6 +14,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
   const { companyId } = useParams();
 
   const [inboxChatList, setInboxChatList] = useState([]);
+  // console.log(inboxChatList)
   const [newMessage, setNewMessage] = useState("");
   const [allMessages, setAllMessages] = useState([]);
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -34,42 +35,42 @@ export default function Chatbox({ senderRole, reciverRole }) {
     }
   }, [allMessages])
 
+  async function fetchData() {
 
-  useEffect(() => {
+    try {
 
-    (async function fetchData() {
+      if (senderRole === 'users') {
 
-      try {
+        const response = await Axios_Instance.get(`/chats?compId=${companyId}&senderRole=${senderRole}`);
+        if (response.status === 200) {
 
-        if (senderRole === 'users') {
-
-          const response = await Axios_Instance.get(`/chats?compId=${companyId}&senderRole=${senderRole}`);
-          if (response.status === 200) {
-
-            openChatBox(response.data.selectedChat);
-            setInboxChatList(response.data.chatList)
-            setIsInitialRender(false);
-          }
-        } else {
-
-          const response = await Axios_Instance.get(`/company/chats?senderRole=${senderRole}`);
-
-          if (response.status === 200) {
-            setInboxChatList(response.data.chatList)
-          }
+          openChatBox(response.data.selectedChat);
+          setInboxChatList(response.data.chatList)
+          setIsInitialRender(false);
         }
-      } catch (error) {
-        console.log(error);
-        //? If blocked user 
-        if (error?.response?.data?.isBlocked) {
-          dispatch(userLogout());
-          toast.error(error?.response?.data?.errMsg);
-        }
-        if(error?.response?.data?.accessDenied){
-          dispatch(userLogout());
+      } else {
+
+        const response = await Axios_Instance.get(`/company/chats?senderRole=${senderRole}`);
+
+        if (response.status === 200) {
+          setInboxChatList(response.data.chatList)
         }
       }
-    })();
+    } catch (error) {
+      console.log(error);
+      //? If blocked user 
+      if (error?.response?.data?.isBlocked) {
+        dispatch(userLogout());
+        toast.error(error?.response?.data?.errMsg);
+      }
+      if (error?.response?.data?.accessDenied) {
+        dispatch(userLogout());
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchData()
   }, [senderRole]);
 
 
@@ -93,6 +94,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
 
     socketConnection.emit(`send_message`, newMessageData)
     setNewMessage("")
+    fetchData()
 
   };
 
@@ -195,6 +197,26 @@ export default function Chatbox({ senderRole, reciverRole }) {
   }
 
 
+  function formatTime(dateString) {
+    // Create a Date object from the dateString
+    const date = new Date(dateString);
+
+    // Extract hours and minutes
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    // Convert hours to 12-hour format
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+
+    // Pad minutes with a leading zero if necessary
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+
+    // Return the formatted time string
+    return `${hours}:${minutesStr} ${ampm}`;
+  }
+
   return (
     <div className={`"container mx-auto " ${senderRole === 'company' ? 'mt-24' : 'mt-6'}`}>
       <div className="min-w-full border rounded lg:grid lg:grid-cols-3">
@@ -232,7 +254,7 @@ export default function Chatbox({ senderRole, reciverRole }) {
             <li className=''>
               <p className='mt-5 ml-2'>
 
-              {inboxChatList.length < 1 && senderRole === 'company' && 'No messages reached'}
+                {inboxChatList.length < 1 && senderRole === 'company' && 'No messages reached'}
               </p>
               {inboxChatList.map((chat) => (
 
@@ -255,12 +277,14 @@ export default function Chatbox({ senderRole, reciverRole }) {
                   >
                     <div className="flex justify-between"
                     >
-                      <span className="block ml-2 font-semibold text-gray-600">
+                      <span className="block ml-2 font-semibold text-gray-600 text-base">
                         {senderRole === 'users' ? chat?.companyId?.companyName : chat?.userId?.firstName} {senderRole === 'company' && chat?.userId?.lastName}
                       </span>
                       {/* <span className="block ml-2 text-sm text-gray-600">10 unread messages</span> */}
                     </div>
-                    <span className="block ml-2 text-sm text-gray-600">time</span>
+                    <span className="block ml-2 text-sm text-gray-600">
+                      {formatTime(chat?.latestMessage?.createdAt)}
+                    </span>
                   </div>
                 </div>
               ))}

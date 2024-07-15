@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Axios_Instance from '../../api/userAxios'
 import { toast } from 'react-hot-toast';
 import { TextField } from '@mui/material';
+import { ResendOTP } from "otp-input-react";
 // import { userLogin } from '../store/slice/userSlice';
 
 export default function ForgotPassword() {
@@ -58,6 +59,32 @@ export default function ForgotPassword() {
     }
   };
   //*************************END GET OTP***************************************
+
+  //************************* RESEND OTP***************************************
+  const resendOtp = async () => {
+
+    try {
+      setUserOtp('')
+      const response = await Axios_Instance.post('/forgot_password', { email, action: "resendOtp", otpId })
+
+      if (response.status === 200) {
+        setOtpId(response?.data?.otpId)
+        toast.success(response.data.message)
+      }
+    } catch (error) {
+
+      if (error?.response?.status === 401) {
+        toast.error(error.response.errMsg)
+      } else {
+        toast.error("Please try again later")
+      }
+      console.log(error)
+
+    }
+
+  }
+  //*************************END RESEND OTP***************************************
+
   const handleChangeOTP = (e) => {
     const newValue = e.target.value;
 
@@ -97,6 +124,7 @@ export default function ForgotPassword() {
       if (response.status === 200 || response.data.success) {
         setProccessing(false)
         setIsPasswordFormOpen(true);
+        setUserOtp('')
         setNotHideEmailAndOtpForm(false)
 
       } else {
@@ -227,11 +255,18 @@ export default function ForgotPassword() {
                     ))}
                   </div>
 
+                  <div onClick={resendOtp}>
+                    <ResendOTP className='text-green-500 mt-150' />
+                  </div>
+
                   <div className='flex justify-center'>
                     <button
                       type='button'
                       className='font-serif border border-red-600 text-red-600 px-2 py-1.5 rounded mr-2 active:bg-red-300'
-                      onClick={() => setIsOpenEmailForm(true)}
+                      onClick={() => {
+                        setIsOpenEmailForm(true)
+                        setUserOtp('')
+                      }}
                     >
                       Cancel
                     </button>
@@ -269,14 +304,14 @@ export default function ForgotPassword() {
                 </div>
 
                 <div className='flex justify-center pt-1'>
-                <Link to={'/login'}>
-                      <button
-                        type='button'
-                        className='font-serif border border-red-600 text-red-600 px-2 py-1.5 rounded mr-2 active:bg-red-300'
-                      >
-                        Back to login
-                      </button>
-                    </Link>
+                  <Link to={'/login'}>
+                    <button
+                      type='button'
+                      className='font-serif border border-red-600 text-red-600 px-2 py-1.5 rounded mr-2 active:bg-red-300'
+                    >
+                      Back to login
+                    </button>
+                  </Link>
                   <button
                     type='submit'
                     className='font-serif border border-green-600 text-green-600 px-2 py-1.5 rounded active:bg-green-300'

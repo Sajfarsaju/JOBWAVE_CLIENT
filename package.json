@@ -20,6 +20,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "antd": "^5.8.4",
     "axios": "^1.4.0",
+    "caniuse-lite": "^1.0.30001642",
     "firebase": "^10.7.0",
     "otp-input-react": "^0.3.0",
     "react": "^18.2.0",
